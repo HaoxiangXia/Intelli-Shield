@@ -1,0 +1,1108 @@
+[2026-04-08T02:02:47.606599Z] | INFO | ops/app | system.db.init | Database initialized successfully
+[2026-04-08T02:02:49.706180Z] | INFO | ops/mqtt | mqtt.client.connected | topic=factory/forklift/+/alarm | Connected to MQTT broker successfully
+[2026-04-08T02:02:49.706770Z] | INFO | ops/mqtt | mqtt.client.started | MQTT client started successfully | extra={"broker": "localhost", "port": 1883}
+[2026-04-08T02:02:49.731739Z] | INFO | ops/mqtt | mqtt.topic.subscribed | topic=factory/forklift/+/alarm | Subscribed to target MQTT topic
+[2026-04-08T02:02:49.738468Z] | INFO | ops/app | system.mqtt.start | MQTT client started successfully
+[2026-04-08T02:02:49.765676Z] | INFO | ops/app | system.background.position_broadcast_started | Position broadcast loop started
+={"interval_sec": 5}
+[2026-04-08T02:02:49.781863Z] | INFO | ops/app | system.app.starting | Flask + SocketIO app starting
+[2026-04-08T02:02:53.662389Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:02:53.822935Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:02:53.926201Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:02:53.960293Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:02:54.035225Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:02:54.095211Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:02:54.128357Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:02:54.187269Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:02:54.246190Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:02:58.665475Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:02:58.737437Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:02:58.807393Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:02:58.842508Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:02:58.916419Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:02:58.984688Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:02:59.020344Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:02:59.099192Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:02:59.159405Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:03.668519Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:03:03.727179Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:03:03.782012Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:03.815238Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:03:03.880027Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:03:03.933915Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:03.964450Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:03:04.023571Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:03:04.086216Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:08.669982Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:03:08.745940Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:03:08.792517Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:08.820880Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:03:08.868627Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:03:08.916883Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:08.942857Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:03:08.997815Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:03:09.057450Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:13.671464Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:03:13.736025Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:03:13.758696Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:13.775621Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T02:03:13.808220Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T02:03:13.830763Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T02:03:15.786517Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_10-03-10_0.jpg"}
+[2026-04-08T02:03:15.823346Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_10-03-11_1.jpg"}
+[2026-04-08T02:03:15.868875Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_10-03-12_2.jpg"}
+[2026-04-08T02:03:15.909982Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_10-03-13_3.jpg"}
+[2026-04-08T02:03:15.930765Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 344}
+[2026-04-08T02:03:16.051076Z] | INFO | biz/mqtt | device.alarm.image_urls_recorded | device=FORK-003 | Alarm image URLs recorded | extra={"image_urls": ["/images/alarms/FORK-003_2026-04-08_10-03-10_0.jpg", "/images/alarms/FORK-003_2026-04-08_10-03-11_1.jpg", "/images/alarms/FORK-003_2026-04-08_10-03-12_2.jpg", "/images/alarms/FORK-003_2026-04-08_10-03-13_3.jpg"]}
+[2026-04-08T02:03:16.074698Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T02:03:16.107945Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:31.003293Z] | INFO | ops/app | system.db.init | Database initialized successfully
+[2026-04-08T12:49:33.095933Z] | INFO | ops/mqtt | mqtt.client.started | MQTT client started successfully | extra={"broker": "localhost", "port": 1883}
+[2026-04-08T12:49:33.096516Z] | INFO | ops/mqtt | mqtt.client.connected | topic=factory/forklift/+/alarm | Connected to MQTT broker successfully
+[2026-04-08T12:49:33.132685Z] | INFO | ops/mqtt | mqtt.topic.subscribed | topic=factory/forklift/+/alarm | Subscribed to target MQTT topic
+[2026-04-08T12:49:33.167541Z] | INFO | ops/app | system.mqtt.start | MQTT client started successfully
+[2026-04-08T12:49:33.202436Z] | INFO | ops/app | system.background.offline_check_started | Offline detection loop started | extra={"interval_sec": 5}
+[2026-04-08T12:49:33.226594Z] | INFO | ops/app | system.app.starting | Flask + SocketIO app starting
+on broadcast loop started
+[2026-04-08T12:49:37.132461Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:37.169787Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:37.196773Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:37.217073Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:37.252256Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T12:49:37.274410Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:38.277449Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 38783.257862}
+[2026-04-08T12:49:38.307550Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T12:49:42.134000Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:42.184356Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:42.207967Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:42.226712Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:42.259026Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:42.281960Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:42.298317Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:42.330655Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true, "online_marked": true}}
+[2026-04-08T12:49:42.350823Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:47.135040Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:47.169197Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T12:49:47.189875Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:47.208015Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:47.243322Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:47.265015Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:47.281095Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:47.312696Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:47.333740Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:52.135505Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:52.178406Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:52.201158Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:52.217358Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:52.249710Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:52.273766Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:57.136179Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:57.172986Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:57.195022Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:57.212044Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:49:57.246257Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:49:57.268776Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:49:58.360894Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 11.342759}
+[2026-04-08T12:49:58.389434Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T12:50:02.137402Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:02.183011Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T12:50:02.217407Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:02.237269Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:02.275472Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:02.296414Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:07.139133Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:07.199407Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T12:50:07.232628Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:07.257752Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:07.306880Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:07.331779Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:07.351859Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:07.385262Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T12:50:07.407611Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:12.139699Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:12.175546Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:12.198224Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:12.214865Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:12.248489Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T12:50:12.271936Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:12.288592Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:12.321580Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:12.344435Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:17.140659Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:17.182148Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:17.204151Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:17.221560Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:17.261435Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:17.288472Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:22.141561Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:22.197870Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:22.224259Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:22.242205Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:22.277648Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T12:50:22.302839Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:23.471750Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 11.448294}
+[2026-04-08T12:50:23.508309Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T12:50:27.142895Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:27.182194Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:27.218715Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:27.238907Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:27.276930Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:27.299446Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:32.143248Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:32.177773Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:32.199154Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:50:32.215606Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:50:32.247674Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:50:32.269170Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:32.842877Z] | INFO | ops/app | system.db.init | Database initialized successfully
+[2026-04-08T12:58:34.921729Z] | INFO | ops/mqtt | mqtt.client.started | MQTT client started successfully | extra={"broker": "localhost", "port": 1883}
+[2026-04-08T12:58:34.922228Z] | INFO | ops/mqtt | mqtt.client.connected | topic=factory/forklift/+/alarm | Connected to MQTT broker successfully
+[2026-04-08T12:58:34.944276Z] | INFO | ops/app | system.mqtt.start | MQTT client started successfully
+[2026-04-08T12:58:34.952239Z] | INFO | ops/app | system.background.position_broadcast_started | Position broadcast loop started
+[2026-04-08T12:58:34.951833Z] | INFO | ops/app | system.background.offline_check_started | Offline detection loop started | extra={"interval_sec": 5}
+[2026-04-08T12:58:34.960745Z] | INFO | ops/app | system.app.starting | Flask + SocketIO app starting
+[2026-04-08T12:58:34.984432Z] | INFO | ops/mqtt | mqtt.topic.subscribed | topic=factory/forklift/+/alarm | Subscribed to target MQTT topic
+[2026-04-08T12:58:39.360656Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:39.410640Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T12:58:39.432624Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:39.450009Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:39.495210Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:39.517773Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:39.536268Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:39.580823Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T12:58:39.611791Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:44.361574Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:44.424141Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:44.485585Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:44.523478Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:44.592458Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:44.646534Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:44.681135Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:44.744692Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:44.811455Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:49.363890Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:49.448988Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:49.514938Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:49.553168Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:49.967684Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:50.132988Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:50.185064Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:50.266478Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:50.324345Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:54.366889Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:54.440211Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:54.506147Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:54.536907Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:54.599363Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:55.156792Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:55.189857Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:55.248250Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:55.304535Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:59.368457Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:59.406283Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:59.437772Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:59.458734Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:59.495509Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:59.527694Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:58:59.546930Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:58:59.588379Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:58:59.620683Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:04.369864Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:04.437727Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:04.489730Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:04.524401Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:04.584658Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T12:59:04.649981Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:04.679475Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:04.743718Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:04.799783Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:09.370985Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:09.444653Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:09.504473Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:09.530667Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:09.584998Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T12:59:09.616522Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:09.640139Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:09.698896Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:09.756240Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:14.373180Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:14.447382Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:14.539022Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:14.578493Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:14.641126Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:14.694722Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:19.373893Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:19.412267Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:19.434238Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:19.451673Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:19.485286Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:19.507874Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:19.530659Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:19.567067Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:19.593450Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:24.376783Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:24.438868Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:24.468393Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:24.486031Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:24.522093Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:24.546060Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:24.563327Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:24.597329Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:24.620886Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:29.379728Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:29.444852Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:29.502667Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:29.544118Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:29.615798Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:29.674146Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:34.380663Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:34.441967Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T12:59:34.492239Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:34.522037Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:34.580749Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:34.631027Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:34.663202Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:34.721373Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:34.778813Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:39.381421Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:39.435863Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T12:59:39.479237Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:39.503893Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:39.553040Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:39.593026Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:41.504399Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_20-59-36_0.jpg"}
+[2026-04-08T12:59:41.924505Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_20-59-37_1.jpg"}
+[2026-04-08T12:59:41.990692Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_20-59-38_2.jpg"}
+[2026-04-08T12:59:42.048180Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_20-59-39_3.jpg"}
+[2026-04-08T12:59:42.081501Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 344}
+[2026-04-08T12:59:42.233556Z] | INFO | biz/mqtt | device.alarm.image_urls_recorded | device=FORK-003 | Alarm image URLs recorded | extra={"image_urls": ["/images/alarms/FORK-003_2026-04-08_20-59-36_0.jpg", "/images/alarms/FORK-003_2026-04-08_20-59-37_1.jpg", "/images/alarms/FORK-003_2026-04-08_20-59-38_2.jpg", "/images/alarms/FORK-003_2026-04-08_20-59-39_3.jpg"]}
+[2026-04-08T12:59:42.257608Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T12:59:42.296759Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:47.082119Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:47.136348Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:47.158502Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:47.177425Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:47.227730Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:47.277758Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:47.307788Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:47.353942Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T12:59:47.395366Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:52.083567Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:52.140443Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:52.183276Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:52.208695Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:52.257815Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:52.293904Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:57.085902Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:57.153759Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:57.200064Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:57.227288Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:57.274410Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:57.319861Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T12:59:57.348923Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T12:59:57.396427Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T12:59:57.431871Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:02.087253Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:02.132083Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:02.162071Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:02.183340Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:02.225580Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:00:02.255732Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:07.088439Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:07.149452Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:07.192570Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:07.219921Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:07.276269Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:07.318169Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:10.329700Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 13.292477}
+[2026-04-08T13:00:10.380767Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:00:12.089665Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:12.153414Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:12.192184Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:12.218131Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:12.265885Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:00:12.307190Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:12.335144Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:12.389019Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T13:00:12.431580Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:17.091419Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:17.149126Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:17.195430Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:17.223620Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:17.271896Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:17.333498Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:17.361655Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:17.421435Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:17.471114Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:22.092608Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:22.162466Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:00:22.212994Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:22.247294Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:22.299413Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:22.339992Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:27.096249Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:27.161854Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:27.223690Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:27.249244Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:27.295770Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:27.339860Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:27.365735Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:27.412347Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:27.449939Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:32.102175Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:32.165887Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:32.219478Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:32.250021Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:32.303621Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:32.357092Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:37.104210Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:37.189604Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:37.263684Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:37.291043Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:37.340742Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:37.409633Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:37.443464Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:37.515881Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:37.557301Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:42.107549Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:42.172652Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:42.233476Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:42.265189Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:42.314443Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:42.348531Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:47.109124Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:47.162082Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:47.207043Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:47.234224Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:47.284976Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:47.330265Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:49.245360Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-00-44_0.jpg"}
+[2026-04-08T13:00:49.305739Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-00-45_1.jpg"}
+[2026-04-08T13:00:49.362509Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-00-46_2.jpg"}
+[2026-04-08T13:00:49.413020Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-00-47_3.jpg"}
+[2026-04-08T13:00:49.431765Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 344}
+[2026-04-08T13:00:49.592927Z] | INFO | biz/mqtt | device.alarm.image_urls_recorded | device=FORK-003 | Alarm image URLs recorded | extra={"image_urls": ["/images/alarms/FORK-003_2026-04-08_21-00-44_0.jpg", "/images/alarms/FORK-003_2026-04-08_21-00-45_1.jpg", "/images/alarms/FORK-003_2026-04-08_21-00-46_2.jpg", "/images/alarms/FORK-003_2026-04-08_21-00-47_3.jpg"]}
+[2026-04-08T13:00:49.618130Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:00:49.659303Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:54.433386Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:54.490137Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:54.531042Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:54.566311Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:54.635945Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:54.688640Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:59.434333Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:59.512131Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:59.563344Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:00:59.599959Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:00:59.659131Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:00:59.728309Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:00.561891Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 11.533972}
+[2026-04-08T13:01:00.617666Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:01:04.436293Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:04.513163Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:04.579111Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:04.610811Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:04.670569Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:04.727838Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:09.440421Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:09.518127Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:01:09.566050Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:09.589600Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:09.636962Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:09.677017Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:09.702163Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:09.760044Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T13:01:09.815039Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:14.442153Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:14.515407Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:14.574748Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:14.617228Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:14.675235Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:14.734304Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:14.763428Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:14.846873Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:14.898109Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:19.443279Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:19.493492Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:19.533959Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:19.560680Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:19.616620Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:19.670385Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:24.444957Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:24.525067Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:24.577944Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:24.604156Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:24.652339Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:24.689522Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:24.712918Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:24.764975Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:01:24.807043Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:29.446527Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:29.513671Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:29.563739Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:29.591710Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:29.639813Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:29.678714Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:29.702683Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:29.748167Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:29.773406Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:34.451036Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:34.521418Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:34.573588Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:34.599249Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:34.648456Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:34.686282Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:39.453513Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:39.515391Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:39.566515Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:39.589717Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:39.636245Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:39.666802Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:39.691897Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:39.735907Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:39.776160Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:44.454726Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:44.508060Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:44.546044Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:44.568520Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:44.615142Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:44.650974Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:49.456726Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:49.536956Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:49.588018Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:49.610215Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:49.666351Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:49.730339Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:50.817683Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 11.786045}
+[2026-04-08T13:01:50.868042Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:01:54.457581Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:54.520878Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:54.568647Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:54.594056Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:54.647274Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:54.704852Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:59.459917Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:59.530640Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:01:59.574221Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:59.618745Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:59.676910Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:01:59.728580Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:01:59.761047Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:01:59.824369Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T13:01:59.858951Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:04.464608Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:04.524527Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:04.569299Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:04.597175Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:04.645467Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:02:04.693714Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:09.465837Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:09.537643Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:09.601153Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:09.632093Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:09.679225Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:02:09.721551Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:10.992996Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 11.954912}
+[2026-04-08T13:02:11.057139Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:02:14.468154Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:14.538306Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:14.602137Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:14.631335Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:14.694929Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:14.759541Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:16.601494Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-02-11_0.jpg"}
+[2026-04-08T13:02:16.661756Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-02-12_1.jpg"}
+[2026-04-08T13:02:16.727381Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-02-13_2.jpg"}
+[2026-04-08T13:02:17.088900Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-02-14_3.jpg"}
+[2026-04-08T13:02:17.126977Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 344}
+[2026-04-08T13:02:17.302478Z] | INFO | biz/mqtt | device.alarm.image_urls_recorded | device=FORK-003 | Alarm image URLs recorded | extra={"image_urls": ["/images/alarms/FORK-003_2026-04-08_21-02-11_0.jpg", "/images/alarms/FORK-003_2026-04-08_21-02-12_1.jpg", "/images/alarms/FORK-003_2026-04-08_21-02-13_2.jpg", "/images/alarms/FORK-003_2026-04-08_21-02-14_3.jpg"]}
+[2026-04-08T13:02:17.347712Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true, "online_marked": true}}
+[2026-04-08T13:02:17.384264Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:22.129069Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:22.201132Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:22.249253Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:22.283271Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:22.339029Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:22.373089Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:27.130564Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:27.185069Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:27.236355Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:27.264918Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:27.319375Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:27.344147Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:27.362364Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:27.419837Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:27.480677Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:32.132316Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:32.198901Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:02:32.245363Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:32.271133Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:32.337622Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:02:32.396019Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:32.421468Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:32.465406Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:32.502294Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:37.136840Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:37.202386Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:37.241750Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:37.265647Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:37.321966Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:37.386752Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:37.420772Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:37.481547Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:02:37.534124Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:42.138859Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:42.204210Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:02:42.245657Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:42.278743Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:42.331731Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:42.372391Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:42.402791Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:42.461182Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:42.507112Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:47.140675Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:47.195735Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:47.265891Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:47.290476Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:47.329134Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:02:47.367504Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:49.298059Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-02-44_0.jpg"}
+[2026-04-08T13:02:49.337820Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-02-45_1.jpg"}
+[2026-04-08T13:02:49.389405Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-02-46_2.jpg"}
+[2026-04-08T13:02:49.482878Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-02-47_3.jpg"}
+[2026-04-08T13:02:49.514945Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 344}
+[2026-04-08T13:02:49.666757Z] | INFO | biz/mqtt | device.alarm.image_urls_recorded | device=FORK-003 | Alarm image URLs recorded | extra={"image_urls": ["/images/alarms/FORK-003_2026-04-08_21-02-44_0.jpg", "/images/alarms/FORK-003_2026-04-08_21-02-45_1.jpg", "/images/alarms/FORK-003_2026-04-08_21-02-46_2.jpg", "/images/alarms/FORK-003_2026-04-08_21-02-47_3.jpg"]}
+[2026-04-08T13:02:49.695395Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:02:49.730645Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:54.516436Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:54.576128Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:54.619301Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:54.643386Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:54.702256Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:54.765245Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:59.518434Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:59.575189Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:59.646076Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:59.670804Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:59.724588Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:02:59.774425Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:02:59.802771Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:02:59.862106Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:02:59.918088Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:04.525006Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:04.585068Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:04.637708Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:04.670669Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:04.728903Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:04.777801Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:04.813988Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:04.877952Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:04.929052Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:09.528276Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:09.593242Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:09.649021Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:09.671460Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:09.714471Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:09.738435Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:09.757409Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:09.803979Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:09.838041Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:14.529737Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:14.604666Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:14.670229Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:14.699009Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:14.761268Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:03:14.816844Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:19.531691Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:19.593072Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:03:19.629861Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:19.651588Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:19.708969Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:19.753305Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:19.775604Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:19.834333Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:19.889544Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:24.535077Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:24.585956Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:24.629778Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:24.666644Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:24.717871Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:24.771708Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:24.799547Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:24.849474Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:24.887806Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:29.537349Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:29.606054Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:29.655771Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:29.676635Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:29.741309Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:29.796669Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:34.541061Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:34.773144Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:34.828025Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:34.857189Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:34.911788Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:34.961571Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:34.989242Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:35.043822Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:35.089585Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:39.542325Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:39.641416Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:39.690326Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:39.717216Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:39.773426Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:39.821016Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:44.544207Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:44.737448Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:44.776665Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:44.801339Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:44.856355Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:44.905356Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:44.931537Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:44.982909Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:03:45.039268Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:49.551285Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:49.769923Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:03:49.785222Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:49.791599Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:49.832441Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:49.858892Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:54.551838Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:54.752038Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:54.793569Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:54.818898Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:54.862206Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:54.926256Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:54.952281Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:55.000975Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:55.041577Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:59.554336Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:59.621686Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:03:59.659023Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:03:59.681494Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:03:59.720072Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:03:59.754504Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:04.556692Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:04.739684Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:04.791232Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:04.823495Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:04.880768Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:04.925478Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:06.409778Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 12.37914}
+[2026-04-08T13:04:06.449320Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:04:09.559963Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:09.748748Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:09.801347Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:09.826088Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:09.872937Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:09.911164Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:09.934496Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:09.997640Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T13:04:10.037808Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:14.560658Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:14.745044Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:14.772226Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:14.788749Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:14.822183Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:14.846571Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:14.864691Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:14.899418Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:14.922864Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:19.561275Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:19.781579Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:19.806002Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:19.824141Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:19.859027Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:19.882959Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:24.562480Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:24.803114Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:24.825505Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:24.842650Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:24.876571Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:24.903828Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:24.920665Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:24.954412Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:24.976805Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:29.562890Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:29.601039Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:04:29.622897Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:29.639905Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:29.672724Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:29.694214Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:29.711841Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:29.746350Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:29.777208Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:34.563637Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:34.868840Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:34.890190Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:34.906398Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:34.937036Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:34.957283Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:34.972540Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:35.002473Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:35.023020Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:39.565257Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:39.844301Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:04:39.874453Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:39.889823Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:39.926592Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:39.947085Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:39.961990Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:39.991826Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:40.011639Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:44.566186Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:44.839226Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:44.862507Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:44.879677Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:44.918730Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:04:44.943795Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:44.962125Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:44.996119Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:45.018789Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:49.566710Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:49.926540Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:49.950398Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:49.968133Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:50.003184Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:50.025832Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:54.567332Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:54.920277Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:54.944830Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:54.962620Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:54.996237Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:55.021023Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:55.039257Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:55.073479Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:55.096633Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:59.568491Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:59.810624Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:59.833901Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:04:59.850662Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:04:59.882878Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:04:59.905310Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:01.675612Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-04-56_0.jpg"}
+[2026-04-08T13:05:01.722956Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-04-57_1.jpg"}
+[2026-04-08T13:05:01.766963Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-04-58_2.jpg"}
+[2026-04-08T13:05:01.810187Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-04-59_3.jpg"}
+[2026-04-08T13:05:01.831763Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 344}
+[2026-04-08T13:05:01.940257Z] | INFO | biz/mqtt | device.alarm.image_urls_recorded | device=FORK-003 | Alarm image URLs recorded | extra={"image_urls": ["/images/alarms/FORK-003_2026-04-08_21-04-56_0.jpg", "/images/alarms/FORK-003_2026-04-08_21-04-57_1.jpg", "/images/alarms/FORK-003_2026-04-08_21-04-58_2.jpg", "/images/alarms/FORK-003_2026-04-08_21-04-59_3.jpg"]}
+[2026-04-08T13:05:01.963525Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:05:01.993542Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:06.832383Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:06.879826Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:06.908967Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:06.929700Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:06.967563Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:05:06.997206Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:11.577925Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 10.548322}
+[2026-04-08T13:05:11.626372Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:05:11.833366Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:11.874293Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:11.904742Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:11.921638Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:11.957958Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:11.981872Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:12.000403Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:12.036384Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T13:05:12.059895Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:16.834187Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:16.876572Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:16.909385Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:16.928136Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:16.969740Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:16.993578Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:17.010326Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:17.045974Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:05:17.072712Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:21.834945Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:21.870309Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:21.892090Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:21.909601Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:21.949282Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:21.976671Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:21.994508Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:22.035498Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:22.059583Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:26.835597Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:26.879259Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:05:26.902459Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:26.920320Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:26.953316Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:26.974714Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:26.993105Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:27.024950Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:27.051083Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:31.836742Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:31.877274Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:31.899333Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:31.915498Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:31.949291Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:05:31.971886Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:36.837736Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:36.886532Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:36.920240Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:36.937008Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:36.971133Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:36.993165Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:37.009374Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:37.041892Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:37.065982Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:41.838686Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:41.885917Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:41.918345Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:41.938431Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:41.979406Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:42.011875Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:42.033867Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:42.070793Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:42.093523Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:46.839421Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:46.882778Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:46.909735Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:46.929044Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:46.963339Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:05:46.986455Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:51.840127Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:51.888301Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:51.925334Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:51.945229Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:51.986117Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:52.011792Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:52.029552Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:52.067032Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:52.092007Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:56.841139Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:56.890061Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:05:56.914854Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:56.933299Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:05:56.973323Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:05:56.996175Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:05:58.956734Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-05-53_0.jpg"}
+[2026-04-08T13:05:58.994945Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-05-54_1.jpg"}
+[2026-04-08T13:05:59.036146Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-05-55_2.jpg"}
+[2026-04-08T13:05:59.080794Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-05-56_3.jpg"}
+[2026-04-08T13:05:59.100880Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 344}
+[2026-04-08T13:05:59.209448Z] | INFO | biz/mqtt | device.alarm.image_urls_recorded | device=FORK-003 | Alarm image URLs recorded | extra={"image_urls": ["/images/alarms/FORK-003_2026-04-08_21-05-53_0.jpg", "/images/alarms/FORK-003_2026-04-08_21-05-54_1.jpg", "/images/alarms/FORK-003_2026-04-08_21-05-55_2.jpg", "/images/alarms/FORK-003_2026-04-08_21-05-56_3.jpg"]}
+[2026-04-08T13:05:59.227815Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:05:59.256126Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:04.101658Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:04.149165Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:06:04.175952Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:04.192220Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:04.229452Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:04.251759Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:04.269509Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:04.303167Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:04.326246Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:09.103604Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:09.164332Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:09.192426Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:09.209381Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:09.247344Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:09.274326Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:14.105278Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:14.155058Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:06:14.188723Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:14.206017Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:14.243347Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:14.265602Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:16.773303Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 12.743287}
+[2026-04-08T13:06:16.805509Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:06:19.106081Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:19.151776Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:19.181008Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:19.197867Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:19.232592Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:19.254462Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:19.271185Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:19.304221Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T13:06:19.325950Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:24.106737Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:24.151076Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:24.174418Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:24.192558Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:24.227475Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:06:24.249763Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:24.266105Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:24.299438Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:24.321961Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:29.108002Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:29.158895Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:29.186403Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:29.202845Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:29.236657Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:06:29.259352Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:29.276048Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:29.310150Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:06:29.334954Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:34.110433Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:34.172607Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:34.200687Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:34.218906Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:34.259324Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:34.281358Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:39.111132Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:39.157826Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:39.179819Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:39.196195Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:39.229717Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:39.252288Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:39.268856Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:39.301296Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:39.323386Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:44.112041Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:44.153585Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:44.181739Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:44.198984Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:44.232279Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:06:44.256781Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:49.112594Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:49.151687Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:49.178893Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:49.197483Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:49.235459Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:49.258850Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:51.902263Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 12.875291}
+[2026-04-08T13:06:51.928916Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:06:54.113714Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:54.157267Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:54.190146Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:54.209574Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:54.243885Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:54.265732Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:59.114887Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:59.150918Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:06:59.176125Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:59.193092Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:59.227017Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:06:59.252078Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:06:59.268979Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:06:59.303104Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"online_marked": true}}
+[2026-04-08T13:06:59.324407Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:04.115800Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:04.164986Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:04.186711Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:04.203851Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:04.238087Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:04.259951Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:09.116150Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:09.160724Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:07:09.183306Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:09.199676Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:09.232921Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:09.255035Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:11.227413Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-07-06_0.jpg"}
+[2026-04-08T13:07:11.272524Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-07-07_1.jpg"}
+[2026-04-08T13:07:11.314305Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-07-08_2.jpg"}
+[2026-04-08T13:07:11.353083Z] | INFO | biz/app | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-08_21-07-09_3.jpg"}
+[2026-04-08T13:07:11.372812Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 344}
+[2026-04-08T13:07:11.483962Z] | INFO | biz/mqtt | device.alarm.image_urls_recorded | device=FORK-003 | Alarm image URLs recorded | extra={"image_urls": ["/images/alarms/FORK-003_2026-04-08_21-07-06_0.jpg", "/images/alarms/FORK-003_2026-04-08_21-07-07_1.jpg", "/images/alarms/FORK-003_2026-04-08_21-07-08_2.jpg", "/images/alarms/FORK-003_2026-04-08_21-07-09_3.jpg"]}
+[2026-04-08T13:07:11.500842Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:07:11.524643Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:16.373558Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:16.417722Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:16.440185Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:16.457514Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:16.500126Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:16.522249Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:21.374529Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:21.419903Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true}}
+[2026-04-08T13:07:21.456807Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:21.478947Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:21.524861Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:21.566918Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:22.019409Z] | WARNING | biz/app | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 10.987704}
+[2026-04-08T13:07:22.104123Z] | INFO | ops/app | socket.broadcast.device_update | Broadcasted device_update (offline event)
+[2026-04-08T13:07:26.375907Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:26.434180Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:07:26.474293Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:26.503860Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:26.552192Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_raised": true}}
+[2026-04-08T13:07:26.592573Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:26.617347Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:26.668309Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {"alarm_cleared": true, "online_marked": true}}
+[2026-04-08T13:07:26.704088Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:31.378142Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-001/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:31.421286Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-001 | topic=factory/forklift/FORK-001/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:31.449561Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-001 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:31.466644Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-002/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:31.506011Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-002 | topic=factory/forklift/FORK-002/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:31.529253Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-002 | Pushed device data to frontend via SocketIO
+[2026-04-08T13:07:31.546193Z] | DEBUG | ops/mqtt | mqtt.message.received | topic=factory/forklift/FORK-003/alarm | MQTT message received | extra={"payload_size": 116}
+[2026-04-08T13:07:31.578488Z] | INFO | biz/mqtt | mqtt.message.processed | device=FORK-003 | topic=factory/forklift/FORK-003/alarm | MQTT message processed and DB updated | extra={"changed": {}}
+[2026-04-08T13:07:31.601429Z] | DEBUG | biz/socketio | socketio.data.pushed | device=FORK-003 | Pushed device data to frontend via SocketIO
+[2026-04-12T04:36:26.700622Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-12T04:36:29.743454Z] | WARNING | biz/worker | device.status.offline_marked | device=FORK-001 | Device marked offline | extra={"offline_seconds": 314938.6945025921}
+[2026-04-12T04:36:29.834444Z] | WARNING | biz/worker | device.status.offline_marked | device=FORK-002 | Device marked offline | extra={"offline_seconds": 314938.6945025921}
+[2026-04-12T04:36:29.922432Z] | WARNING | biz/worker | device.status.offline_marked | device=FORK-003 | Device marked offline | extra={"offline_seconds": 314938.6945025921}
+[2026-04-12T04:36:30.438662Z] | INFO | ops/socketio | socket.client.connected | sid=DcZ_tvji8c6_8avZAAAB | SocketIO client connected
+[2026-04-12T04:36:44.008656Z] | INFO | ops/socketio | socket.client.disconnected | sid=DcZ_tvji8c6_8avZAAAB | SocketIO client disconnected
+[2026-04-12T04:36:44.453628Z] | INFO | ops/socketio | socket.client.connected | sid=86yr56GxiMLsJPAfAAAD | SocketIO client connected
+[2026-04-12T04:36:44.945862Z] | INFO | ops/socketio | socket.client.disconnected | sid=86yr56GxiMLsJPAfAAAD | SocketIO client disconnected
+[2026-04-12T04:36:45.394669Z] | INFO | ops/socketio | socket.client.connected | sid=PIvRrtTTxwT2CAfGAAAF | SocketIO client connected
+[2026-04-12T04:38:26.435362Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-38-21_0.jpg"}
+[2026-04-12T04:38:26.478387Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-38-22_1.jpg"}
+[2026-04-12T04:38:26.526061Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-38-23_2.jpg"}
+[2026-04-12T04:38:26.581437Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-38-24_3.jpg"}
+[2026-04-12T04:38:58.757201Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-38-53_0.jpg"}
+[2026-04-12T04:38:58.802013Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-38-54_1.jpg"}
+[2026-04-12T04:38:58.844522Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-38-55_2.jpg"}
+[2026-04-12T04:38:58.888767Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-38-56_3.jpg"}
+[2026-04-12T04:40:41.188310Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-40-36_0.jpg"}
+[2026-04-12T04:40:41.244628Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-40-37_1.jpg"}
+[2026-04-12T04:40:41.297638Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-40-38_2.jpg"}
+[2026-04-12T04:40:41.349399Z] | INFO | biz/api | device.image.uploaded | device=FORK-003 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-003_2026-04-12_12-40-39_3.jpg"}
+[2026-04-16T11:43:16.620349Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-17T12:45:37.161406Z] | INFO | ops/socketio | socket.client.connected | sid=x8BFJ_jq8lW59SxcAAAB | SocketIO client connected
+[2026-04-17T12:45:37.868897Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-17T14:43:09.983844Z] | INFO | ops/socketio | socket.client.connected | sid=tFmwxBlKXzoYcDlrAAAB | SocketIO client connected
+[2026-04-17T14:43:10.293064Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-17T14:45:06.063416Z] | INFO | ops/socketio | socket.client.disconnected | sid=tFmwxBlKXzoYcDlrAAAB | SocketIO client disconnected
+[2026-04-18T14:31:27.846372Z] | INFO | ops/socketio | socket.client.connected | sid=YTPUyULFO0ruKXt4AAAB | SocketIO client connected
+[2026-04-18T14:36:12.360185Z] | INFO | ops/socketio | socket.client.connected | sid=R9Ol_fc7FHGurxjnAAAB | SocketIO client connected
+[2026-04-18T14:36:13.378316Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-18T14:36:14.847288Z] | INFO | ops/socketio | socket.client.disconnected | sid=R9Ol_fc7FHGurxjnAAAB | SocketIO client disconnected
+[2026-04-19T14:36:27.169317Z] | INFO | ops/socketio | socket.client.connected | sid=MokfNw-ApfVEM8CuAAAB | SocketIO client connected
+[2026-04-19T14:36:27.690962Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-26T20:36:46.317545Z] | INFO | ops/socketio | socket.client.connected | sid=sHj_J5Olr54Z2nHgAAAB | SocketIO client connected
+[2026-04-26T20:36:46.753941Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-26T20:36:48.211009Z] | INFO | ops/socketio | socket.client.disconnected | sid=sHj_J5Olr54Z2nHgAAAB | SocketIO client disconnected
+[2026-04-26T20:36:49.031672Z] | INFO | ops/socketio | socket.client.connected | sid=laAwDSfR0Lt7I5rvAAAD | SocketIO client connected
+[2026-04-26T20:36:49.347345Z] | INFO | ops/socketio | socket.client.disconnected | sid=laAwDSfR0Lt7I5rvAAAD | SocketIO client disconnected
+[2026-04-26T20:36:50.736507Z] | INFO | ops/socketio | socket.client.connected | sid=yM0N9LS2vKg5FKV0AAAF | SocketIO client connected
+[2026-04-26T20:36:51.717971Z] | INFO | ops/socketio | socket.client.disconnected | sid=yM0N9LS2vKg5FKV0AAAF | SocketIO client disconnected
+[2026-04-26T20:36:53.027655Z] | INFO | ops/socketio | socket.client.connected | sid=YoMFNIq-RC0KdcBiAAAH | SocketIO client connected
+[2026-04-26T20:36:53.245095Z] | INFO | ops/socketio | socket.client.disconnected | sid=YoMFNIq-RC0KdcBiAAAH | SocketIO client disconnected
+[2026-04-26T20:36:55.800299Z] | INFO | ops/socketio | socket.client.connected | sid=X898pIOfJ9dQ-WuyAAAJ | SocketIO client connected
+[2026-04-26T20:37:02.857326Z] | INFO | ops/socketio | socket.client.disconnected | sid=X898pIOfJ9dQ-WuyAAAJ | SocketIO client disconnected
+[2026-04-26T20:37:46.436495Z] | INFO | ops/socketio | socket.client.connected | sid=djqos78PjdAX1x1mAAAB | SocketIO client connected
+[2026-04-26T20:37:47.224148Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-28T07:58:34.939762Z] | INFO | ops/socketio | socket.client.connected | sid=FuwF-DRzt50k3B08AAAB | SocketIO client connected
+[2026-04-28T07:58:34.980580Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-28T07:58:41.292239Z] | INFO | ops/socketio | socket.client.disconnected | sid=FuwF-DRzt50k3B08AAAB | SocketIO client disconnected
+[2026-04-28T07:58:56.863291Z] | INFO | ops/socketio | socket.client.connected | sid=9BGtOtJ1EZ8Ju99uAAAD | SocketIO client connected
+[2026-04-28T07:58:57.663382Z] | INFO | ops/socketio | socket.client.disconnected | sid=9BGtOtJ1EZ8Ju99uAAAD | SocketIO client disconnected
+[2026-04-28T08:00:12.946686Z] | INFO | ops/socketio | socket.client.connected | sid=XWnVULY3MmTaIxhyAAAF | SocketIO client connected
+[2026-04-28T08:00:26.622905Z] | INFO | ops/socketio | socket.client.disconnected | sid=XWnVULY3MmTaIxhyAAAF | SocketIO client disconnected
+[2026-04-28T08:00:32.320240Z] | INFO | ops/socketio | socket.client.connected | sid=78yAM3JATTwk00XdAAAH | SocketIO client connected
+[2026-04-28T08:02:15.238900Z] | INFO | ops/socketio | socket.client.disconnected | sid=78yAM3JATTwk00XdAAAH | SocketIO client disconnected
+[2026-04-28T09:48:33.692867Z] | INFO | ops/socketio | socket.client.connected | sid=maTbtm6ihK6jKOmtAAAJ | SocketIO client connected
+[2026-04-28T09:48:35.881032Z] | INFO | ops/socketio | socket.client.disconnected | sid=maTbtm6ihK6jKOmtAAAJ | SocketIO client disconnected
+[2026-04-30T05:43:17.283334Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T05:43:20.255168Z] | WARNING | biz/worker | device.status.offline_marked | device=FORK-001 | Device marked offline | extra={"offline_seconds": 1004387.2242808342}
+[2026-04-30T05:43:20.293921Z] | WARNING | biz/worker | device.status.offline_marked | device=FORK-002 | Device marked offline | extra={"offline_seconds": 1004387.2242808342}
+[2026-04-30T07:23:15.061817Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T07:23:22.518520Z] | INFO | biz/api | device.image.uploaded | device=FORK-006 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-006_2026-04-30_15-23-17_0.jpg"}
+[2026-04-30T07:23:22.595276Z] | INFO | biz/api | device.image.uploaded | device=FORK-006 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-006_2026-04-30_15-23-18_1.jpg"}
+[2026-04-30T07:23:22.731748Z] | INFO | biz/api | device.image.uploaded | device=FORK-006 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-006_2026-04-30_15-23-19_2.jpg"}
+[2026-04-30T07:23:22.828919Z] | INFO | biz/api | device.image.uploaded | device=FORK-006 | Image uploaded via HTTP | extra={"image_path": "images\\alarms\\FORK-006_2026-04-30_15-23-20_3.jpg"}
+[2026-04-30T07:44:32.583186Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T07:49:31.957048Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T08:20:23.452484Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T10:02:06.730768Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T10:03:20.756608Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T10:05:56.469689Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T10:06:40.848646Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T10:11:39.623332Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T10:12:09.489364Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}
+[2026-04-30T10:18:17.186194Z] | WARNING | ops/mqtt | mqtt.client.start_failed | MQTT client failed to start | error=int() argument must be a string, a bytes-like object or a real number, not 'ReasonCode' | extra={"broker": "localhost", "port": 1883, "required": false}

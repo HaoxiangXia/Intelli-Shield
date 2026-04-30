@@ -1,0 +1,31 @@
+# --- 通用忽略 ---
+__pycache__/
+.DS_Store
+.venv/
+uv.lock
+.kilo
+.kilocode
+.vscode
+.ruff_cache
+AGENTS.md
+AGENTS.MD
+
+# --- 设备端 (device) ---
+device/*.pt
+device/*.onnx
+device/logs/
+device/secrets.h
+device/*.lnk
+device/export.py
+
+# --- 云端 (cloud) ---
+cloud/.env
+cloud/frontend/node_modules/
+cloud/frontend/dist/
+cloud/frontend/.vite/
+cloud/*.db
+cloud/*.log
+cloud/ignore/
+cloud/images/alarms/*
+!cloud/images/alarms/FORK-003_20260408_003836.png
+!cloud/images/alarms/MANUAL-TEST_20260408_002811.png
