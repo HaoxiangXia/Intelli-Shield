@@ -17,9 +17,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.request import urlopen
 
-import db
+ROOT = Path(__file__).resolve().parents[1]
+os.chdir(ROOT)
+sys.path.insert(0, str(ROOT))
+from backend.repositories import database as db
 
-ROOT = Path(__file__).resolve().parent
 DB_FILES = ("alarm.db", "alarm.db-shm", "alarm.db-wal")
 
 
@@ -430,8 +432,8 @@ def wait_for_server(url: str, timeout_sec: float = 20.0) -> bool:
 
 
 def main() -> int:
-    if not (ROOT / "app.py").exists():
-        print("未找到文件：app.py")
+    if not (ROOT / "backend" / "app.py").exists():
+        print("未找到文件：backend/app.py")
         return 1
 
     backup = None
@@ -448,7 +450,7 @@ def main() -> int:
 
         heartbeat_keeper.start()
         runner.start(
-            "app.py",
+            "backend/app.py",
             {
                 "APP_HOST": app_host,
                 "APP_PORT": str(app_port),
