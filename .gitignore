@@ -24,7 +24,7 @@ cloud/frontend/node_modules/
 cloud/frontend/dist/
 cloud/frontend/.vite/
 cloud/*.db
-cloud/*.log
+cloud/logs/*.log
 cloud/ignore/
 cloud/images/alarms/*
 !cloud/images/alarms/FORK-003_20260408_003836.png
