@@ -18,7 +18,7 @@ from ..settings import (
     TREND_LIMIT,
 )
 from ..llm_client import analyze_alarm_image
-from logger import get_logs_by_page, log_event
+from logger import log_event
 from backend.repositories import database as repo
 
 DEVICE_IDS = ["FORK-001", "FORK-002", "FORK-003"]
@@ -57,7 +57,7 @@ def get_latest_payload():
 
 
 def get_logs_payload(page: int, page_size: int, level: str | None, device_id: str | None, category: str | None):
-    return get_logs_by_page(page, page_size, level, device_id, category)
+    return repo.get_logs_by_page(page, page_size, level, device_id, category)
 
 
 def get_device_history_payload(device_id: str):
