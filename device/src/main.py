@@ -80,7 +80,10 @@ def on_alarm_change(alarm_state: bool, center_raw: bool, outer_raw: bool,
                     center_state: bool, outer_state: bool,
                     center_counter, outer_counter,
                     prev_alarm_state: bool, trigger_reason: str, img=None):
-    """当报警状态改变时发送 UART 输出并记录日志。"""
+    """
+    当报警状态改变时发送 UART 输出并记录日志。
+    注：outer_raw 和 outer_state 现表示外围速度风险。
+    """
     cmd_data = "ALARM:1" if alarm_state else "ALARM:0"
     log_output = "ALARM: ON" if alarm_state else "ALARM: OFF"
     print(f"[STATE CHANGE] {log_output}")
@@ -258,9 +261,10 @@ try:
         trigger_reason = "detection_update"
 
         # 执行逻辑更新
-        res = alarm_logic.update(person_boxes, frame_w, frame_h)
+        res = alarm_logic.update(person_boxes, frame_w, frame_h, timestamp_s=frame_start_s)
         center_raw = res[0]
-        outer_raw = res[1]
+        # outer_raw 现表示外围速度风险 raw（轨迹靠近速度>=阈值）；outer_state 表示去抖稳定态
+        outer_raw = res[1] 
         center_state = res[2]
         outer_state = res[3]
         alarm_state = res[4]
@@ -305,8 +309,11 @@ try:
         alarm_color = image.COLOR_RED if alarm_state else image.COLOR_GREEN
 
         img.draw_string(10, 10, f"Center: {int(center_raw)}/{int(center_state)}", color=center_color, scale=2)
-        img.draw_string(10, 50, f"Outer: {int(outer_raw)}/{int(outer_state)}", color=outer_color, scale=2)
+        img.draw_string(10, 50, f"Speed: {int(outer_raw)}/{int(outer_state)}", color=outer_color, scale=2)
         img.draw_string(10, 90, f"Alarm: {int(alarm_state)}", color=alarm_color, scale=2)
+        
+        speed_px_s = getattr(alarm_logic, "max_approach_speed_px_s", 0.0)
+        img.draw_string(10, 130, f"V: {speed_px_s:.0f}px/s", color=image.COLOR_GREEN, scale=2)
 
         # 5. 显示最终图像
         disp.show(img)
