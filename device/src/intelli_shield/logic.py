@@ -182,8 +182,9 @@ class DualROIAlarm:
                 self.next_track_id += 1
                 
         self.active_track_count = len(self.tracks)
-        if self.tracks:
-            self.max_approach_speed_px_s = max(t.approach_speed_px_s for t in self.tracks)
+        current_tracks = [t for t in self.tracks if t.missing_frames == 0]
+        if current_tracks:
+            self.max_approach_speed_px_s = max(t.approach_speed_px_s for t in current_tracks)
         else:
             self.max_approach_speed_px_s = 0.0
 
