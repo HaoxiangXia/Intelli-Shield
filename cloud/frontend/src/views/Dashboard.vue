@@ -156,9 +156,11 @@ const DASHBOARD_MAP_URL = '/map.jpg'
 let mapChartInstance = null
 const MAP_COORD_WIDTH = 1920
 const MAP_COORD_HEIGHT = 1080
-const MAP_MARKER_OUTER_SIZE = 42
-const MAP_MARKER_MIDDLE_SIZE = 32
-const MAP_MARKER_INNER_SIZE = 22
+const MAP_MARKER_OUTER_SIZE = 28
+const MAP_MARKER_MIDDLE_SIZE = 21
+const MAP_MARKER_INNER_SIZE = 14
+const MAP_WARNING_RADIUS = 90
+const MAP_DANGER_RADIUS = 45
 
 const C = {
   text: '#5c5678',
@@ -167,6 +169,8 @@ const C = {
   green: '#a8e6cf',
   red: '#f0a0a0',
   offline: '#b0a8c8',
+  warningRing: '#f3b04d',
+  dangerRing: '#e85d5d',
 }
 
 async function fetchAlarmTrend() {
@@ -224,14 +228,48 @@ function buildMapPointData() {
   })
 }
 
+function buildSafetyRangeData(radius, color) {
+  return devices.value
+    .filter(dev => Number.isFinite(Number(dev.pos_x)) && Number.isFinite(Number(dev.pos_y)))
+    .map(dev => ({
+      name: dev.device_id,
+      value: [Number(dev.pos_x) || 0, Number(dev.pos_y) || 0, radius, color],
+    }))
+}
+
+function renderSafetyRange(_params, api) {
+  const center = api.coord([api.value(0), api.value(1)])
+  const radius = Math.abs(api.size([api.value(2), 0])[0])
+  const color = api.value(3)
+  return {
+    type: 'circle',
+    shape: {
+      cx: center[0],
+      cy: center[1],
+      r: radius,
+    },
+    style: {
+      fill: 'rgba(255,255,255,0)',
+      stroke: color,
+      lineWidth: 1.5,
+      lineDash: [6, 5],
+      opacity: 0.88,
+    },
+  }
+}
+
 function updateMap() {
   if (!mapChartInstance) return
   updateMapLayout()
 
   const pointData = buildMapPointData()
+  const warningRanges = buildSafetyRangeData(MAP_WARNING_RADIUS, C.warningRing)
+  const dangerRanges = buildSafetyRangeData(MAP_DANGER_RADIUS, C.dangerRing)
 
   mapChartInstance.setOption({
     series: [
+      { data: warningRanges },
+      { data: dangerRanges },
       { data: pointData },
       { data: pointData },
       { data: pointData },
@@ -405,11 +443,31 @@ onMounted(() => {
       show: false,
     },
     series: [{
-      type: 'scatter',
+      type: 'custom',
       coordinateSystem: 'cartesian2d',
       clip: true,
       silent: true,
       z: 1,
+      dimensions: ['x', 'y', 'radius', { name: 'color', type: 'ordinal' }],
+      encode: { x: 0, y: 1 },
+      renderItem: renderSafetyRange,
+      data: [],
+    }, {
+      type: 'custom',
+      coordinateSystem: 'cartesian2d',
+      clip: true,
+      silent: true,
+      z: 2,
+      dimensions: ['x', 'y', 'radius', { name: 'color', type: 'ordinal' }],
+      encode: { x: 0, y: 1 },
+      renderItem: renderSafetyRange,
+      data: [],
+    }, {
+      type: 'scatter',
+      coordinateSystem: 'cartesian2d',
+      clip: true,
+      silent: true,
+      z: 3,
       symbolSize: MAP_MARKER_OUTER_SIZE,
       itemStyle: {
         color: '#111111',
@@ -421,7 +479,7 @@ onMounted(() => {
       coordinateSystem: 'cartesian2d',
       clip: true,
       silent: true,
-      z: 2,
+      z: 4,
       symbolSize: MAP_MARKER_MIDDLE_SIZE,
       itemStyle: {
         color: 'rgba(255, 255, 255, 0.96)',
@@ -431,7 +489,7 @@ onMounted(() => {
       type: 'scatter',
       coordinateSystem: 'cartesian2d',
       clip: true,
-      z: 3,
+      z: 5,
       symbolSize: MAP_MARKER_INNER_SIZE,
       data: [],
     }],
