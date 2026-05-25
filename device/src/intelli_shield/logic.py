@@ -152,16 +152,20 @@ class DualROIAlarm:
             cy = box.y + (box.h / 2.0)
             in_center = (x <= cx <= x2) and (y <= cy <= y2)
             current_objects.append({'cx': cx, 'cy': cy, 'in_center': in_center, 'matched': False})
-            
+        
+        max_match_distance_sq = config.TRACK_MATCH_MAX_DISTANCE_PX * config.TRACK_MATCH_MAX_DISTANCE_PX
+        
         # 对每个已有的 track 找最近的未匹配 box
         for track in self.tracks:
             best_idx = -1
-            min_dist = float('inf')
+            min_dist_sq = float('inf')
             for i, obj in enumerate(current_objects):
                 if not obj['matched']:
-                    dist = math.sqrt((track.cx - obj['cx'])**2 + (track.cy - obj['cy'])**2)
-                    if dist < min_dist and dist <= config.TRACK_MATCH_MAX_DISTANCE_PX:
-                        min_dist = dist
+                    dx = track.cx - obj['cx']
+                    dy = track.cy - obj['cy']
+                    dist_sq = (dx * dx) + (dy * dy)
+                    if dist_sq < min_dist_sq and dist_sq <= max_match_distance_sq:
+                        min_dist_sq = dist_sq
                         best_idx = i
             
             if best_idx != -1:
@@ -182,8 +186,9 @@ class DualROIAlarm:
                 self.next_track_id += 1
                 
         self.active_track_count = len(self.tracks)
-        if self.tracks:
-            self.max_approach_speed_px_s = max(t.approach_speed_px_s for t in self.tracks)
+        current_tracks = [t for t in self.tracks if t.missing_frames == 0]
+        if current_tracks:
+            self.max_approach_speed_px_s = max(t.approach_speed_px_s for t in current_tracks)
         else:
             self.max_approach_speed_px_s = 0.0
 
