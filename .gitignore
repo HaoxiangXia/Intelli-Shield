@@ -19,6 +19,7 @@ device/*.lnk
 device/export.py
 
 # --- 云端 (cloud) ---
+cloud/.agents
 cloud/.env
 cloud/frontend/node_modules/
 cloud/frontend/dist/
