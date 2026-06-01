@@ -2,13 +2,17 @@
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![YOLO](https://img.shields.io/badge/YOLO-000000?style=flat&logo=yolo&logoColor=white)
 ![MQTT](https://img.shields.io/badge/MQTT-3C52F0?style=flat&logo=mqtt&logoColor=white)
+![Vue](https://img.shields.io/badge/Vue-3-4FC08D?style=flat&logo=vue.js&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
 
 </div>
 
 智盾 Intelli Shield 是一个端云协同的人车互斥安全预警系统，面向厂区叉车、矿山运输等工业安防场景。
+
+> 完整产品需求、目标用户、MVP 范围、里程碑与团队分工见 [`PRD.md`](PRD.md)。
 
 ## 项目定位
 
@@ -24,14 +28,56 @@
 
 ## 技术栈
 
-- **设备端**：MaixCAM + Python，端侧识别与本地报警联动
-- **云端后端**：FastAPI + Uvicorn，MQTT/Socket.IO 通信
-- **前端**：Vue 3 + Vite + Element Plus，ECharts/Chart.js 数据可视化
+| 端 | 关键组件 |
+|---|---|
+| 设备端 | MaixCAM Pro + YOLO11n + Python（MaixPy v4.12）；UART 串口对接 STM32 控制 LED / 蜂鸣器 / OLED |
+| 云端后端 | FastAPI + Uvicorn + paho-mqtt + python-socketio + SQLite；可选 LLM 多模态描述（OpenAI 兼容） |
+| 前端 | Vue 3 + Vite + Element Plus + ECharts（vue-echarts）+ socket.io-client + Bun/npm |
 
-## 项目结构
+## 端云协同数据流
 
-- **[device/](device/)**: 设备端代码（基于 MaixCAM），负责人员检测、报警逻辑、本地日志及图片上传。
-- **[cloud/](cloud/)**: 云端代码，负责接收设备上报的数据、存储及前端展示。
+```
+设备端 (MaixCAM)              云端 (FastAPI)                前端 (Vue 3)
+─────────────────            ─────────────                ──────────
+[双状态机判定报警]
+   │
+   │  HTTP 上传图片 ─────────▶│  images/alarms/ + alarm_images
+   │                          │
+   │  ◀── image_urls ─────────│
+   │
+   │  MQTT 报警状态 ─────────▶│  WorkerManager → SQLite
+   │                          │           ↓
+   │                          │  Socket.IO ────────────▶  Dashboard 实时刷新
+```
+
+## 目录结构
+
+```text
+智盾 Intelli Shield/
+├── README.md          ← 本文件
+├── PRD.md             ← 产品需求文档
+├── device/            ← 设备端模块（MaixCAM + STM32）
+│   ├── src/           ← 主程序 + intelli_shield 核心包
+│   ├── docs/          ← 设备端深度文档
+│   ├── export.py      ← PC 端模型导出工具
+│   ├── uart_test.py   ← 串口链路联调脚本
+│   └── README.md      ← 设备端 README
+└── cloud/             ← 云端模块（FastAPI + Vue 3）
+    ├── backend/       ← FastAPI + MQTT + Socket.IO + LLM + SQLite
+    ├── frontend/      ← Vue 3 + ECharts 看板
+    ├── tests/         ← 仿真演示（edge_node_client.py）
+    ├── docs/          ← 云端深度文档（通信层 / 上传指南 / Bun / 仿真）
+    ├── images/        ← 报警图片存储
+    └── README.md      ← 云端 README
+```
+
+## 关键文档
+
+| 文档 | 用途 |
+|---|---|
+| [`PRD.md`](PRD.md) | 产品需求、目标用户、MVP 范围、里程碑与团队分工 |
+| [`device/README.md`](device/README.md) | 设备端模块说明（MaixCAM 部署、双状态机、UART 协议、云上报） |
+| [`cloud/README.md`](cloud/README.md) | 云端模块说明（后端 / 前端 / 仿真 / API / 实时通道 / FAQ） |
 
 ## 快速开始
 
@@ -40,6 +86,3 @@
 
 ### 2) 云端
 请参考 [cloud/README.md](cloud/README.md) 进行部署。
-
-### 3) 前端
-前端位于 [cloud/frontend/](cloud/frontend/)，可按其中 `package.json` 的脚本进行开发与构建。
