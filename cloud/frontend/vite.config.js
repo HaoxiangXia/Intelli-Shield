@@ -14,10 +14,6 @@ export default defineConfig({
       '/images': {
         target: 'http://localhost:5000',
         changeOrigin: true
-      },
-      '/map.jpg': {
-        target: 'http://localhost:5000',
-        changeOrigin: true
       }
     }
   }
