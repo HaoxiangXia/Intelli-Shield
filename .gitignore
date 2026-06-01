@@ -9,6 +9,7 @@ uv.lock
 .ruff_cache
 AGENTS.md
 AGENTS.MD
+ignore/
 
 # --- 设备端 (device) ---
 device/*.pt

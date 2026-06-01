@@ -110,27 +110,27 @@ onMounted(fetchHistory)
 
 <style scoped>
 .history-page {
-  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content-inner {
-  padding: 28px 32px;
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow:
-    0 8px 32px rgba(30, 64, 175, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  padding: 24px;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .card.trend-card {
   padding: 20px;
   animation: fade-in 0.6s ease;
   border-radius: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 @keyframes fade-in {
@@ -143,6 +143,7 @@ onMounted(fetchHistory)
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .card-title {
@@ -164,6 +165,7 @@ onMounted(fetchHistory)
   display: flex;
   justify-content: flex-end;
   margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .controls button {
@@ -181,33 +183,57 @@ onMounted(fetchHistory)
 }
 
 .table-wrap {
-  overflow-x: auto;
+  flex: 1;
+  width: 100%;
+  overflow: auto;
+  border-radius: 16px;
+  /* 自定义滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(184, 169, 232, 0.3) transparent;
+}
+
+.table-wrap::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+  background-color: rgba(184, 169, 232, 0.3);
+  border-radius: 10px;
+}
+
+.table-wrap::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .history-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  overflow: hidden;
+}
+
+.history-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: rgba(235, 240, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.history-table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #5c5678;
 }
 
 .history-table th,
 .history-table td {
-  padding: 12px;
-  border-bottom: 1px solid rgba(184,169,232,0.2);
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(184,169,232,0.15);
   color: #3a3550;
-  vertical-align: top;
-}
-
-.history-table th {
-  font-weight: 700;
-  text-align: left;
-  font-size: 13px;
-}
-
-.history-table td {
-  font-size: 13px;
+  vertical-align: middle;
 }
 
 .device-id {
