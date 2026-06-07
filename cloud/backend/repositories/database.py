@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import json
 import os
 import random
 import sqlite3
@@ -99,6 +100,20 @@ def init_db():
     )
     cursor.execute(
         """
+        CREATE TABLE IF NOT EXISTS all_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ts TEXT,
+            level TEXT,
+            event TEXT,
+            category TEXT,
+            device_id TEXT,
+            message TEXT,
+            extra TEXT
+        )
+        """
+    )
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS alarm_images (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             device_id TEXT,
@@ -151,6 +166,93 @@ def init_db():
     )
     conn.commit()
     conn.close()
+
+
+def save_log(ts, level, event, category, device_id, message, extra=None):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS all_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ts TEXT,
+            level TEXT,
+            event TEXT,
+            category TEXT,
+            device_id TEXT,
+            message TEXT,
+            extra TEXT
+        )
+        """
+    )
+    cursor.execute(
+        """
+        INSERT INTO all_logs (ts, level, event, category, device_id, message, extra)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (ts, level, event, category, device_id, message, json.dumps(extra, ensure_ascii=False) if extra else None),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_logs_by_page(page=1, page_size=20, level=None, device_id=None, category=None):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='all_logs'")
+    if not cursor.fetchone():
+        conn.close()
+        return {"logs": [], "total": 0, "total_pages": 0}
+
+    conditions = []
+    params = []
+    if level:
+        conditions.append("level = ?")
+        params.append(level)
+    if device_id:
+        conditions.append("device_id = ?")
+        params.append(device_id)
+    if category:
+        conditions.append("category = ?")
+        params.append(category)
+    where_clause = " AND ".join(conditions) if conditions else "1=1"
+
+    cursor.execute(f"SELECT COUNT(*) FROM all_logs WHERE {where_clause}", params)
+    total = cursor.fetchone()[0]
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 0
+    offset = (page - 1) * page_size
+    cursor.execute(
+        f"""
+        SELECT id, ts, level, event, category, device_id, message, extra
+        FROM all_logs
+        WHERE {where_clause}
+        ORDER BY id DESC
+        LIMIT ? OFFSET ?
+        """,
+        params + [page_size, offset],
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    logs = []
+    for row in rows:
+        extra_raw = row["extra"]
+        logs.append(
+            {
+                "id": row["id"],
+                "ts": row["ts"],
+                "level": row["level"],
+                "event": row["event"],
+                "category": row["category"],
+                "device_id": row["device_id"],
+                "message": row["message"],
+                "extra": json.loads(extra_raw) if extra_raw else {},
+            }
+        )
+    return {"logs": logs, "total": total, "total_pages": total_pages}
+
+
+def get_biz_logs_by_page(page=1, page_size=20, level=None, device_id=None):
+    return get_logs_by_page(page, page_size, level, device_id, category="biz")
 
 
 def update_device_data(device_id, alarm, mqtt_timestamp=None):

@@ -139,15 +139,19 @@ onMounted(() => {
 
 <style scoped>
 .logs-page {
-  min-height: 100vh;
-  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .content {
   padding: 24px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow: hidden;
   animation: page-reveal 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
@@ -168,11 +172,12 @@ onMounted(() => {
 
 .header {
   border-radius: 20px;
-  padding: 20px 24px;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  flex-shrink: 0;
 }
 
 .header-title h1 {
@@ -181,6 +186,7 @@ onMounted(() => {
   font-weight: 600;
   color: #3a3550;
   letter-spacing: -0.01em;
+  margin: 0;
 }
 
 .subtitle {
@@ -194,15 +200,20 @@ onMounted(() => {
 .card {
   border-radius: 24px;
   padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   padding-bottom: 12px;
   border-bottom: 1px solid rgba(184, 169, 232, 0.15);
+  flex-shrink: 0;
 }
 
 .card-title {
@@ -214,108 +225,145 @@ onMounted(() => {
 
 .filter-bar {
   display: grid;
-  grid-template-columns: 160px 160px 200px auto;
+  grid-template-columns: 140px 140px 180px auto;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .filter-control {
-  height: 36px;
+  height: 38px;
   border: 1px solid rgba(184, 169, 232, 0.2);
   border-radius: 12px;
   padding: 0 12px;
   font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   background: rgba(255, 255, 255, 0.3);
   color: #3a3550;
   outline: none;
-  transition: border-color 0.2s, background 0.2s;
+  transition: all 0.2s;
 }
 
 .filter-control:focus {
-  border-color: rgba(139, 92, 246, 0.4);
-  background: rgba(255, 255, 255, 0.45);
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 4px rgba(47, 107, 255, 0.1);
 }
 
 .filter-action {
-  height: 36px;
+  height: 38px;
   padding: 0 16px;
-  border: 1px solid rgba(184, 169, 232, 0.2);
+  border: none;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.25);
-  color: #3a3550;
+  background: rgba(184, 169, 232, 0.15);
+  color: #5c5678;
   font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s;
   justify-self: start;
-  transition: background 0.2s, transform 0.15s ease;
 }
 
 .filter-action:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(184, 169, 232, 0.25);
   transform: translateY(-1px);
 }
 
 .table-wrap {
-  overflow-x: auto;
+  flex: 1;
+  overflow: auto;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(184, 169, 232, 0.3) transparent;
+}
+
+.table-wrap::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+  background-color: rgba(184, 169, 232, 0.3);
+  border-radius: 10px;
 }
 
 .data-table {
   width: 100%;
-  border-collapse: collapse;
-  min-width: 960px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.data-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: rgba(235, 240, 255, 0.95);
+  backdrop-filter: blur(10px);
 }
 
 .data-table th {
+  padding: 14px 16px;
   text-align: left;
-  font-family: 'Outfit', sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  color: #8a8aa8;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(184, 169, 232, 0.12);
-  background: rgba(255, 255, 255, 0.1);
+  color: #5c5678;
+  border-bottom: 1px solid rgba(184, 169, 232, 0.2);
 }
 
 .data-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(184, 169, 232, 0.08);
-  vertical-align: middle;
-  color: #4a4a6a;
-}
-
-.data-table tbody tr {
-  transition: background-color 0.2s ease;
-}
-
-.data-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.device-id {
-  font-family: 'JetBrains Mono', monospace;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(184, 169, 232, 0.1);
   font-size: 13px;
+  color: #3a3550;
+  vertical-align: middle;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(184, 169, 232, 0.15);
+  flex-shrink: 0;
+}
+
+.page-btn {
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(184, 169, 232, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+  color: #3a3550;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 13px;
+  color: #8491ac;
   font-weight: 500;
 }
 
-.time-col {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  color: #8a8aa8;
-  white-space: nowrap;
-}
-
 .level-badge {
-  display: inline-block;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: 8px;
   font-size: 11px;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .level-badge.info {
@@ -335,45 +383,19 @@ onMounted(() => {
 
 .empty-state {
   text-align: center;
-  padding: 36px 16px;
+  padding: 48px;
   color: #8a8aa8;
 }
 
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(184, 169, 232, 0.12);
-}
-
-.page-btn {
-  padding: 8px 18px;
-  border: 1px solid rgba(184, 169, 232, 0.2);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.25);
-  color: #3a3550;
+.device-id {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  color: var(--color-primary);
 }
 
-.page-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.45);
-  transform: translateY(-1px);
-}
-
-.page-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.page-info {
-  font-size: 13px;
-  color: #8a8aa8;
+.time-col {
+  white-space: nowrap;
+  color: var(--color-text-secondary);
 }
 
 @media (max-width: 900px) {

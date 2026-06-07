@@ -129,9 +129,9 @@ factory/forklift/{device_id}/alarm
 
 ### 3.1 模拟设备脚本
 
-参考根目录下的 [publish_test.py](publish_test.py) 进行 MQTT 通信模拟：
+参考 [`tests/publish_test.py`](../tests/publish_test.py) 进行 MQTT 通信模拟：
 ```bash
-python publish_test.py
+python tests/publish_test.py
 ```
 
 ### 3.2 离线检测逻辑
@@ -152,10 +152,10 @@ curl -X POST http://localhost:5000/api/upload-image \
 ## 4. 常见问题 (FAQ)
 
 1. **MQTT 连接不上？**
-   - 检查 `config.py` 中的 `MQTT_BROKER` 和 `MQTT_PORT`。
+   - 检查 `backend/settings.py` 中的 `MQTT_BROKER` 和 `MQTT_PORT`。
    - 确保本地安装了 MQTT Broker (如 Mosquitto) 且已启动。
 2. **图片上传报错 413？**
-   - 检查 `config.py` 中的 `MAX_IMAGE_SIZE_MB` 配置。
+   - 检查 `backend/settings.py` 中的 `MAX_IMAGE_SIZE_MB` 配置。
 3. **前端看不到实时更新？**
    - 检查服务器日志是否输出了 `socketio.data.pushed`。
    - 确保前端已建立 WebSocket 连接。

@@ -9,6 +9,7 @@ uv.lock
 .ruff_cache
 AGENTS.md
 AGENTS.MD
+ignore/
 
 # --- 设备端 (device) ---
 device/*.pt
@@ -19,12 +20,13 @@ device/*.lnk
 device/export.py
 
 # --- 云端 (cloud) ---
+cloud/.agents
 cloud/.env
 cloud/frontend/node_modules/
 cloud/frontend/dist/
 cloud/frontend/.vite/
 cloud/*.db
-cloud/*.log
+cloud/logs/*.log
 cloud/ignore/
 cloud/images/alarms/*
 !cloud/images/alarms/FORK-003_20260408_003836.png

@@ -21,9 +21,10 @@ import os
 import requests
 from urllib.parse import urljoin
 
-# 添加父目录到路径，以便导入 db 和 config
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import db
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(ROOT)
+sys.path.insert(0, ROOT)
+from backend.repositories import database as db
 from backend.settings import POSITION_UPDATE_INTERVAL_SEC, POSITION_MOVE_RANGE
 
 # MQTT 配置
@@ -37,7 +38,7 @@ DEVICES = ["FORK-001", "FORK-002", "FORK-003"]
 SERVER_BASE_URL = os.getenv("SERVER_BASE_URL", "http://localhost:5000").rstrip("/") + "/"
 UPLOAD_URL = urljoin(SERVER_BASE_URL, "api/upload-image")
 IMAGE_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "images", "alarms", "bqb.jpg"
+    ROOT, "images", "alarms", "bqb.jpg"
 )
 UPLOAD_DEVICE = "FORK-003"  # 只有这个设备进行图片上传
 

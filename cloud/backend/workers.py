@@ -27,6 +27,11 @@ from .repositories import database as repo
 from .services import app_service
 
 
+def _is_mqtt_success(reason_code):
+    value = getattr(reason_code, "value", reason_code)
+    return value == 0 or str(reason_code).lower() == "success"
+
+
 class WorkerManager:
     def __init__(self, sio):
         self.sio = sio
@@ -73,7 +78,7 @@ class WorkerManager:
         self.mqtt_client = client
 
         def on_connect(client, userdata, flags, reason_code, properties=None):
-            if int(reason_code) == 0:
+            if _is_mqtt_success(reason_code):
                 client.subscribe(MQTT_TOPIC)
                 log_event("INFO", "mqtt.client.connected", "ops", "mqtt", "Connected to MQTT broker successfully", topic=MQTT_TOPIC)
             else:
