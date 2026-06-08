@@ -1,8 +1,11 @@
 <template>
   <header class="top-header">
     <div class="logo-area">
-      <img src="/logo.png" alt="Logo" class="logo" />
-      <span class="title">智盾</span>
+      <img src="/logo.svg" alt="Logo" class="logo" />
+      <div class="title-group">
+        <span class="title">智盾</span>
+        <span class="subtitle">Intelli Shield</span>
+      </div>
     </div>
     
     <div class="user-area">
@@ -30,16 +33,15 @@ import { Setting, ArrowDown } from '@element-plus/icons-vue'
 .logo-area {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding-left: 12px;
+  gap: 0;
   transition: transform 0.3s ease;
 }
 .logo-area:hover {
   transform: translateX(4px);
 }
 .logo {
-  width: 40px;
-  height: 40px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(47, 107, 255, 0.2));
 }
@@ -51,6 +53,17 @@ import { Setting, ArrowDown } from '@element-plus/icons-vue'
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
+}
+.title-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.5px;
 }
 .user-area {
   display: flex;
