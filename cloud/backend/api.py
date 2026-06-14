@@ -162,6 +162,14 @@ async def serve_vite_svg():
     raise HTTPException(status_code=404, detail="vite.svg not found")
 
 
+@router.get("/logo.svg")
+async def serve_logo_svg():
+    dist_svg = FRONTEND_DIST_DIR / "logo.svg"
+    if dist_svg.is_file():
+        return FileResponse(dist_svg)
+    raise HTTPException(status_code=404, detail="logo.svg not found")
+
+
 @router.get("/assets/{asset_path:path}")
 async def serve_asset(asset_path: str):
     file = FRONTEND_ASSETS_DIR / asset_path
