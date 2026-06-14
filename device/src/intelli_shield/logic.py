@@ -226,7 +226,7 @@ class DualROIAlarm:
 
         center_state = self.center_sm.state
         outer_state = self.outer_sm.state
-        alarm_state = bool(center_state and outer_state)
+        alarm_state = bool(center_state)
 
         state_changed = (alarm_state != self.alarm_state)
         self.alarm_state = alarm_state

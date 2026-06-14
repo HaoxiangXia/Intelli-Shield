@@ -44,6 +44,9 @@ MSG_HB = b"<HB,8A>"             # HB -> H(72)+B(66) = 138 % 256 = 138 (8A)
 HEARTBEAT_INTERVAL_S = 1.5 
 
 # ===================== 云上报配置（MaixCam 直连） =====================
+# 云上报总开关：True 启用，False 关闭
+ENABLE_CLOUD_REPORTING = False
+
 # 设备唯一标识，参与 MQTT topic 与图片上传参数
 DEVICE_ID = "FORK-006"
 
