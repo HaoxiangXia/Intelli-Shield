@@ -67,7 +67,7 @@ MQTT_REQUIRED = _get_bool("MQTT_REQUIRED", False)
 # ==============================
 # 数据库配置
 # ==============================
-DB_PATH = "alarm.db"
+DB_PATH = _get_str("DB_PATH", "alarm.db")
 # SQLite 写锁冲突等待时长（毫秒）：给并发写入一点缓冲时间，减少瞬时锁冲突报错。
 DB_BUSY_TIMEOUT_MS = 5000
 

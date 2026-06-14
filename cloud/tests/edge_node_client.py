@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import asyncio
 import json
 import math
 import os
 import socket
 import sqlite3
+import subprocess
 import sys
 import threading
 import time
@@ -16,360 +16,406 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.request import urlopen
 
-ROOT = Path(__file__).resolve().parents[1]
-os.chdir(ROOT)
-sys.path.insert(0, str(ROOT))
+import socketio
 
-from backend import settings
-from backend.repositories import database as db
+CLOUD_ROOT = Path(__file__).resolve().parents[1]
+DEMO_DB_NAME = "alarm_demo.db"
+DEMO_DB_PATH = CLOUD_ROOT / DEMO_DB_NAME
+DEMO_DB_FILES = (
+    DEMO_DB_PATH,
+    CLOUD_ROOT / f"{DEMO_DB_NAME}-shm",
+    CLOUD_ROOT / f"{DEMO_DB_NAME}-wal",
+)
 
-DEMO_DB_PATH = ROOT / "alarm_demo.db"
-DEMO_DB_FILES = (DEMO_DB_PATH, ROOT / "alarm_demo.db-shm", ROOT / "alarm_demo.db-wal")
-MAP_WIDTH = 1920
-MAP_HEIGHT = 1080
-TICK_SEC = 0.5
+os.environ["DB_PATH"] = str(DEMO_DB_PATH)
 
-FORKLIFT_PATHS = {
-    "FORK-001": [(630.0, 760.0), (630.0, 150.0), (150.0, 150.0), (150.0, 760.0), (630.0, 760.0)],
-    "FORK-002": [(630.0, 760.0), (1417.0, 760.0), (1417.0, 950.0), (630.0, 950.0), (630.0, 760.0)],
-    "FORK-003": [(630.0, 760.0), (1417.0, 760.0), (1417.0, 150.0), (630.0, 150.0), (630.0, 760.0)],
-}
-FORKLIFT_SPEEDS = {
-    "FORK-001": 36.0,
-    "FORK-002": 42.0,
-    "FORK-003": 48.0,
-}
-INITIAL_ROUTE_ADVANCE_SEC = {
-    "FORK-001": 0.0,
-    "FORK-002": 3.0,
-    "FORK-003": 6.0,
-}
-DEMO_PHASES = [
-    ("normal", 15.0, "正常巡航：三台叉车沿固定路线匀速行驶"),
-    ("forklift_collision", 10.0, "作业交叉点预警：两台叉车接近 [630,760]"),
-    ("person_warning", 8.0, "行人进入叉车安全预警区"),
-    ("person_danger", 10.0, "行人进入叉车报警区"),
-    ("clearing", 10.0, "行人远离，警报解除，叉车继续行驶"),
-]
+# 将项目根目录添加到 sys.path 以便导入 backend
+sys.path.append(str(CLOUD_ROOT))
+
+from backend.repositories import database as db  # noqa: E402
 
 
-@dataclass
-class ForkliftState:
+@dataclass(frozen=True)
+class AlarmTrigger:
+    zone: str
+    x_min: float
+    x_max: float
+    y_min: float
+    y_max: float
+
+    def contains(self, pos_x: float, pos_y: float) -> bool:
+        return self.x_min <= pos_x <= self.x_max and self.y_min <= pos_y <= self.y_max
+
+
+@dataclass(frozen=True)
+class DemoVehicle:
     device_id: str
-    path: list[tuple[float, float]]
-    speed: float
-    x: float
-    y: float
-    target_index: int = 1
+    route: tuple[tuple[float, float], ...]
+    step_px: float
+    offset: int = 0
+    alarm_trigger: AlarmTrigger | None = None
 
-    @classmethod
-    def from_path(cls, device_id: str) -> "ForkliftState":
-        path = FORKLIFT_PATHS[device_id]
-        state = cls(
-            device_id=device_id,
-            path=list(path),
-            speed=FORKLIFT_SPEEDS[device_id],
-            x=path[0][0],
-            y=path[0][1],
-            target_index=1,
+
+DEMO_ALARM_IMAGE_NAME = "FORK-003_20260408_003836.png"
+DEMO_ALARM_DESCRIPTION = "演示预设图片：FORK-001 行驶到装卸区固定风险点，触发人车距离过近报警。"
+DEMO_VEHICLES = (
+    DemoVehicle(
+        device_id="FORK-001",
+        route=(
+            (435, 55),
+            (435, 505),
+            (695, 505),
+            (915, 505),
+            (1010, 505),
+            (1010, 380),
+            (1010, 215),
+            (1010, 95),
+            (1120, 95),
+            (1010, 95),
+            (1010, 505),
+            (435, 505),
+        ),
+        step_px=4.0,
+        alarm_trigger=AlarmTrigger("主通道固定风险点", 880, 950, 480, 530),
+    ),
+    DemoVehicle(
+        device_id="FORK-002",
+        route=(
+            (305, 520),
+            (435, 520),
+            (435, 635),
+            (435, 735),
+            (435, 635),
+            (435, 520),
+        ),
+        step_px=3.8,
+        offset=70,
+    ),
+    DemoVehicle(
+        device_id="FORK-003",
+        route=(
+            (1010, 95),
+            (1135, 95),
+            (1135, 150),
+            (1010, 150),
+            (1010, 300),
+            (1010, 505),
+            (1010, 300),
+            (1010, 150),
+        ),
+        step_px=3.5,
+        offset=120,
+    ),
+)
+DEMO_DEVICE_IDS = tuple(vehicle.device_id for vehicle in DEMO_VEHICLES)
+
+
+class ProcessRunner:
+    def __init__(self) -> None:
+        self.process: subprocess.Popen[str] | None = None
+
+    def start(self, extra_env: dict[str, str]) -> None:
+        env = os.environ.copy()
+        env.update(extra_env)
+        self.process = subprocess.Popen(
+            [sys.executable, "-m", "backend.app"],
+            cwd=CLOUD_ROOT,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
         )
-        state.move(INITIAL_ROUTE_ADVANCE_SEC.get(device_id, 0.0))
-        return state
+        threading.Thread(target=self._stream_output, name="demo-app-output", daemon=True).start()
 
-    def move(self, dt: float) -> None:
-        remaining = self.speed * dt
-        while remaining > 0:
-            tx, ty = self.path[self.target_index]
-            dx = tx - self.x
-            dy = ty - self.y
-            distance = math.hypot(dx, dy)
-            if distance <= 0.001:
-                self.target_index = (self.target_index + 1) % len(self.path)
-                continue
-            step = min(remaining, distance)
-            self.x += (dx / distance) * step
-            self.y += (dy / distance) * step
-            remaining -= step
-            if step >= distance - 0.001:
-                self.x = tx
-                self.y = ty
-                self.target_index = (self.target_index + 1) % len(self.path)
-
-    def place_at_path_vertex(self, vertex: tuple[float, float], next_index: int) -> None:
-        self.x, self.y = vertex
-        self.target_index = next_index % len(self.path)
-
-
-class UvicornThreadRunner:
-    def __init__(self, host: str, port: int) -> None:
-        self.host = host
-        self.port = port
-        self.server: object | None = None
-        self.thread: threading.Thread | None = None
-
-    def start(self) -> None:
-        import uvicorn
-
-        config = uvicorn.Config(
-            "backend.main:app",
-            host=self.host,
-            port=self.port,
-            reload=False,
-            log_level="info",
-        )
-        self.server = uvicorn.Server(config)
-        self.thread = threading.Thread(target=self.server.run, name="demo-uvicorn", daemon=True)
-        self.thread.start()
+    def _stream_output(self) -> None:
+        if self.process is None or self.process.stdout is None:
+            return
+        for line in self.process.stdout:
+            print(f"[APP] {line}", end="")
 
     def stop(self) -> None:
-        if self.server is not None:
+        if self.process is None:
+            return
+        if self.process.poll() is None:
             print("正在停止 APP...")
-            self.server.should_exit = True
-        if self.thread and self.thread.is_alive():
-            self.thread.join(timeout=8)
+            self.process.terminate()
+            try:
+                self.process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                print("APP 未在超时时间内退出，执行强制终止。")
+                self.process.kill()
+                self.process.wait(timeout=5)
 
     def monitor(self) -> int:
-        if self.thread is None:
+        if self.process is None:
             return 1
         try:
-            while self.thread.is_alive():
+            while True:
+                return_code = self.process.poll()
+                if return_code is not None:
+                    print(f"APP 已退出，返回码: {return_code}")
+                    return return_code
                 time.sleep(0.5)
-            return 0
         except KeyboardInterrupt:
             print("\n检测到 Ctrl + C，准备退出...")
             return 0
 
 
-class DemoSimulator:
-    def __init__(self, tick_sec: float = TICK_SEC) -> None:
-        self.tick_sec = tick_sec
-        self.states = {device_id: ForkliftState.from_path(device_id) for device_id in FORKLIFT_PATHS}
+class FixedPathDemoPlayer:
+    """Drive all forklifts through fixed smooth demo routes."""
+
+    def __init__(self, service_url: str, image_url: str, frame_interval_sec: float = 0.2) -> None:
+        self.service_url = service_url
+        self.image_url = image_url
+        self.frame_interval_sec = frame_interval_sec
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
-        self._phase_started_at = 0.0
-        self._phase_index = -1
-        self._active_sessions: dict[str, str] = {}
-        self._last_broadcast_at = 0.0
+        self._socket = socketio.Client(reconnection=True)
+        self._tracks = {
+            vehicle.device_id: self._build_track(vehicle.route, vehicle.step_px)
+            for vehicle in DEMO_VEHICLES
+        }
+        self._alarm_states = {vehicle.device_id: 0 for vehicle in DEMO_VEHICLES}
+        self._tick = 0
 
     def start(self) -> None:
-        self._thread = threading.Thread(target=self._run, name="demo-simulator", daemon=True)
+        self._thread = threading.Thread(target=self._run, name="fixed-demo-player", daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
         self._stop_event.set()
         if self._thread and self._thread.is_alive():
             self._thread.join(timeout=5)
+        with suppress(Exception):
+            self._socket.disconnect()
 
     def _run(self) -> None:
-        start = time.monotonic()
+        self._connect_socket()
+        self._alarm_states = self._load_alarm_states()
+        print("仿真模式已启动：三辆叉车在线，按厂区道路闭环匀速移动。")
         while not self._stop_event.is_set():
-            elapsed = time.monotonic() - start
-            phase_index, phase_name = self._phase_for_elapsed(elapsed)
-            if phase_index != self._phase_index:
-                self._phase_index = phase_index
-                self._phase_started_at = elapsed
-                self._on_phase_enter(phase_name)
-                print(f"[DEMO] {DEMO_PHASES[phase_index][2]}")
+            devices, status_changed = self._advance_frame()
+            self._broadcast_update(devices, status_changed)
+            self._tick += 1
+            self._stop_event.wait(self.frame_interval_sec)
 
-            phase_elapsed = elapsed - self._phase_started_at
-            self._step(phase_name, phase_elapsed)
-            self._write_devices(phase_name)
-            self._broadcast_if_due()
-            self._stop_event.wait(self.tick_sec)
+    def _connect_socket(self) -> None:
+        for _ in range(20):
+            if self._stop_event.is_set():
+                return
+            try:
+                self._socket.connect(self.service_url, transports=["polling"])
+                return
+            except Exception:
+                self._stop_event.wait(0.5)
+        print("[DEMO] Socket.IO 连接失败，页面可能需要手动刷新才能看到最新位置。")
 
-    def _phase_for_elapsed(self, elapsed: float) -> tuple[int, str]:
-        total = sum(duration for _, duration, _ in DEMO_PHASES)
-        cursor = elapsed % total
-        for index, (name, duration, _) in enumerate(DEMO_PHASES):
-            if cursor < duration:
-                return index, name
-            cursor -= duration
-        return 0, DEMO_PHASES[0][0]
-
-    def _on_phase_enter(self, phase_name: str) -> None:
-        if phase_name == "forklift_collision":
-            self.states["FORK-001"].place_at_path_vertex((630.0, 760.0), 1)
-            self.states["FORK-003"].place_at_path_vertex((630.0, 760.0), 1)
-            self._start_alarm("FORK-001", "两台叉车驶入作业交叉点，触发碰撞预警", "forklift_forklift")
-            self._start_alarm("FORK-003", "两台叉车驶入作业交叉点，触发碰撞预警", "forklift_forklift")
-        elif phase_name == "person_warning":
-            self._clear_alarm("FORK-001", "交叉点碰撞预警解除")
-            self._clear_alarm("FORK-003", "交叉点碰撞预警解除")
-            self._start_alarm("FORK-002", "行人进入叉车安全预警区", "person_warning")
-        elif phase_name == "person_danger":
-            self._start_alarm("FORK-002", "行人进入叉车报警区，距离进一步缩短", "person_forklift")
-        elif phase_name == "clearing":
-            self._clear_alarm("FORK-002", "行人远离，警报解除")
-        elif phase_name == "normal":
-            for device_id in list(self._active_sessions):
-                self._clear_alarm(device_id, "仿真循环复位，设备恢复正常")
-
-    def _step(self, phase_name: str, phase_elapsed: float) -> None:
-        for state in self.states.values():
-            state.move(self.tick_sec)
-
-        if phase_name == "forklift_collision":
-            pulse = math.sin(phase_elapsed * math.pi * 2 / 4.0) * 8.0
-            self.states["FORK-001"].x = 630.0
-            self.states["FORK-001"].y = 760.0 - pulse
-            self.states["FORK-003"].x = 630.0 + pulse
-            self.states["FORK-003"].y = 760.0
-        elif phase_name in {"person_warning", "person_danger"}:
-            state = self.states["FORK-002"]
-            if phase_name == "person_warning":
-                state.x = 930.0 + math.sin(phase_elapsed * 1.4) * 12.0
-                state.y = 760.0
-            else:
-                state.x = 980.0 + math.sin(phase_elapsed * 1.8) * 8.0
-                state.y = 760.0
-
-    def _write_devices(self, phase_name: str) -> None:
-        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        alarm_devices = self._alarm_devices_for_phase(phase_name)
-        with sqlite3.connect(DEMO_DB_PATH) as conn:
-            cursor = conn.cursor()
-            rows = []
-            for device_id, state in self.states.items():
-                rows.append(
+    def _build_track(
+        self,
+        route: tuple[tuple[float, float], ...],
+        step_px: float,
+    ) -> tuple[tuple[float, float], ...]:
+        points: list[tuple[float, float]] = []
+        for index, start in enumerate(route):
+            end = route[(index + 1) % len(route)]
+            distance = math.dist(start, end)
+            steps = max(1, round(distance / step_px))
+            for step in range(steps):
+                t = step / steps
+                points.append(
                     (
-                        1 if device_id in alarm_devices else 0,
-                        now_str,
-                        now_str,
-                        1,
-                        round(state.x, 2),
-                        round(state.y, 2),
-                        device_id,
+                        start[0] + (end[0] - start[0]) * t,
+                        start[1] + (end[1] - start[1]) * t,
                     )
                 )
+        return tuple(points)
+
+    def _load_alarm_states(self) -> dict[str, int]:
+        conn = connect_demo_db()
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                f"""
+                SELECT device_id, alarm_status
+                FROM devices
+                WHERE device_id IN ({','.join(['?'] * len(DEMO_DEVICE_IDS))})
+                """,
+                DEMO_DEVICE_IDS,
+            )
+            states = {row["device_id"]: int(row["alarm_status"] or 0) for row in cursor.fetchall()}
+            return {device_id: states.get(device_id, 0) for device_id in DEMO_DEVICE_IDS}
+        finally:
+            conn.close()
+
+    def _advance_frame(self) -> tuple[list[dict], bool]:
+        now_str = format_now()
+        devices = []
+        status_changed = False
+
+        for vehicle in DEMO_VEHICLES:
+            track = self._tracks[vehicle.device_id]
+            pos_x, pos_y = track[(self._tick + vehicle.offset) % len(track)]
+            alarm = 1 if vehicle.alarm_trigger and vehicle.alarm_trigger.contains(pos_x, pos_y) else 0
+            if self._alarm_states.get(vehicle.device_id, 0) != alarm:
+                self._record_alarm_transition(vehicle, alarm, pos_x, pos_y, now_str)
+                self._alarm_states[vehicle.device_id] = alarm
+                status_changed = True
+            devices.append(
+                {
+                    "device_id": vehicle.device_id,
+                    "alarm_status": alarm,
+                    "online_status": 1,
+                    "pos_x": round(pos_x, 1),
+                    "pos_y": round(pos_y, 1),
+                    "last_seen": now_str,
+                    "update_time": now_str,
+                }
+            )
+
+        self._write_frame(devices, now_str)
+        return devices, status_changed
+
+    def _write_frame(self, devices: list[dict], now_str: str) -> None:
+        conn = connect_demo_db()
+        try:
+            cursor = conn.cursor()
             cursor.executemany(
                 """
                 UPDATE devices
+                SET pos_x = ?,
+                    pos_y = ?,
+                    alarm_status = ?,
+                    online_status = 1,
+                    last_seen = ?,
+                    update_time = ?
+                WHERE device_id = ?
+                """,
+                [
+                    (
+                        device["pos_x"],
+                        device["pos_y"],
+                        device["alarm_status"],
+                        now_str,
+                        now_str,
+                        device["device_id"],
+                    )
+                    for device in devices
+                ],
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def _record_alarm_transition(
+        self,
+        vehicle: DemoVehicle,
+        alarm: int,
+        pos_x: float,
+        pos_y: float,
+        now_str: str,
+    ) -> None:
+        conn = connect_demo_db()
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT error_count, boot_time FROM devices WHERE device_id = ?", (vehicle.device_id,))
+            row = cursor.fetchone()
+            error_count = int(row["error_count"] or 0) if row else 0
+            boot_time = row["boot_time"] if row else now_str
+
+            cursor.execute(
+                "INSERT INTO alarms (device_id, alarm, timestamp) VALUES (?, ?, ?)",
+                (vehicle.device_id, alarm, now_str),
+            )
+            if alarm == 1:
+                zone = vehicle.alarm_trigger.zone if vehicle.alarm_trigger else "固定风险点"
+                print(f"[DEMO] {vehicle.device_id} 到达{zone}，触发报警")
+                error_count += 1
+                cursor.execute(
+                    "INSERT INTO alarm_sessions (device_id, start_time, status) VALUES (?, ?, 0)",
+                    (vehicle.device_id, now_str),
+                )
+                cursor.execute(
+                    """
+                    INSERT OR IGNORE INTO alarm_images (
+                        device_id, image_path, timestamp, description,
+                        description_status, description_model,
+                        description_updated_at, description_error
+                    ) VALUES (?, ?, ?, ?, 'done', 'demo-fixture', ?, NULL)
+                    """,
+                    (
+                        vehicle.device_id,
+                        self.image_url,
+                        now_str,
+                        DEMO_ALARM_DESCRIPTION,
+                        now_str,
+                    ),
+                )
+            else:
+                print(f"[DEMO] {vehicle.device_id} 离开固定风险点，报警解除")
+                cursor.execute(
+                    """
+                    SELECT id, start_time
+                    FROM alarm_sessions
+                    WHERE device_id = ? AND status = 0
+                    ORDER BY id DESC LIMIT 1
+                    """,
+                    (vehicle.device_id,),
+                )
+                active_session = cursor.fetchone()
+                if active_session:
+                    start_dt = datetime.strptime(active_session["start_time"], "%Y-%m-%d %H:%M:%S")
+                    end_dt = datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
+                    duration = max(0.0, (end_dt - start_dt).total_seconds())
+                    cursor.execute(
+                        """
+                        UPDATE alarm_sessions
+                        SET end_time = ?, duration_sec = ?, status = 1
+                        WHERE id = ?
+                        """,
+                        (now_str, duration, active_session["id"]),
+                    )
+
+            cursor.execute(
+                """
+                UPDATE devices
                 SET alarm_status = ?,
+                    error_count = ?,
+                    boot_time = ?,
+                    online_status = 1,
                     last_seen = ?,
                     update_time = ?,
-                    online_status = ?,
                     pos_x = ?,
                     pos_y = ?
                 WHERE device_id = ?
                 """,
-                rows,
+                (alarm, error_count, boot_time, now_str, now_str, pos_x, pos_y, vehicle.device_id),
             )
             conn.commit()
+        finally:
+            conn.close()
 
-    def _alarm_devices_for_phase(self, phase_name: str) -> set[str]:
-        if phase_name == "forklift_collision":
-            return {"FORK-001", "FORK-003"}
-        if phase_name in {"person_warning", "person_danger"}:
-            return {"FORK-002"}
-        return set()
-
-    def _start_alarm(self, device_id: str, message: str, category: str) -> None:
-        if device_id in self._active_sessions:
-            self._log("WARNING", "device.alarm.escalated", "biz", device_id, message, {"category": category})
+    def _broadcast_update(self, devices: list[dict], status_changed: bool) -> None:
+        if not self._socket.connected:
             return
-
-        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with sqlite3.connect(DEMO_DB_PATH) as conn:
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO alarms (device_id, alarm, timestamp) VALUES (?, 1, ?)", (device_id, now_str))
-            cursor.execute(
-                """
-                INSERT INTO alarm_sessions (device_id, start_time, status)
-                VALUES (?, ?, 0)
-                """,
-                (device_id, now_str),
-            )
-            cursor.execute(
-                """
-                UPDATE devices
-                SET alarm_status = 1, error_count = error_count + 1
-                WHERE device_id = ?
-                """,
-                (device_id,),
-            )
-            conn.commit()
-        self._active_sessions[device_id] = now_str
-        self._log("WARNING", "device.alarm.raised", "biz", device_id, message, {"category": category})
-
-    def _clear_alarm(self, device_id: str, message: str) -> None:
-        if device_id not in self._active_sessions:
-            return
-
-        now = datetime.now()
-        now_str = now.strftime("%Y-%m-%d %H:%M:%S")
-        start_str = self._active_sessions.pop(device_id)
         try:
-            duration_sec = max(0.0, (now - datetime.strptime(start_str, "%Y-%m-%d %H:%M:%S")).total_seconds())
-        except ValueError:
-            duration_sec = 0.0
-
-        with sqlite3.connect(DEMO_DB_PATH) as conn:
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO alarms (device_id, alarm, timestamp) VALUES (?, 0, ?)", (device_id, now_str))
-            cursor.execute(
-                """
-                UPDATE alarm_sessions
-                SET end_time = ?, duration_sec = ?, status = 1
-                WHERE device_id = ? AND status = 0
-                """,
-                (now_str, duration_sec, device_id),
-            )
-            cursor.execute("UPDATE devices SET alarm_status = 0 WHERE device_id = ?", (device_id,))
-            conn.commit()
-        self._log("INFO", "device.alarm.cleared", "biz", device_id, message, {"duration_sec": duration_sec})
-
-    def _log(
-        self,
-        level: str,
-        event: str,
-        category: str,
-        device_id: str | None,
-        message: str,
-        extra: dict[str, object] | None = None,
-    ) -> None:
-        ts = datetime.now().isoformat(timespec="seconds") + "Z"
-        with sqlite3.connect(DEMO_DB_PATH) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                INSERT INTO all_logs (ts, level, event, category, device_id, message, extra)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (ts, level, event, category, device_id, message, json.dumps(extra or {}, ensure_ascii=False)),
-            )
-            conn.commit()
-
-    def _broadcast_if_due(self) -> None:
-        now = time.monotonic()
-        if now - self._last_broadcast_at < 1.0:
-            return
-        self._last_broadcast_at = now
-        try:
-            from backend.main import worker_manager
-            from backend.services import app_service
-
-            if worker_manager.loop is None:
-                return
-            payload = app_service.get_latest_payload()
-            asyncio.run_coroutine_threadsafe(worker_manager.sio.emit("device_update", payload), worker_manager.loop)
+            self._socket.emit("position_update", devices)
+            if status_changed:
+                self._socket.emit("device_update", build_latest_payload())
         except Exception:
             pass
 
 
-def configure_demo_database() -> None:
-    demo_path = str(DEMO_DB_PATH)
-    settings.DB_PATH = demo_path
-    db.DB_PATH = demo_path
-    settings.OFFLINE_TIMEOUT_SEC = 7200
-    settings.POSITION_MOVE_RANGE = 0
-    settings.POSITION_UPDATE_INTERVAL_SEC = 86400
-    settings.LLM_ENABLED = False
+def format_now() -> str:
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def remove_demo_database_files() -> None:
-    for path in DEMO_DB_FILES:
-        with suppress(FileNotFoundError):
-            path.unlink()
+def connect_demo_db() -> sqlite3.Connection:
+    conn = sqlite3.connect(DEMO_DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=5000;")
+    return conn
 
 
 def find_available_port(host: str = "127.0.0.1") -> int:
@@ -378,32 +424,46 @@ def find_available_port(host: str = "127.0.0.1") -> int:
         return int(sock.getsockname()[1])
 
 
+def remove_demo_database_files() -> None:
+    for path in DEMO_DB_FILES:
+        with suppress(FileNotFoundError):
+            path.unlink()
+
+
 def ensure_demo_assets() -> tuple[str, str]:
-    primary = ROOT / "images" / "alarms" / "FORK-003_20260408_003836.png"
-    secondary = ROOT / "images" / "alarms" / "MANUAL-TEST_20260408_002811.png"
-    if not primary.exists() or not secondary.exists():
-        raise FileNotFoundError("缺少演示图片资源")
-    return (
-        "images/alarms/FORK-003_20260408_003836.png",
-        "images/alarms/MANUAL-TEST_20260408_002811.png",
+    primary_candidates = (
+        CLOUD_ROOT / "images" / "alarms" / DEMO_ALARM_IMAGE_NAME,
+        CLOUD_ROOT / "tests" / DEMO_ALARM_IMAGE_NAME,
     )
+    secondary = CLOUD_ROOT / "images" / "alarms" / "MANUAL-TEST_20260408_002811.png"
+    primary = next((path for path in primary_candidates if path.exists()), None)
+    if primary is None or not secondary.exists():
+        raise FileNotFoundError(
+            "缺少演示图片资源。\n"
+            f"请确认存在：images/alarms/MANUAL-TEST_20260408_002811.png\n"
+            f"以及以下任一文件：images/alarms/{DEMO_ALARM_IMAGE_NAME} 或 tests/{DEMO_ALARM_IMAGE_NAME}"
+        )
+    return (relative_cloud_path(primary), relative_cloud_path(secondary))
+
+
+def relative_cloud_path(path: Path) -> str:
+    return path.relative_to(CLOUD_ROOT).as_posix()
 
 
 def ensure_frontend_build() -> None:
-    index_file = ROOT / "frontend" / "dist" / "index.html"
+    index_file = CLOUD_ROOT / "frontend" / "dist" / "index.html"
     if index_file.exists():
         return
     raise FileNotFoundError(
         "缺少前端构建产物：frontend/dist/index.html\n"
         "请先执行：\n"
-        "  cd frontend\n"
+        "  cd cloud\\frontend\n"
         "  npm install\n"
-        "  npm run build\n"
-        "  cd .."
+        "  npm run build"
     )
 
 
-def rebuild_demo_database() -> None:
+def rebuild_demo_database() -> str:
     image_primary, image_secondary = ensure_demo_assets()
     remove_demo_database_files()
     db.init_db()
@@ -411,81 +471,200 @@ def rebuild_demo_database() -> None:
     now = datetime.now().replace(second=0, microsecond=0)
     today = now.replace(hour=8, minute=0)
     yesterday = today - timedelta(days=1)
+    week_anchor = today - timedelta(days=4)
 
-    device_rows = []
-    for index, (device_id, state) in enumerate((device_id, ForkliftState.from_path(device_id)) for device_id in FORKLIFT_PATHS):
-        device_rows.append(
-            {
-                "device_id": device_id,
-                "alarm_status": 0,
-                "error_count": index + 1,
-                "boot_time": (now - timedelta(hours=6 + index)).strftime("%Y-%m-%d %H:%M:%S"),
-                "last_seen": now.strftime("%Y-%m-%d %H:%M:%S"),
-                "online_status": 1,
-                "update_time": now.strftime("%Y-%m-%d %H:%M:%S"),
-                "pos_x": state.x,
-                "pos_y": state.y,
-            }
-        )
+    devices = [
+        {
+            "device_id": "FORK-001",
+            "alarm_status": 0,
+            "error_count": 3,
+            "boot_time": (now - timedelta(hours=6)).strftime("%Y-%m-%d %H:%M:%S"),
+            "last_seen": (now - timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M:%S"),
+            "online_status": 1,
+            "update_time": (now - timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M:%S"),
+            "pos_x": 435.0,
+            "pos_y": 55.0,
+        },
+        {
+            "device_id": "FORK-002",
+            "alarm_status": 0,
+            "error_count": 8,
+            "boot_time": (now - timedelta(hours=4, minutes=20)).strftime("%Y-%m-%d %H:%M:%S"),
+            "last_seen": now.strftime("%Y-%m-%d %H:%M:%S"),
+            "online_status": 1,
+            "update_time": now.strftime("%Y-%m-%d %H:%M:%S"),
+            "pos_x": 305.0,
+            "pos_y": 520.0,
+        },
+        {
+            "device_id": "FORK-003",
+            "alarm_status": 0,
+            "error_count": 5,
+            "boot_time": (now - timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S"),
+            "last_seen": now.strftime("%Y-%m-%d %H:%M:%S"),
+            "online_status": 1,
+            "update_time": now.strftime("%Y-%m-%d %H:%M:%S"),
+            "pos_x": 1010.0,
+            "pos_y": 95.0,
+        },
+    ]
 
     alarm_rows = [
-        ("FORK-001", 1, (yesterday + timedelta(hours=9, minutes=20)).strftime("%Y-%m-%d %H:%M:%S")),
-        ("FORK-001", 0, (yesterday + timedelta(hours=9, minutes=28)).strftime("%Y-%m-%d %H:%M:%S")),
-        ("FORK-002", 1, (today + timedelta(hours=1, minutes=10)).strftime("%Y-%m-%d %H:%M:%S")),
-        ("FORK-002", 0, (today + timedelta(hours=1, minutes=16)).strftime("%Y-%m-%d %H:%M:%S")),
-        ("FORK-003", 1, (today + timedelta(hours=2, minutes=35)).strftime("%Y-%m-%d %H:%M:%S")),
-        ("FORK-003", 0, (today + timedelta(hours=2, minutes=43)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-001", 1, (now - timedelta(hours=3, minutes=25)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-001", 0, (now - timedelta(hours=3, minutes=12)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-001", 1, (today + timedelta(hours=2, minutes=15)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-001", 0, (today + timedelta(hours=2, minutes=26)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-002", 1, (today + timedelta(hours=1, minutes=5)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-002", 0, (today + timedelta(hours=1, minutes=18)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-002", 1, (today + timedelta(hours=4, minutes=10)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-002", 1, (now - timedelta(minutes=22)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-002", 1, (now - timedelta(minutes=8)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-003", 1, (yesterday + timedelta(hours=3, minutes=40)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-003", 0, (yesterday + timedelta(hours=3, minutes=56)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-003", 1, (week_anchor + timedelta(hours=1, minutes=25)).strftime("%Y-%m-%d %H:%M:%S")),
+        ("FORK-003", 0, (week_anchor + timedelta(hours=1, minutes=45)).strftime("%Y-%m-%d %H:%M:%S")),
     ]
 
     image_rows = [
         (
             "FORK-001",
             image_secondary,
-            (yesterday + timedelta(hours=9, minutes=20)).strftime("%Y-%m-%d %H:%M:%S"),
-            "历史演示记录：通道转角处视线受阻",
+            (now - timedelta(hours=3, minutes=24)).strftime("%Y-%m-%d %H:%M:%S"),
+            "通道转角处视线受阻",
             "done",
-            "demo-simulator",
-            (now - timedelta(minutes=30)).strftime("%Y-%m-%d %H:%M:%S"),
+            "gpt-4.1-mini",
+            (now - timedelta(hours=3, minutes=23)).strftime("%Y-%m-%d %H:%M:%S"),
             None,
         ),
         (
             "FORK-002",
             image_primary,
-            (today + timedelta(hours=1, minutes=10)).strftime("%Y-%m-%d %H:%M:%S"),
-            "历史演示记录：行人进入叉车安全预警区",
+            (now - timedelta(minutes=8)).strftime("%Y-%m-%d %H:%M:%S"),
+            "行人低头搬运未注意叉车",
             "done",
-            "demo-simulator",
-            (now - timedelta(minutes=20)).strftime("%Y-%m-%d %H:%M:%S"),
+            "gpt-4.1-mini",
+            (now - timedelta(minutes=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            None,
+        ),
+        (
+            "FORK-003",
+            image_primary,
+            (yesterday + timedelta(hours=3, minutes=40)).strftime("%Y-%m-%d %H:%M:%S"),
+            "货物遮挡导致注意力不足",
+            "done",
+            "gpt-4.1-mini",
+            (yesterday + timedelta(hours=3, minutes=41)).strftime("%Y-%m-%d %H:%M:%S"),
             None,
         ),
     ]
 
     session_rows = [
-        ("FORK-001", alarm_rows[0][2], alarm_rows[1][2], 480.0, 1),
-        ("FORK-002", alarm_rows[2][2], alarm_rows[3][2], 360.0, 1),
-        ("FORK-003", alarm_rows[4][2], alarm_rows[5][2], 480.0, 1),
+        (
+            "FORK-001",
+            (now - timedelta(hours=3, minutes=25)).strftime("%Y-%m-%d %H:%M:%S"),
+            (now - timedelta(hours=3, minutes=12)).strftime("%Y-%m-%d %H:%M:%S"),
+            780.0,
+            1,
+        ),
+        (
+            "FORK-001",
+            (today + timedelta(hours=2, minutes=15)).strftime("%Y-%m-%d %H:%M:%S"),
+            (today + timedelta(hours=2, minutes=26)).strftime("%Y-%m-%d %H:%M:%S"),
+            660.0,
+            1,
+        ),
+        (
+            "FORK-002",
+            (today + timedelta(hours=1, minutes=5)).strftime("%Y-%m-%d %H:%M:%S"),
+            (today + timedelta(hours=1, minutes=18)).strftime("%Y-%m-%d %H:%M:%S"),
+            780.0,
+            1,
+        ),
+        (
+            "FORK-002",
+            (now - timedelta(minutes=22)).strftime("%Y-%m-%d %H:%M:%S"),
+            (now - timedelta(minutes=12)).strftime("%Y-%m-%d %H:%M:%S"),
+            600.0,
+            1,
+        ),
+        (
+            "FORK-003",
+            (yesterday + timedelta(hours=3, minutes=40)).strftime("%Y-%m-%d %H:%M:%S"),
+            (yesterday + timedelta(hours=3, minutes=56)).strftime("%Y-%m-%d %H:%M:%S"),
+            960.0,
+            1,
+        ),
     ]
 
     log_rows = [
         (
-            now.isoformat(timespec="seconds") + "Z",
+            (now - timedelta(minutes=40)).isoformat() + "Z",
             "INFO",
             "system.demo.seeded",
             "ops",
             None,
-            "Loaded isolated simulation demo database",
-            {"database": str(DEMO_DB_PATH), "devices": 3},
+            "Loaded fixed demo dataset",
+            {"mode": "presentation"},
+        ),
+        (
+            (now - timedelta(minutes=32)).isoformat() + "Z",
+            "INFO",
+            "device.status.online",
+            "biz",
+            "FORK-001",
+            "Device heartbeat received",
+            {"zone": "A区"},
+        ),
+        (
+            (now - timedelta(minutes=22)).isoformat() + "Z",
+            "WARNING",
+            "device.alarm.raised",
+            "biz",
+            "FORK-002",
+            "Pedestrian close to forklift",
+            {"zone": "B区"},
+        ),
+        (
+            (now - timedelta(minutes=21)).isoformat() + "Z",
+            "INFO",
+            "llm.image.analysis.generated",
+            "biz",
+            "FORK-002",
+            "AI generated alarm summary",
+            {"summary": "行人低头搬运未注意叉车"},
+        ),
+        (
+            (now - timedelta(minutes=18)).isoformat() + "Z",
+            "INFO",
+            "device.status.online",
+            "biz",
+            "FORK-003",
+            "Device heartbeat received",
+            {"zone": "C区"},
+        ),
+        (
+            (now - timedelta(minutes=12)).isoformat() + "Z",
+            "WARNING",
+            "auth.failed.ws",
+            "sec",
+            None,
+            "Socket client connected without token in demo mode",
+            {"path": "/socket.io/"},
+        ),
+        (
+            (now - timedelta(minutes=6)).isoformat() + "Z",
+            "INFO",
+            "socket.broadcast.position_update",
+            "ops",
+            None,
+            "Position update emitted",
+            {"devices": 3},
         ),
     ]
 
-    with sqlite3.connect(DEMO_DB_PATH) as conn:
+    conn = connect_demo_db()
+    try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM alarm_sessions")
-        cursor.execute("DELETE FROM alarm_images")
-        cursor.execute("DELETE FROM alarms")
-        cursor.execute("DELETE FROM devices")
-        cursor.execute("DELETE FROM biz_logs")
-        cursor.execute("DELETE FROM all_logs")
         cursor.executemany(
             """
             INSERT INTO devices (
@@ -496,9 +675,12 @@ def rebuild_demo_database() -> None:
                 :last_seen, :online_status, :update_time, :pos_x, :pos_y
             )
             """,
-            device_rows,
+            devices,
         )
-        cursor.executemany("INSERT INTO alarms (device_id, alarm, timestamp) VALUES (?, ?, ?)", alarm_rows)
+        cursor.executemany(
+            "INSERT INTO alarms (device_id, alarm, timestamp) VALUES (?, ?, ?)",
+            alarm_rows,
+        )
         cursor.executemany(
             """
             INSERT INTO alarm_images (
@@ -510,8 +692,9 @@ def rebuild_demo_database() -> None:
         )
         cursor.executemany(
             """
-            INSERT INTO alarm_sessions (device_id, start_time, end_time, duration_sec, status)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO alarm_sessions (
+                device_id, start_time, end_time, duration_sec, status
+            ) VALUES (?, ?, ?, ?, ?)
             """,
             session_rows,
         )
@@ -520,9 +703,42 @@ def rebuild_demo_database() -> None:
             INSERT INTO all_logs (ts, level, event, category, device_id, message, extra)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            [(ts, level, event, category, device_id, message, json.dumps(extra, ensure_ascii=False)) for ts, level, event, category, device_id, message, extra in log_rows],
+            [
+                (ts, level, event, category, device_id, message, json.dumps(extra, ensure_ascii=False))
+                for ts, level, event, category, device_id, message, extra in log_rows
+            ],
         )
         conn.commit()
+    finally:
+        conn.close()
+
+    return image_primary
+
+
+def build_latest_payload() -> dict:
+    conn = connect_demo_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM devices")
+        devices = [dict(row) for row in cursor.fetchall()]
+    finally:
+        conn.close()
+
+    total = len(devices)
+    online = sum(1 for device in devices if device.get("online_status") == 1)
+    alarm = sum(
+        1
+        for device in devices
+        if device.get("online_status") == 1 and device.get("alarm_status") == 1
+    )
+    return {
+        "devices": devices,
+        "stats": {
+            "total": total,
+            "online": online,
+            "alarm": alarm,
+        },
+    }
 
 
 def wait_for_server(url: str, timeout_sec: float = 20.0) -> bool:
@@ -538,49 +754,59 @@ def wait_for_server(url: str, timeout_sec: float = 20.0) -> bool:
 
 
 def main() -> int:
-    if not (ROOT / "backend" / "app.py").exists():
-        print("未找到文件：backend/app.py")
-        return 1
-
-    runner: UvicornThreadRunner | None = None
-    simulator: DemoSimulator | None = None
+    runner = ProcessRunner()
+    demo_player: FixedPathDemoPlayer | None = None
     try:
         ensure_frontend_build()
-        configure_demo_database()
-        rebuild_demo_database()
-
-        os.environ["OFFLINE_TIMEOUT_SEC"] = "7200"
-        os.environ["POSITION_MOVE_RANGE"] = "0"
-        os.environ["POSITION_UPDATE_INTERVAL_SEC"] = "86400"
+        alarm_image_url = rebuild_demo_database()
+        print(f"仿真演示系统已启动，数据库: {DEMO_DB_PATH}")
 
         app_host = "127.0.0.1"
         app_port = find_available_port(app_host)
         service_url = f"http://localhost:{app_port}"
 
-        runner = UvicornThreadRunner(app_host, app_port)
-        runner.start()
+        runner.start(
+            {
+                "APP_HOST": app_host,
+                "APP_PORT": str(app_port),
+                "DB_PATH": str(DEMO_DB_PATH),
+                "OFFLINE_TIMEOUT_SEC": "7200",
+                "POSITION_MOVE_RANGE": "0",
+                "POSITION_UPDATE_INTERVAL_SEC": "1",
+            }
+        )
         if not wait_for_server(service_url + "/"):
             print("服务启动失败")
             runner.stop()
             return 1
 
-        simulator = DemoSimulator()
-        simulator.start()
-
-        print(f"仿真演示系统已启动，数据库: {DEMO_DB_PATH}")
         print(service_url)
         with suppress(Exception):
             webbrowser.open(service_url + "/", new=2, autoraise=True)
 
-        return runner.monitor()
+        demo_player = FixedPathDemoPlayer(
+            service_url,
+            alarm_image_url,
+            frame_interval_sec=float(os.getenv("DEMO_FRAME_INTERVAL_SEC", "0.2")),
+        )
+        demo_player.start()
+
+        code = runner.monitor()
+        demo_player.stop()
+        demo_player = None
+        runner.stop()
+        return code
     except Exception as exc:
         print(f"运行失败: {exc}")
+        if demo_player is not None:
+            demo_player.stop()
+            demo_player = None
+        runner.stop()
         return 1
     finally:
-        if simulator is not None:
-            simulator.stop()
-        if runner is not None:
-            runner.stop()
+        if demo_player is not None:
+            demo_player.stop()
+        runner.stop()
 
 
 if __name__ == "__main__":

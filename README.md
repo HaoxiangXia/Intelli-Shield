@@ -78,6 +78,8 @@
 | [`PRD.md`](PRD.md) | 产品需求、目标用户、MVP 范围、里程碑与团队分工 |
 | [`device/README.md`](device/README.md) | 设备端模块说明（MaixCAM 部署、双状态机、UART 协议、云上报） |
 | [`cloud/README.md`](cloud/README.md) | 云端模块说明（后端 / 前端 / 仿真 / API / 实时通道 / FAQ） |
+| [`device/docs/`](device/docs/) | 设备端深度文档（`introduction.md` / `main_flow.md` / `logger.md` / `event_log_example.md`） |
+| [`cloud/docs/`](cloud/docs/) | 云端深度文档（`communication-layer.md` / `image-upload-guide.md` / `bun-help.md` / `simulation-demo.md`） |
 
 ## 快速开始
 
@@ -86,3 +88,6 @@
 
 ### 2) 云端
 请参考 [cloud/README.md](cloud/README.md) 进行部署。
+
+### 3) 前端
+前端位于 [cloud/frontend/](cloud/frontend/)，可按其中 `package.json` 的脚本进行开发与构建。
