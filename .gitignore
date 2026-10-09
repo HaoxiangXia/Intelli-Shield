@@ -10,6 +10,11 @@ uv.lock
 AGENTS.md
 AGENTS.MD
 ignore/
+*.pt
+*.onnx
+*.mp4
+bus.jpg
+
 
 # --- 设备端 (device) ---
 device/*.pt
