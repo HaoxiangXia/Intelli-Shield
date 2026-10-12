@@ -75,6 +75,7 @@
 
 | 文档 | 用途 |
 |---|---|
+| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | **快速部署指南（Linux / Windows PowerShell 双版本）** |
 | [`PRD.md`](PRD.md) | 产品需求、目标用户、MVP 范围、里程碑与团队分工 |
 | [`device/README.md`](device/README.md) | 设备端模块说明（MaixCAM 部署、双状态机、UART 协议、云上报） |
 | [`cloud/README.md`](cloud/README.md) | 云端模块说明（后端 / 前端 / 仿真 / API / 实时通道 / FAQ） |
@@ -82,6 +83,8 @@
 | [`cloud/docs/`](cloud/docs/) | 云端深度文档（`communication-layer.md` / `image-upload-guide.md` / `bun-help.md` / `simulation-demo.md`） |
 
 ## 快速开始
+
+> 完整的 Linux / Windows PowerShell 部署步骤（含环境变量、冒烟验证、故障排查）见 **[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)**。
 
 ### 1) 设备端
 请参考 [device/README.md](device/README.md) 进行部署。
