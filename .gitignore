@@ -12,6 +12,7 @@ AGENTS.MD
 ignore/
 *.pt
 *.onnx
+*.weights
 *.mp4
 bus.jpg
 

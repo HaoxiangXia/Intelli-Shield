@@ -17,8 +17,8 @@ echo " Job ID: $SLURM_JOB_ID"
 echo " Date: $(date)"
 echo "=========================================================="
 
-VIDEO=${1:-"samples/cctv/demo_forklift.mp4"}
-OUTPUT=${2:-"samples/cctv/omnijev_results.json"}
+VIDEO=${1:-"samples/cctv/videos/demo_forklift.mp4"}
+OUTPUT=${2:-"samples/cctv/benchmarks/omnijev_results.json"}
 
 # source ~/.bashrc
 # conda activate omnijev

@@ -212,8 +212,8 @@ def run_batch_evaluation(
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video", default="/archive/xhx/Intelli-Shield/samples/cctv/demo_forklift.mp4")
-    parser.add_argument("--output", default="/archive/xhx/Intelli-Shield/samples/cctv/omnijev_results_real3090.json")
+    parser.add_argument("--video", default="/archive/xhx/Intelli-Shield/samples/cctv/videos/demo_forklift.mp4")
+    parser.add_argument("--output", default="/archive/xhx/Intelli-Shield/samples/cctv/benchmarks/omnijev_results_real3090.json")
     parser.add_argument("--model", default="/archive/xhx/models/OneJev-0.8B")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--stride", type=int, default=3)

@@ -143,7 +143,7 @@ def process_video(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--video", required=True, help="Path to CCTV video")
-    parser.add_argument("--output", default="samples/cctv/omnijev_results.json", help="Path to output JSON")
+    parser.add_argument("--output", default="samples/cctv/benchmarks/omnijev_results.json", help="Path to output JSON")
     parser.add_argument("--stride", type=int, default=2, help="Sample every N frames")
     parser.add_argument("--model", default="OneJev-0.8B", help="OmniJev model name")
     args = parser.parse_args()

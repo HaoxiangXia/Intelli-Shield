@@ -25,8 +25,8 @@ conda activate omnijev
 export CUDA_VISIBLE_DEVICES=0
 
 python3 /archive/xhx/Intelli-Shield/slurm/run_real_3090_batch.py \
-    --video /archive/xhx/Intelli-Shield/samples/cctv/demo_forklift.mp4 \
-    --output /archive/xhx/Intelli-Shield/samples/cctv/omnijev_results_real3090.json \
+    --video /archive/xhx/Intelli-Shield/samples/cctv/videos/demo_forklift.mp4 \
+    --output /archive/xhx/Intelli-Shield/samples/cctv/benchmarks/omnijev_results_real3090.json \
     --model /archive/xhx/models/OneJev-0.8B \
     --stride 4 \
     --max-frames 20

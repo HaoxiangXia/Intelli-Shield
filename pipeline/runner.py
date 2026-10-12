@@ -80,7 +80,7 @@ def run_pipeline(
 
 def main():
     parser = argparse.ArgumentParser(description="Intelli-Shield CCTV Perception-Decision Runner")
-    parser.add_argument("--video", type=str, default="samples/cctv/demo_forklift.mp4", help="Path to CCTV video")
+    parser.add_argument("--video", type=str, default="samples/cctv/videos/demo_forklift.mp4", help="Path to CCTV video")
     parser.add_argument("--endpoint", type=str, default="http://127.0.0.1:8000/probe", help="OmniJev probe endpoint")
     parser.add_argument("--replay", type=str, default=None, help="Path to precomputed Slurm JSON log")
     parser.add_argument("--fps", type=float, default=10.0, help="Target processing FPS")
