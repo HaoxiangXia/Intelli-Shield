@@ -1,31 +1,78 @@
-
 :root {
-  --color-bg-start: #eef6ff;
-  --color-bg-mid: #f7fbff;
-  --color-bg-end: #e8f0ff;
+  /* Light Industrial Control Palette (Clean, Modern Lab / Command Center) */
+  --bg-canvas: #f8fafc;
+  --bg-panel: #ffffff;
+  --bg-panel-subtle: #f1f5f9;
+  --bg-surface-elevated: #ffffff;
+  --border-machined: #e2e8f0;
+  --border-bright: #cbd5e1;
 
-  --color-primary: #2f6bff;
-  --color-primary-light: #6fa0ff;
-  --color-success: #35c98b;
-  --color-danger: #ff4d3d;
-  --color-warning: #f5b84b;
+  /* High-contrast Safety Accents (Tuned for Crisp Light Backgrounds) */
+  --telemetry-cyan: #0284c7;
+  --telemetry-cyan-dim: rgba(2, 132, 199, 0.10);
+  --safety-amber: #d97706;
+  --safety-amber-dim: rgba(217, 119, 6, 0.12);
+  --emergency-red: #dc2626;
+  --emergency-red-dim: rgba(220, 38, 38, 0.12);
+  --nominal-green: #16a34a;
+  --nominal-green-dim: rgba(22, 163, 74, 0.12);
+  --flywheel-purple: #9333ea;
+  --flywheel-purple-dim: rgba(147, 51, 234, 0.12);
 
-  --color-text-main: #111827;
-  --color-text-secondary: #52617a;
-  --color-text-muted: #8491ac;
+  /* High-Legibility Typography for Projectors & Defense Displays */
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --font-display: 'Chakra Petch', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  --glass-bg: rgba(255, 255, 255, 0.35);
-  --glass-bg-strong: rgba(255, 255, 255, 0.5);
-  --glass-border: rgba(255, 255, 255, 0.4);
-  --glass-shadow: 0 8px 32px rgba(30, 64, 175, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  /* Legacy Compatibility Shims */
+  --color-primary: #0284c7;
+  --color-primary-light: #0ea5e9;
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+  --color-warning: #d97706;
+  --color-text-main: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+
+  --glass-bg: #ffffff;
+  --glass-bg-strong: #f8fafc;
+  --glass-border: #e2e8f0;
+  --glass-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
 }
-body {
+html, body, #app {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: linear-gradient(135deg, var(--color-bg-start), var(--color-bg-mid), var(--color-bg-end));
-  color: var(--color-text-main);
-  min-height: 100vh;
+  padding: 0;
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas) !important;
+  color: var(--text-main) !important;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
 * {
   box-sizing: border-box;
+}
+
+/* Industrial Global Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-bright);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }

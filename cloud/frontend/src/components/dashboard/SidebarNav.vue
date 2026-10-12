@@ -8,67 +8,113 @@
         class="nav-item"
         active-class="active"
       >
-        <span class="nav-text">{{ item.name }}</span>
+        <span class="nav-code">{{ item.code }}</span>
+        <span class="nav-text-cn">{{ item.name }}</span>
       </router-link>
+    </div>
+    
+    <div class="officer-duty-chip">
+      <span class="duty-dot"></span>
+      <span>安全责任人: <strong>#01 [在岗值守]</strong></span>
     </div>
   </nav>
 </template>
 
 <script setup>
 const menuItems = [
-  { name: '实时总览', path: '/' },
-  { name: '趋势分析', path: '/trend' },
-  { name: '事件追溯', path: '/history' },
-  { name: '设备管理', path: '/devices' },
-  { name: '业务日志', path: '/logs' }
+  { name: '态势总览', code: '01', path: '/' },
+  { name: '趋势分析', code: '02', path: '/trend' },
+  { name: '隐患台账', code: '03', path: '/history' },
+  { name: '设备集群', code: '04', path: '/devices' },
+  { name: '运行日志', code: '05', path: '/logs' }
 ]
 </script>
 
 <style scoped>
 .sidebar-nav {
-  width: 200px;
+  width: 150px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  align-self: center;
+  justify-content: space-between;
+  background-color: var(--bg-panel);
+  border-right: 1px solid var(--border-machined);
+  user-select: none;
 }
+
 .nav-container {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-left: none;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 0 20px 20px 0;
-  padding: 24px 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow: var(--glass-shadow);
-  height: max-content;
+  gap: 3px;
+  padding: 10px 6px;
 }
+
 .nav-item {
   text-decoration: none;
-  padding: 14px 20px;
-  border-radius: 16px;
-  color: var(--color-text-secondary);
-  font-size: 15px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  text-align: center;
+  padding: 10px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  transition: all 0.15s ease;
+  background: transparent;
 }
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.4);
-  color: var(--color-text-main);
-  transform: translateY(-2px);
+
+.nav-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 16px;
 }
-.nav-item.active {
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(47, 107, 255, 0.25);
+
+.nav-text-cn {
+  font-size: 13px;
   font-weight: 600;
+  color: inherit;
 }
-.nav-item.active:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(47, 107, 255, 0.35);
+
+.nav-item:hover {
+  background: var(--bg-surface-elevated);
+  color: var(--text-main);
+  border-color: var(--border-machined);
+}
+
+.nav-item.active {
+  background: rgba(2, 132, 199, 0.08);
+  border-color: rgba(2, 132, 199, 0.25);
+  border-left: 3px solid var(--telemetry-cyan);
+  color: var(--telemetry-cyan);
+  font-weight: 700;
+}
+.nav-item.active .nav-code {
+  color: var(--telemetry-cyan);
+}
+
+.officer-duty-chip {
+  padding: 10px 8px;
+  border-top: 1px solid var(--border-machined);
+  background: var(--bg-panel-subtle);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.duty-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--nominal-green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--nominal-green);
+  flex-shrink: 0;
+}
+
+.officer-duty-chip strong {
+  color: var(--telemetry-cyan);
+  font-weight: 600;
 }
 </style>
