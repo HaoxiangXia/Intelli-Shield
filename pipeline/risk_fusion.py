@@ -3,7 +3,7 @@
 from __future__ import annotations
 from typing import List, Optional, Tuple
 
-from .models import AlarmLevel, FrameDecision, OmniJevProbes, PerceptionResult
+from .models import AlarmLevel, FrameDecision, GatingDecision, OmniJevProbes, PerceptionResult
 
 
 class RiskFusionEngine:
@@ -29,6 +29,7 @@ class RiskFusionEngine:
         timestamp: float,
         perception: PerceptionResult,
         probes: Optional[OmniJevProbes],
+        gating: Optional[GatingDecision] = None,
     ) -> FrameDecision:
         reasons: List[str] = []
         alarm_level = AlarmLevel.NORMAL
@@ -43,15 +44,30 @@ class RiskFusionEngine:
                 alarm_level=AlarmLevel.NORMAL,
                 reasons=["No co-occurring pedestrian and forklift in frame"],
             )
+        # Spatial metric reference (prefer dynamic distance from gating if available)
+        dist = gating.min_dynamic_distance_px if (gating and gating.min_dynamic_distance_px is not None) else perception.min_distance_px
 
-        # Spatial metric reference
-        dist = perception.min_distance_px
+        # Gating fast-path: if gating actively determined safe / motionless / driver-only
+        if gating is not None and not gating.should_trigger:
+            reasons.append(f"OmniJev probe gated (Fast-Path NORMAL): {gating.reason}")
+            return FrameDecision(
+                frame_id=frame_id,
+                timestamp=timestamp,
+                perception=perception,
+                probes=None,
+                alarm_level=AlarmLevel.NORMAL,
+                reasons=reasons,
+                gating=gating,
+            )
+
+        if gating is not None and gating.should_trigger:
+            reasons.append(f"Gating trigger: {gating.reason}")
+
         if dist is not None:
             if dist < self.dist_critical_px:
                 reasons.append(f"Spatial distance ({dist:.1f}px) within critical buffer ({self.dist_critical_px}px)")
             elif dist < self.dist_warning_px:
                 reasons.append(f"Spatial distance ({dist:.1f}px) within warning buffer ({self.dist_warning_px}px)")
-
         # OmniJev System 1 Decision Probes
         if probes is not None:
             # Check collision probability
@@ -90,4 +106,5 @@ class RiskFusionEngine:
             probes=probes,
             alarm_level=alarm_level,
             reasons=reasons,
+            gating=gating,
         )

@@ -29,8 +29,20 @@ class PerceptionResult:
     timestamp: float
     forklifts: List[BoundingBox] = field(default_factory=list)
     pedestrians: List[BoundingBox] = field(default_factory=list)
+    detections: List[BoundingBox] = field(default_factory=list)
     min_distance_px: Optional[float] = None
 
+
+@dataclass
+class GatingDecision:
+    """Outcome of spatial-temporal gating filter before invoking OmniJev."""
+    should_trigger: bool
+    active_pedestrians: List[BoundingBox] = field(default_factory=list)
+    active_forklifts: List[BoundingBox] = field(default_factory=list)
+    driver_pedestrians: List[BoundingBox] = field(default_factory=list)
+    static_forklifts: List[BoundingBox] = field(default_factory=list)
+    min_dynamic_distance_px: Optional[float] = None
+    reason: str = ""
 
 @dataclass
 class OmniJevProbes:
@@ -51,6 +63,7 @@ class FrameDecision:
     probes: Optional[OmniJevProbes]
     alarm_level: AlarmLevel
     reasons: List[str] = field(default_factory=list)
+    gating: Optional[GatingDecision] = None
 
     def to_dict(self) -> dict:
         return asdict(self)
