@@ -1,0 +1,134 @@
+{
+  "detections": [
+    {
+      "class_name": "truck",
+      "confidence": 0.997,
+      "bbox": [
+        1255.0,
+        766.0,
+        1563.0,
+        1173.0
+      ]
+    },
+    {
+      "class_name": "truck",
+      "confidence": 0.995,
+      "bbox": [
+        1455.0,
+        603.0,
+        1674.0,
+        845.0
+      ]
+    },
+    {
+      "class_name": "truck",
+      "confidence": 0.987,
+      "bbox": [
+        938.0,
+        520.0,
+        1149.0,
+        760.0
+      ]
+    },
+    {
+      "class_name": "forkTruck",
+      "confidence": 0.986,
+      "bbox": [
+        2038.0,
+        975.0,
+        2404.0,
+        1333.0
+      ]
+    },
+    {
+      "class_name": "truck",
+      "confidence": 0.979,
+      "bbox": [
+        1337.0,
+        484.0,
+        1485.0,
+        642.0
+      ]
+    },
+    {
+      "class_name": "person",
+      "confidence": 0.958,
+      "bbox": [
+        2060.0,
+        776.0,
+        2114.0,
+        934.0
+      ]
+    },
+    {
+      "class_name": "vest",
+      "confidence": 0.872,
+      "bbox": [
+        2069.0,
+        802.0,
+        2106.0,
+        867.0
+      ]
+    },
+    {
+      "class_name": "person",
+      "confidence": 0.824,
+      "bbox": [
+        1638.0,
+        577.0,
+        1664.0,
+        625.0
+      ]
+    },
+    {
+      "class_name": "head",
+      "confidence": 0.824,
+      "bbox": [
+        2075.0,
+        775.0,
+        2098.0,
+        804.0
+      ]
+    },
+    {
+      "class_name": "truckHead",
+      "confidence": 0.794,
+      "bbox": [
+        1304.0,
+        778.0,
+        1526.0,
+        923.0
+      ]
+    },
+    {
+      "class_name": "person",
+      "confidence": 0.776,
+      "bbox": [
+        2106.0,
+        730.0,
+        2156.0,
+        841.0
+      ]
+    },
+    {
+      "class_name": "head",
+      "confidence": 0.524,
+      "bbox": [
+        2117.0,
+        733.0,
+        2141.0,
+        760.0
+      ]
+    },
+    {
+      "class_name": "person",
+      "confidence": 0.269,
+      "bbox": [
+        615.0,
+        706.0,
+        649.0,
+        818.0
+      ]
+    }
+  ]
+}
