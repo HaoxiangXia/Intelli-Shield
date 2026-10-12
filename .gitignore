@@ -16,6 +16,13 @@ ignore/
 *.mp4
 bus.jpg
 
+# --- 导师遗留 C++ 参考实现 (仅作迁移对照, 不参与构建) ---
+cpp/
+
+# --- 前端本地调试产物 (仅 samples/cctv/ 下同名文件入库) ---
+cloud/frontend/public/samples/cctv/keyframes/yolov4_*.png
+cloud/frontend/public/samples/cctv/keyframes/220121shenyang1509_annotated.png
+
 
 # --- 设备端 (device) ---
 device/*.pt
