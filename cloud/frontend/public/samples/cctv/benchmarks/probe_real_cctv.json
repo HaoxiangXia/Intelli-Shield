@@ -1,0 +1,12 @@
+{
+  "probes": {
+    "collision_risk": 0.785,
+    "worker_awareness": {
+      "unaware": 0.6,
+      "yielding": 0.25,
+      "separated": 0.15
+    },
+    "threat_score": 2.48,
+    "latency_ms": 107.4
+  }
+}
