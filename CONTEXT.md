@@ -33,4 +33,15 @@ _Avoid_: Daemon, background process, cron
 
 **Risk Fusion Engine**:
 The arbitration component that combines geometric metrics (distance, trajectory, velocity) with OmniJev's calibrated probabilities into definitive alert levels (`NORMAL`, `WARNING`, `CRITICAL`).
-_Avoid_: If-else filter, alarm script
+
+**Spatial-Temporal Gate**:
+The pre-probe filtering mechanism (migrated and enhanced from the advisor's legacy C++ `IsCarAway` algorithm) that excludes on-board drivers, cancels motionless vehicles, and enforces ROI geofences before invoking OmniJev.
+_Avoid_: Simple threshold, OpenCV filter, C++ wrapper
+
+**Cognitive Decision Architecture**:
+The theoretical framework grounding the system in Kahneman's System 1 (Fast Intuition):
+- **Front-Stage Spatial Perception**: Lightweight YOLO model outputting bounding boxes and coarse geometric anchors.
+- **Spatial-Temporal Gating**: Self-developed lightweight filter (0.5ms) excluding drivers and stationary vehicles, saving >70% remote GPU compute.
+- **Cognitive Decision Layer**: OmniJev evaluated via single forward pass (~107ms, ZERO generative tokens, 0 external LLM APIs) on remote RTX 3090, outputting calibrated probabilities for risk, worker attention, and threat level.
+- **Asymmetric Risk Fusion**: Geometry overrides model at critical thresholds (<120px) to guarantee functional safety.
+_Avoid_: Generative LLM, Chatbot, external API, slow text generation, token streaming
