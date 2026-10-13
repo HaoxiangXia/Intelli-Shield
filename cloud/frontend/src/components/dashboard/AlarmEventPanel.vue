@@ -64,13 +64,19 @@ function resolveImageUrl(imagePath) {
 }
 
 function mapAlarmToEvent(alarm) {
+  const rzState = alarm?.red_zone_state || (alarm?.alarm === 1 ? 'INSIDE' : 'SAFE')
+  const rzDist = alarm?.red_zone_dist_m !== undefined ? Number(alarm.red_zone_dist_m) : -0.88
+  const redZoneTag = rzState === 'INSIDE'
+    ? `红光内侵入 ${rzDist.toFixed(2)}m`
+    : (rzState === 'BUFFER' ? `缓冲带 +${rzDist.toFixed(2)}m` : '')
   return {
     deviceId: alarm?.device_id || '-',
     time: formatTime(alarm?.timestamp),
     status: alarm?.alarm === 1 ? '已报警' : '已恢复',
     area: alarm?.zone || '未知',
+    redZoneTag,
     duration: formatDurationFromTimestamp(alarm?.timestamp),
-    desc: alarm?.description || '报警事件',
+    desc: alarm?.description || '人员越过叉车三向红光警戒线',
     imageUrl: resolveImageUrl(alarm?.image_path)
   }
 }

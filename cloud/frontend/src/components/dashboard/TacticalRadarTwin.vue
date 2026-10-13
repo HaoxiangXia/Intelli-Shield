@@ -62,9 +62,19 @@
             </linearGradient>
           </defs>
 
+          <!-- 0. 叉车三向红光安全禁区多边形 (Ground Optical Red-Zone Polygon) -->
+          <g v-for="(polyPoints, pIdx) in scaledRedZonePolygons" :key="'rz-' + pIdx">
+            <polygon
+              :points="polyPoints"
+              :fill="isCriticalAlarm ? 'rgba(239, 68, 68, 0.24)' : (isWarningAlarm ? 'rgba(245, 158, 11, 0.20)' : 'rgba(16, 185, 129, 0.12)')"
+              :stroke="isCriticalAlarm ? '#ff3b30' : (isWarningAlarm ? '#ff9f0a' : '#10b981')"
+              stroke-width="2.5"
+              stroke-dasharray="8,4"
+            />
+          </g>
+
           <!-- 1. 动态绘制当前帧检出的所有 YOLO 目标框 -->
           <g v-for="(box, bIdx) in scaledDetections" :key="bIdx">
-            <!-- 框体 -->
             <rect
               :x="box.x"
               :y="box.y"
@@ -76,7 +86,6 @@
               :stroke-dasharray="box.isDanger ? 'none' : '4,2'"
               rx="2"
             />
-            <!-- 标签背底 -->
             <rect
               :x="box.x"
               :y="Math.max(0, box.y - 20)"
@@ -85,7 +94,6 @@
               :fill="box.color"
               rx="2"
             />
-            <!-- 标签文字 -->
             <text
               :x="box.x + 6"
               :y="Math.max(0, box.y - 20) + 14"
@@ -98,41 +106,24 @@
             </text>
           </g>
 
-          <!-- 2. 人车间距动态测距射线 (当存在间距时) -->
-          <g v-if="scaledDistanceRay">
-            <line
-              :x1="scaledDistanceRay.x1"
-              :y1="scaledDistanceRay.y1"
-              :x2="scaledDistanceRay.x2"
-              :y2="scaledDistanceRay.y2"
-              :stroke="isCriticalAlarm ? '#ff3b30' : '#ff9f0a'"
-              stroke-width="2.5"
-              stroke-dasharray="6,3"
-            >
-              <animate attributeName="stroke-dashoffset" values="0;18" dur="0.8s" repeatCount="indefinite" />
-            </line>
-            <!-- 射线中心距离标牌 -->
-            <g :transform="`translate(${scaledDistanceRay.midX}, ${scaledDistanceRay.midY})`">
-              <rect
-                x="-55"
-                y="-11"
-                width="110"
-                height="22"
-                fill="#ffffff"
-                :stroke="isCriticalAlarm ? '#dc2626' : '#d97706'"
-                stroke-width="1.5"
-                rx="2"
-              />
+          <!-- 2. 地面行人足底接地点准星与红光边界拓扑标牌 -->
+          <g v-for="(anchor, aIdx) in scaledFootAnchors" :key="'fa-' + aIdx">
+            <circle :cx="anchor.x" :cy="anchor.y" r="10" fill="none" :stroke="anchor.color" stroke-width="2" />
+            <circle :cx="anchor.x" :cy="anchor.y" r="4" :fill="anchor.color" />
+            <line :x1="anchor.x - 14" :y1="anchor.y" :x2="anchor.x + 14" :y2="anchor.y" :stroke="anchor.color" stroke-width="1.8" />
+            <line :x1="anchor.x" :y1="anchor.y - 14" :x2="anchor.x" :y2="anchor.y + 14" :stroke="anchor.color" stroke-width="1.8" />
+            <g :transform="`translate(${anchor.x}, ${anchor.y + 22})`">
+              <rect x="-82" y="-11" width="164" height="22" fill="rgba(15, 23, 42, 0.9)" :stroke="anchor.color" stroke-width="1.5" rx="3" />
               <text
                 x="0"
                 y="4"
                 text-anchor="middle"
-                :fill="isCriticalAlarm ? '#ff3b30' : '#ff9f0a'"
-                font-size="10"
+                :fill="anchor.color"
+                font-size="10.5"
                 font-weight="700"
-                font-family="'JetBrains Mono', monospace"
+                font-family="'PingFang SC', 'JetBrains Mono', monospace"
               >
-                {{ currentFrameData.min_dist_px }} 像素
+                {{ anchor.badgeText }}
               </text>
             </g>
           </g>
@@ -145,50 +136,38 @@
             <span class="cam-name">CCTV-04 仓库主干道 (中转区南段)</span>
             <span class="cam-timecode">{{ formattedTimecode }}</span>
           </div>
-          <div class="stream-stat-pills">
-            <span class="stat-pill">视频帧率: 25.0 帧/秒</span>
-            <span class="stat-pill latency-pill">
-              HPC 推理延迟: {{ currentProbes.latency_ms || 107.4 }} 毫秒
-            </span>
-            <span class="stat-pill status-pill" :class="alarmStatusClass">
-              {{ alarmStatusText }}
-            </span>
-            <span
-              class="stat-pill gate-status-badge"
-              :class="currentFrameData?.gating?.status === 'OPEN' ? 'gate-active-pulse' : 'gate-standby-pill'"
-            >
-              {{ currentFrameData?.gating?.status === 'OPEN' ? '⚡ 门控: 激活唤醒 OneJev' : '🛡️ 门控: 阻断休眠 (GPU待机)' }}
-            </span>
-          </div>
-        </div>
-
-        <!-- 左下角浮动认知探针胶囊 (纯中文，由 JSON 数据实时驱动) -->
-        <div class="omnijev-capsule">
-          <div class="capsule-col">
-            <span class="capsule-label">双系统认知直觉推演</span>
-            <span class="capsule-value highlight-cyan">OneJev-0.8B (RTX 3090)</span>
-          </div>
-          <div class="capsule-col">
-            <span class="capsule-label">前向推理延迟</span>
-            <span class="capsule-value">{{ currentProbes.latency_ms || 107.4 }} 毫秒</span>
-          </div>
-          <div class="capsule-col">
-            <span class="capsule-label">碰撞风险概率</span>
-            <span
-              class="capsule-value"
-              :class="isCriticalAlarm ? 'val-danger' : (isWarningAlarm ? 'val-warning' : 'val-safe')"
-            >
-              {{ ((currentProbes.collision_risk || 0.12) * 100).toFixed(1) }}%
-            </span>
-          </div>
-          <div class="capsule-col">
-            <span class="capsule-label">综合危害烈度</span>
-            <span
-              class="capsule-value"
-              :class="isCriticalAlarm ? 'val-danger' : (isWarningAlarm ? 'val-warning' : 'val-safe')"
-            >
-              {{ currentProbes.threat_score || 0.45 }} / 3.0 ({{ threatLevelText }})
-            </span>
+          <div class="omnijev-capsule">
+            <div class="capsule-col">
+              <span class="capsule-label">双系统认知直觉推演</span>
+              <span class="capsule-value highlight-cyan">OneJev-0.8B + 红光围栏</span>
+            </div>
+            <div class="capsule-col">
+              <span class="capsule-label">三向红光物理边界</span>
+              <span
+                class="capsule-value"
+                :class="isCriticalAlarm ? 'val-danger' : (isWarningAlarm ? 'val-warning' : 'val-safe')"
+              >
+                {{ redZoneSummaryText }}
+              </span>
+            </div>
+            <div class="capsule-col">
+              <span class="capsule-label">碰撞风险概率</span>
+              <span
+                class="capsule-value"
+                :class="isCriticalAlarm ? 'val-danger' : (isWarningAlarm ? 'val-warning' : 'val-safe')"
+              >
+                {{ ((currentProbes.collision_risk || 0.12) * 100).toFixed(1) }}%
+              </span>
+            </div>
+            <div class="capsule-col">
+              <span class="capsule-label">综合危害烈度</span>
+              <span
+                class="capsule-value"
+                :class="isCriticalAlarm ? 'val-danger' : (isWarningAlarm ? 'val-warning' : 'val-safe')"
+              >
+                {{ currentProbes.threat_score || 0.45 }} / 3.0 ({{ threatLevelText }})
+              </span>
+            </div>
           </div>
         </div>
 
@@ -209,19 +188,19 @@
           <div class="keyframe-jump-strip">
             <span class="strip-label">关键时序节点跳转:</span>
             <button class="seek-chip" @click="seekTo(1.0)">
-              01秒 正常安全 (帧 #0025)
+              01秒 红光外安全 (帧 #0025)
             </button>
-            <button class="seek-chip" @click="seekTo(8.0)">
-              08秒 预警缓冲 (帧 #0200)
+            <button class="seek-chip" @click="seekTo(2.7)">
+              03秒 0~0.3m缓冲预警 (帧 #0068)
             </button>
-            <button class="seek-chip" @click="seekTo(13.0)">
-              13秒 接近警示 (帧 #0325)
+            <button class="seek-chip chip-critical" @click="seekTo(8.0)">
+              🚨 08秒 越过红线告警 (帧 #0200)
             </button>
             <button class="seek-chip chip-critical" @click="seekTo(23.0)">
-              🚨 23秒 临界碰撞 (帧 #0575)
+              🚨 23秒 红区内高危交汇 (帧 #0575)
             </button>
             <button class="seek-chip" @click="seekTo(28.0)">
-              28秒 复位安全 (帧 #0700)
+              28秒 驶离红线复位 (帧 #0700)
             </button>
           </div>
         </div>
@@ -294,16 +273,19 @@ const isWarningAlarm = computed(() => {
   return currentFrameData.value?.alarm_level === 'WARNING'
 })
 
-const alarmStatusClass = computed(() => {
-  if (isCriticalAlarm.value) return 'danger'
-  if (isWarningAlarm.value) return 'warning'
-  return 'safe'
-})
-
-const alarmStatusText = computed(() => {
-  if (isCriticalAlarm.value) return '● 触发碰撞阻断 (紧急)'
-  if (isWarningAlarm.value) return '▲ 接近预警缓冲 (注意)'
-  return '✔ 处于安全通行区 (正常)'
+const redZoneSummaryText = computed(() => {
+  const rz = currentFrameData.value?.red_zone
+  if (!rz || rz.min_dist_m === null || rz.min_dist_m === undefined) {
+    return isCriticalAlarm.value ? '禁区侵入 (一票否决)' : '安全线外'
+  }
+  const m = Number(rz.min_dist_m)
+  if (rz.state === 'INSIDE') {
+    return `侵入红线 ${m.toFixed(2)}m (违章)`
+  }
+  if (rz.state === 'BUFFER') {
+    return `临界缓冲 +${m.toFixed(2)}m (≤0.3m)`
+  }
+  return `红线外 +${m.toFixed(2)}m (合规)`
 })
 
 const threatLevelText = computed(() => {
@@ -364,43 +346,47 @@ const scaledDetections = computed(() => {
   })
 })
 
-// 绘制人车测距射线 (严格仅在 person 与 forkTruck 之间计算最近交互对)
-const scaledDistanceRay = computed(() => {
-  if (!currentFrameData.value || !currentFrameData.value.min_dist_px) return null
-  const dets = scaledDetections.value
-  const persons = dets.filter(d => d.label.startsWith('person'))
-  const forkTrucks = dets.filter(d => d.label.startsWith('forkTruck'))
-  if (persons.length === 0 || forkTrucks.length === 0) return null
+// 绘制地面三向红光安全禁区多边形
+const scaledRedZonePolygons = computed(() => {
+  const polys = currentFrameData.value?.red_zone?.polygons
+  if (!polys || !Array.isArray(polys)) return []
+  const { width: dW, height: dH, left: dL, top: dT } = displayMetrics.value
+  const scaleX = dW / videoNativeW.value
+  const scaleY = dH / videoNativeH.value
 
-  let bestP = null
-  let bestF = null
-  let minD = Infinity
+  return polys.map(poly =>
+    poly
+      .map(([px, py]) => `${(dL + px * scaleX).toFixed(1)},${(dT + py * scaleY).toFixed(1)}`)
+      .join(' ')
+  )
+})
 
-  for (const p of persons) {
-    const pcX = p.x + p.w / 2
-    const pcY = p.y + p.h / 2
-    for (const f of forkTrucks) {
-      const fcX = f.x + f.w / 2
-      const fcY = f.y + f.h / 2
-      const d = Math.hypot(pcX - fcX, pcY - fcY)
-      if (d < minD) {
-        minD = d
-        bestP = { x: pcX, y: pcY }
-        bestF = { x: fcX, y: fcY }
-      }
-    }
+// 绘制地面行人足底接地点锚点与红光距离标牌
+const scaledFootAnchors = computed(() => {
+  const rz = currentFrameData.value?.red_zone
+  const anchors = rz?.foot_anchors
+  if (!anchors || !Array.isArray(anchors)) return []
+  const { width: dW, height: dH, left: dL, top: dT } = displayMetrics.value
+  const scaleX = dW / videoNativeW.value
+  const scaleY = dH / videoNativeH.value
+
+  const distM = rz.min_dist_m !== null && rz.min_dist_m !== undefined ? Number(rz.min_dist_m) : 0
+  let color = '#10b981'
+  let badgeText = `足底锚点: 红线外 +${distM.toFixed(2)}m`
+  if (rz.state === 'INSIDE') {
+    color = '#ff3b30'
+    badgeText = `🚨 足底越过红线: ${distM.toFixed(2)}m`
+  } else if (rz.state === 'BUFFER') {
+    color = '#ff9f0a'
+    badgeText = `⚠️ 0~0.3m缓冲带: +${distM.toFixed(2)}m`
   }
 
-  if (!bestP || !bestF) return null
-
-  return {
-    x1: bestP.x,
-    y1: bestP.y,
-    x2: bestF.x,
-    y2: bestF.y,
-    midX: (bestP.x + bestF.x) / 2,
-    midY: (bestP.y + bestF.y) / 2
-  }
+  return anchors.slice(0, 1).map(([fx, fy]) => ({
+    x: dL + fx * scaleX,
+    y: dT + fy * scaleY,
+    color,
+    badgeText
+  }))
 })
 
 const svgLayerStyle = computed(() => {
@@ -700,86 +686,17 @@ onUnmounted(() => {
   font-size: 11px;
 }
 
-.stream-stat-pills {
-  display: flex;
-  gap: 8px;
-}
-
-.stat-pill {
-  background: rgba(17, 21, 28, 0.9);
-  border: 1px solid var(--border-machined);
-  padding: 4px 8px;
-  font-size: 11px;
-  color: var(--text-secondary);
-  backdrop-filter: blur(4px);
-}
-
-.latency-pill {
-  color: var(--telemetry-cyan);
-  font-family: var(--font-mono);
-}
-
-.status-pill {
-  color: var(--nominal-green);
-  border-color: rgba(48, 209, 88, 0.3);
-}
-
-.status-pill.warning {
-  color: var(--safety-amber);
-  border-color: var(--safety-amber);
-  background: rgba(255, 159, 10, 0.15);
-  font-weight: 700;
-}
-
-.status-pill.danger {
-  color: var(--emergency-red);
-  border-color: var(--emergency-red);
-  background: rgba(255, 59, 48, 0.2);
-  font-weight: 700;
-}
-
-.gate-status-badge {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 3px;
-  transition: all 0.2s ease;
-}
-
-.gate-standby-pill {
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.4);
-  background: rgba(15, 23, 42, 0.7);
-}
-
-.gate-active-pulse {
-  color: #fff;
-  border-color: #ff3b30;
-  background: rgba(255, 59, 48, 0.35);
-  box-shadow: 0 0 12px rgba(255, 59, 48, 0.6);
-  animation: gatePulse 1.2s infinite;
-}
-
-@keyframes gatePulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.02); }
-}
-
-/* 左下角认知探针胶囊 */
+/* 顶部认知探针胶囊 */
 .omnijev-capsule {
-  position: absolute;
-  bottom: 58px;
-  left: 14px;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid var(--border-bright);
   border-left: 3px solid var(--telemetry-cyan);
-  padding: 8px 14px;
+  padding: 4px 12px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-  z-index: 10;
+  gap: 14px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+  pointer-events: auto;
   backdrop-filter: blur(8px);
 }
 

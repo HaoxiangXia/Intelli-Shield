@@ -49,6 +49,9 @@ def decorate_alarm_records(alarms, devices=None):
             alarm["zone"] = "B区" if pos_y < 500 else "D区"
         alarm["description"] = alarm.pop("image_description", None)
         alarm["description_status"] = alarm.pop("image_description_status", None)
+        is_alarm = alarm.get("alarm", 1) == 1
+        alarm["red_zone_state"] = alarm.get("red_zone_state") or ("INSIDE" if is_alarm else "SAFE")
+        alarm["red_zone_dist_m"] = alarm.get("red_zone_dist_m") if alarm.get("red_zone_dist_m") is not None else (-0.88 if is_alarm else 0.85)
     return alarms
 
 

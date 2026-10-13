@@ -126,7 +126,7 @@ const mapNodes = computed(() =>
       top: position.top,
       left: position.left,
       showRipple: status !== 'offline',
-      title: `${device.device_id || '-'} | ${status === 'warning' ? '报警' : status === 'offline' ? '离线' : '正常'}`
+      title: `${device.device_id || '-'} | ${status === 'warning' ? '报警 (三向红光禁区侵入)' : status === 'offline' ? '离线' : '正常 (红光安全线外)'}`
     }
   })
 )

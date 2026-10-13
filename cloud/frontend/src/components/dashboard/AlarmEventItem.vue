@@ -12,6 +12,7 @@
       <div class="tags">
         <span class="tag tag-danger">{{ item.status }}</span>
         <span class="tag tag-area">{{ item.area }}</span>
+        <span v-if="item.redZoneTag" class="tag tag-danger">{{ item.redZoneTag }}</span>
       </div>
       
       <div class="thumbnail-row">

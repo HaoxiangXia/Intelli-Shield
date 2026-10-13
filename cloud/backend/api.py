@@ -129,6 +129,18 @@ async def serve_image(file_path: str):
         raise HTTPException(status_code=404, detail="Image not found")
     return FileResponse(file)
 
+@router.get("/samples/{file_path:path}")
+async def serve_samples(file_path: str):
+    samples_root = (ROOT_DIR.parent / "samples").resolve()
+    file = (samples_root / file_path).resolve()
+    if not file.is_relative_to(samples_root) or not file.is_file():
+        # Fallback to frontend public samples
+        public_file = (FRONTEND_PUBLIC_DIR / "samples" / file_path).resolve()
+        if public_file.is_file():
+            return FileResponse(public_file)
+        raise HTTPException(status_code=404, detail="Sample asset not found")
+    return FileResponse(file)
+
 
 @router.get("/Dashboard.png")
 async def serve_dashboard_png():

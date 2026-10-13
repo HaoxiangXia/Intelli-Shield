@@ -79,7 +79,7 @@
       <!-- 真实高清关键帧抓拍切片 -->
       <div class="hd-snapshot-container" @click="showHdModal = true" title="点击放大查看 1080P 高清逐帧原图">
         <span class="hd-badge-overlay">
-          {{ activeHazard ? 'CCTV-04 抓拍 #0575 (间距 111.4像素 突破临界)' : 'CCTV-04 抓拍 #0025 (安全隔离)' }}
+          {{ activeHazard ? 'CCTV-04 抓拍 #0575 (足底越过红光线 -0.88m · 一票否决)' : 'CCTV-04 抓拍 #0025 (红光线外 +2.27m 安全隔离)' }}
         </span>
         <span class="hd-action-tip">🔍 点击放大展开 1080P 逐帧研判</span>
 
@@ -91,9 +91,9 @@
       </div>
 
       <div class="hazard-caption">
-        <strong>{{ activeHazard ? '仲裁研判结论:' : '核验结论 (责任人解除):' }}</strong>
+        <strong>{{ activeHazard ? '双系统分层仲裁结论:' : '核验结论 (责任人解除):' }}</strong>
         {{ activeHazard 
-          ? '【紧急】物理间距 (111.4像素) 突破临界阈值 (<120像素)；工人分心背对 60.0%，注视避让 32.0%；人车危险交汇，已触发车载声光减速阻断。'
+          ? '【紧急】工人双脚踏入叉车三向红光警戒线内侧 (-0.88m / ZONE_INSIDE)，物理硬约束一票否决直出 CRITICAL；叠加 OmniJev 探针检出分心背对 65.0%，已触发声光急停阻断。'
           : `经安全责任人现场视频复核，判定为【${resolvedReason}】。威胁排除，大屏复位，样本已提交算法微调队列。`
         }}
       </div>

@@ -1,17 +1,17 @@
 <template>
   <div class="threat-timeline-panel">
     <div class="threat-header">
-      <span class="threat-title">时序危险走势与时空门控状态通道 (30秒连续序列)</span>
+      <span class="threat-title">时序危险走势与三向红光空间防御通道 (30秒连续序列)</span>
       <div class="keyframe-dots">
-        <span class="kf-badge">#0025 🛡️ 门控阻断</span>
+        <span class="kf-badge">#0025 🛡️ 红光外安全</span>
         <span class="kf-arrow">➔</span>
-        <span class="kf-badge">#0200 司机排除</span>
+        <span class="kf-badge">#0068 ⚠️ 0~0.3m缓冲带</span>
         <span class="kf-arrow">➔</span>
-        <span class="kf-badge">#0325 GPU待机</span>
+        <span class="kf-badge kf-danger">#0200 🚨 越过红线侵入</span>
         <span class="kf-arrow">➔</span>
-        <span class="kf-badge kf-danger">#0575 ⚡ 门控激活 (唤醒 OneJev)</span>
+        <span class="kf-badge kf-danger">#0575 ⚡ 红区高危交汇</span>
         <span class="kf-arrow">➔</span>
-        <span class="kf-badge">#0700 🛡️ 复位休眠</span>
+        <span class="kf-badge">#0700 🛡️ 驶离红线复位</span>
       </div>
     </div>
     
@@ -52,27 +52,32 @@
 
           <!-- ================= 方案 4: 时空门控活动区间条 (Gate Activity Ribbon) ================= -->
           <!-- 门控活动通道底槽 -->
-          <text x="5" y="70" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="700">时空门控</text>
           <rect x="52" y="60" width="544" height="15" fill="#f1f5f9" stroke="#cbd5e1" rx="2" />
 
-          <!-- 区间 1: 0s ~ 18s (x: 52 ~ 410) 门控阻断休眠 (司机排除/静止车) -->
-          <rect x="54" y="62" width="354" height="11" fill="rgba(2, 132, 199, 0.10)" stroke="rgba(2, 132, 199, 0.3)" rx="2" />
-          <text x="231" y="70.5" fill="#0369a1" font-size="7.5" font-family="'PingFang SC', sans-serif" font-weight="600" text-anchor="middle">
-            🛡️ 门控阻断休眠 (车载司机排除 / 车辆静止 | GPU 待机 0W)
+          <!-- 区间 1: 0s ~ 2.4s 红光外安全 -->
+          <rect x="54" y="62" width="44" height="11" fill="rgba(16, 185, 129, 0.14)" stroke="rgba(16, 185, 129, 0.35)" rx="2" />
+          <text x="76" y="70.5" fill="#047857" font-size="6.8" font-family="'PingFang SC', sans-serif" font-weight="600" text-anchor="middle">
+            安全区
           </text>
 
-          <!-- 区间 2: 18s ~ 26s (x: 410 ~ 522) 门控激活高危区间 (唤醒 OneJev) -->
-          <rect x="410" y="61.5" width="112" height="12" fill="rgba(220, 38, 38, 0.20)" stroke="#dc2626" stroke-width="1.2" rx="2">
+          <!-- 区间 2: 2.4s ~ 3.5s 0~0.3m 缓冲预警 -->
+          <rect x="100" y="62" width="24" height="11" fill="rgba(245, 158, 11, 0.22)" stroke="#d97706" rx="2" />
+          <text x="112" y="70.5" fill="#b45309" font-size="6.5" font-family="'PingFang SC', sans-serif" font-weight="700" text-anchor="middle">
+            0.3m
+          </text>
+
+          <!-- 区间 3: 3.6s ~ 23.2s 红光禁区侵入 (<0m 一票否决 + OneJev 协同) -->
+          <rect x="126" y="61.5" width="356" height="12" fill="rgba(220, 38, 38, 0.22)" stroke="#dc2626" stroke-width="1.2" rx="2">
             <animate attributeName="opacity" values="0.75;1;0.75" dur="1.2s" repeatCount="indefinite" />
           </rect>
-          <text x="466" y="70.5" fill="#991b1b" font-size="8" font-family="'PingFang SC', sans-serif" font-weight="700" text-anchor="middle">
-            ⚡ 门控激活 (唤醒 OneJev 107ms)
+          <text x="304" y="70.5" fill="#991b1b" font-size="8" font-family="'PingFang SC', sans-serif" font-weight="700" text-anchor="middle">
+            🚨 侵入三向红光安全线 (&lt;0m 一票否决 CRITICAL + 唤醒 OneJev 107ms)
           </text>
 
-          <!-- 区间 3: 26s ~ 30s (x: 524 ~ 594) 复位安全 -->
-          <rect x="524" y="62" width="70" height="11" fill="rgba(2, 132, 199, 0.10)" stroke="rgba(2, 132, 199, 0.3)" rx="2" />
-          <text x="559" y="70.5" fill="#0369a1" font-size="7" font-family="'PingFang SC', sans-serif" text-anchor="middle">
-            🛡️ 复位待机
+          <!-- 区间 4: 23.5s ~ 30s 驶离红线复位 -->
+          <rect x="484" y="62" width="110" height="11" fill="rgba(16, 185, 129, 0.14)" stroke="rgba(16, 185, 129, 0.35)" rx="2" />
+          <text x="539" y="70.5" fill="#047857" font-size="7" font-family="'PingFang SC', sans-serif" font-weight="600" text-anchor="middle">
+            🛡️ 驶离红线复位 (&gt;0.3m)
           </text>
           <!-- 动态播放指示针 (随着视频播放同步移动) -->
           <line
