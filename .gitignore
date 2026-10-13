@@ -1,8 +1,8 @@
 # --- 通用忽略 ---
 __pycache__/
+logs/
 .DS_Store
 .venv/
-uv.lock
 .kilo
 .kilocode
 .vscode
