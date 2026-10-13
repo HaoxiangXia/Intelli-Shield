@@ -31,7 +31,8 @@
 | 端 | 关键组件 |
 |---|---|
 | 设备端 | MaixCAM Pro + YOLO11n + Python（MaixPy v4.12）；UART 串口对接 STM32 控制 LED / 蜂鸣器 / OLED |
-| 云端后端 | FastAPI + Uvicorn + paho-mqtt + python-socketio + SQLite；可选 LLM 多模态描述（OpenAI 兼容） |
+| 云端后端 | FastAPI + Uvicorn + paho-mqtt + python-socketio + SQLite；可选 LLM 多模态描述（OpenAI 兼容）；依赖由 uv 统一管理 |
+| 感知流水线 | OpenCV DNN (Darknet YOLOv4) + SpatialTemporalGate 门控 + TypeSafe OmniJev 探针 + 风险仲裁机；依赖由 uv 统一管理 |
 | 前端 | Vue 3 + Vite + Element Plus + ECharts（vue-echarts）+ socket.io-client + Bun/npm |
 
 ## 端云协同数据流
@@ -86,11 +87,30 @@
 
 > 完整的 Linux / Windows PowerShell 部署步骤（含环境变量、冒烟验证、故障排查）见 **[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)**。
 
-### 1) 设备端
+### 1) 依赖安装（使用 uv）
+```bash
+# 一键同步流水线与开发工具依赖
+uv sync
+
+# 或一键同步全部组件（流水线 + 云端后端）
+uv sync --all-packages
+```
+
+### 2) 感知流水线快速运行
+```bash
+uv run python -m pipeline.runner \
+  --video samples/cctv/videos/output_video7.mp4 \
+  --replay samples/cctv/benchmarks/cctv_frames_metadata.json
+```
+
+### 3) 云端后端与看板快速启动
+```bash
+# 前端构建（首次需执行）
+cd cloud/frontend && bun install && bun run build && cd ../..
+
+# 启动云端服务
+cd cloud && uv run python -m backend.app
+```
+
+### 4) 设备端
 请参考 [device/README.md](device/README.md) 进行部署。
-
-### 2) 云端
-请参考 [cloud/README.md](cloud/README.md) 进行部署。
-
-### 3) 前端
-前端位于 [cloud/frontend/](cloud/frontend/)，可按其中 `package.json` 的脚本进行开发与构建。

@@ -17,14 +17,11 @@
 
 | 组件 | 版本 | 是否必需 | 备注 |
 |---|---|---|---|
-| Python（流水线） | 3.10 – 3.13 | 必需 | 无 `pyproject.toml`，依赖需手动安装；开发实测 3.12.3 |
-| Python（云端后端） | **≥ 3.13** | 必需 | `cloud/pyproject.toml` 硬性要求 |
-| [uv](https://docs.astral.sh/uv/) | ≥ 0.4 | 推荐 | 云端依赖同步；也可用 pip |
+| [uv](https://docs.astral.sh/uv/) | ≥ 0.4 | **必需** | 统一管理流水线、开发工具与云端依赖（`uv sync` / `uv run`） |
+| Python | 3.10 – 3.13 | 必需 | 根目录与 `cloud/` 已通过 `.python-version` 锁定 3.13；uv 可自动下载 |
 | Node.js | ≥ 20 | 二选一 | npm / pnpm 用户 |
 | [Bun](https://bun.sh/) | ≥ 1.0 | 二选一 | 前端依赖安装更快（仓库含 `bun.lock`） |
-| Pillow | ≥ 9.0 | 可选 | 仅 `render_video_pipeline.py` / `samples/cctv/scripts/render_real_cctv.py` 渲染脚本需要 |
 | OpenCV DNN 权重 | — | 必需 | `models/*.weights` 被 `.gitignore` 忽略，需单独拷贝 |
-
 ---
 
 ## 1. 获取代码与模型资产
@@ -49,23 +46,19 @@ cd Intelli-Shield
 
 ## 2. 部署感知-决策流水线
 
-### 2.1 Linux
+### 2.1 Linux / macOS
 
 ```bash
 cd Intelli-Shield
 
-# 建议使用独立虚拟环境（仓库根 .venv 已被忽略）
-python3 -m venv .venv
-source .venv/bin/activate
+# 1) 使用 uv 一键同步流水线与开发依赖（自动创建 .venv 并锁定依赖）
+uv sync
 
-# 流水线依赖（仓库无 pyproject.toml，直接装）
-pip install -U pip
-pip install "opencv-python>=4.8" "numpy>=1.24" requests
-# 可选：仅当要用 ultralytics 权重时
-# pip install ultralytics
+# 若需要同时同步云端后端与所有工具，可加 --all-packages
+# uv sync --all-packages
 
-# 冒烟：跑 5 帧，确认权重加载成功
-python -m pipeline.runner \
+# 2) 冒烟：跑 5 帧，确认权重加载成功（无需手动激活虚拟环境，uv run 自动托管）
+uv run python -m pipeline.runner \
   --video samples/cctv/videos/output_video7.mp4 \
   --max-frames 5
 ```
@@ -75,13 +68,11 @@ python -m pipeline.runner \
 ```powershell
 cd Intelli-Shield
 
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1        # 若被策略拦截：Set-ExecutionPolicy -Scope Process RemoteSigned
-python -m pip install --upgrade pip
-python -m pip install "opencv-python>=4.8" "numpy>=1.24" requests
-# python -m pip install ultralytics
+# 1) 使用 uv 同步依赖
+uv sync
 
-python -m pipeline.runner `
+# 2) 冒烟运行
+uv run python -m pipeline.runner `
   --video samples/cctv/videos/output_video7.mp4 `
   --max-frames 5
 ```
@@ -89,14 +80,13 @@ python -m pipeline.runner `
 预期输出包含 `[YOLODetector] Loaded advisor YOLOv4 Darknet: models/yolov4-custom-hebei.cfg (14 classes)`，且逐帧打印 `Frame #0001 | [NORMAL] | Ped: 3 | Forklift: 2 | Dist: 25.8px | ...`；若是 `Warning: Could not find model files`，回到第 1 节补齐权重。
 
 > **注意**：合成样例 `demo_forklift.mp4` 用导师 YOLOv4 权重跑出来是**零检测**（`Ped: 0 | Forklift: 0`），全帧 `NORMAL` 属正常现象，不是环境故障。冒烟请用真实素材 `output_video7.mp4`。
-
 ### 2.3 四种运行模式
 
 | 模式 | 命令（Linux） | PowerShell 等价 | 说明 |
 |---|---|---|---|
-| **离线回放**（答辩推荐） | `python -m pipeline.runner --video samples/cctv/videos/output_video7.mp4 --replay samples/cctv/benchmarks/cctv_frames_metadata.json` | `python -m pipeline.runner --video samples\cctv\videos\output_video7.mp4 --replay samples\cctv\benchmarks\cctv_frames_metadata.json` | 不依赖 GPU 集群，回放 752 帧实测探针结果（RTX 3090，107 ms） |
-| **实时探针** | `python -m pipeline.runner --video <mp4> --endpoint http://<gpu-host>:8000/probe` | 同左 | 先 `sbatch slurm/serve_omnijev.sh` 拉起探针服务，再 `ssh -N -L 8000:<node>:8000 <user>@<host>` 打隧道 |
-| **关闭门控（对照实验）** | `python -m pipeline.runner --video <mp4> --no-gating` | 同左 | 只要画面同时有人与车就发起探针，用于对比门控省下的 GPU 开销 |
+| **离线回放**（答辩推荐） | `uv run python -m pipeline.runner --video samples/cctv/videos/output_video7.mp4 --replay samples/cctv/benchmarks/cctv_frames_metadata.json` | `uv run python -m pipeline.runner --video samples\cctv\videos\output_video7.mp4 --replay samples\cctv\benchmarks\cctv_frames_metadata.json` | 不依赖 GPU 集群，回放 752 帧实测探针结果（RTX 3090，107 ms） |
+| **实时探针** | `uv run python -m pipeline.runner --video <mp4> --endpoint http://<gpu-host>:8000/probe` | 同左 | 先 `sbatch slurm/serve_omnijev.sh` 拉起探针服务，再 `ssh -N -L 8000:<node>:8000 <user>@<host>` 打隧道 |
+| **关闭门控（对照实验）** | `uv run python -m pipeline.runner --video <mp4> --no-gating` | 同左 | 只要画面同时有人与车就发起探针，用于对比门控省下的 GPU 开销 |
 | **探针不可用（自动降级）** | 不加 `--endpoint`，或让 8000 端口不通 | 同左 | `OmniJevEngine.evaluate()` 返回 `None`，`RiskFusionEngine` 自动回退到纯像素距离规则（`<120px → CRITICAL`），不中断流水线 |
 
 常用参数：`--fps`（默认 10）、`--conf`（默认 0.25）、`--gating-dist`（默认 250 px）、`--static-frames`（默认 3）、`--max-frames`。
@@ -109,24 +99,23 @@ python -m pipeline.runner `
 
 ```bash
 # 单图推理校验，输出标注图到 samples/cctv/keyframes/yolov4_result.png
-python infer_yolov4.py
+uv run python infer_yolov4.py
 
 # 抽帧重跑感知 + 门控，重建 benchmarks/*.json
-python scripts/rebuild_all_benchmarks.py
+uv run python scripts/rebuild_all_benchmarks.py
 
-# 带 HUD 的决策可视化视频（需 Pillow：pip install pillow）
-python render_video_pipeline.py
-```
+# 带 HUD 的决策可视化视频（Pillow 已默认随 uv sync 安装）
+uv run python render_video_pipeline.py
 
 后两个脚本面向数据重建与答辩素材制作，日常演示不需要。
 
 ### 2.5 流水线单元测试
 
 ```bash
-python -m unittest discover -s tests -v
+uv run python -m unittest discover -s tests -v
 ```
 
-> 两平台命令相同。Windows 若未激活虚拟环境，用 `.\.venv\Scripts\python.exe -m unittest discover -s tests -v`。
+> 两平台命令相同，`uv run` 自动保证虚拟环境与依赖一致性。
 
 > **已知失败**：`tests/test_spatial_gating.py::test_driver_exclusion` 当前 FAIL（`Gate should NOT trigger for on-board driver!`）——`_is_driver_inside_vehicle` 的驾驶员排除判定与测试期望不一致。这是**部署前就存在的代码缺陷**，不是环境问题；其余 3 项通过。不要为了让测试变绿而删改断言。
 
@@ -139,8 +128,8 @@ python -m unittest discover -s tests -v
 ```bash
 cd Intelli-Shield/cloud
 
-# 1) 后端依赖（Python ≥ 3.13）
-uv sync                       # 或：python3.13 -m venv .venv && pip install -e .
+# 1) 后端依赖（已纳入 uv workspace，可单独同步或在根目录 uv sync --all-packages）
+uv sync
 printf 'APP_HOST=0.0.0.0\nAPP_PORT=5000\nMQTT_REQUIRED=false\nLLM_ENABLED=false\n' > .env
 # 编辑 .env：至少确认 MQTT_BROKER / APP_PORT（模板见 3.3 节）
 
@@ -218,12 +207,12 @@ cd cloud/frontend && bun run dev      # http://localhost:3000，/api 与 /images
 
 ```bash
 cd cloud
-python tests/edge_node_client.py
+uv run python tests/edge_node_client.py
 ```
 
 ```powershell
 cd Intelli-Shield\cloud
-python tests\edge_node_client.py
+uv run python tests\edge_node_client.py
 ```
 
 终端会打印随机可用端口的 URL（如 `http://localhost:51247`）并自动打开浏览器，3 台叉车按剧本巡航触发预警 / 解除。使用独立数据库 `alarm_demo.db`，不污染 `alarm.db`。
@@ -256,12 +245,11 @@ sbatch slurm/run_real_3090.sh
 
 | # | 检查 | 期望 |
 |---|---|---|
-| 1 | `python -m pipeline.runner --video samples/cctv/videos/output_video7.mp4 --max-frames 5` | 打印 `Loaded advisor YOLOv4 Darknet (14 classes)`，逐帧输出 `Frame #0001 \| [NORMAL] \| Ped: 3 \| Forklift: 2 \| ...` |
+| 1 | `uv run python -m pipeline.runner --video samples/cctv/videos/output_video7.mp4 --max-frames 5` | 打印 `Loaded advisor YOLOv4 Darknet (14 classes)`，逐帧输出 `Frame #0001 \| [NORMAL] \| Ped: 3 \| Forklift: 2 \| ...` |
 | 2 | `curl http://localhost:5000/api/latest`（PowerShell：`Invoke-RestMethod http://localhost:5000/api/latest`） | `{"devices":[...],"stats":{...}}` |
 | 3 | 浏览器打开 `http://localhost:5000/` | 看板首页渲染（不是 503） |
-| 4 | `python tests/edge_node_client.py` | 打印 URL，地图上出现叉车点位与报警环 |
-| 5 | `python -m unittest discover -s tests` | 4 项中 3 通过；`test_driver_exclusion` 已知失败 |
-
+| 4 | `cd cloud && uv run python tests/edge_node_client.py` | 打印 URL，地图上出现叉车点位与报警环 |
+| 5 | `uv run python -m unittest discover -s tests` | 4 项中 3 通过；`test_driver_exclusion` 已知失败 |
 ---
 
 ## 7. 常见问题
@@ -287,8 +275,8 @@ GPU 服务未起或隧道未开。`curl -X POST http://127.0.0.1:8000/probe` 自
 **Linux 上 Windows 换行/路径问题**
 所有默认路径均为相对仓库根目录；务必在仓库根执行 `python -m pipeline.runner`，或在 `cloud/` 下执行 `python -m backend.app`。
 
-**Windows 上 PowerShell 执行 `.venv\Scripts\Activate.ps1` 被拒**
-`Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`，或直接用 `.venv\Scripts\python.exe` 免激活。
+**PowerShell 执行策略拦截**
+无需运行 `Activate.ps1`，直接使用 `uv run <command>` 即可无缝跨平台调用虚拟环境。
 
 ---
 

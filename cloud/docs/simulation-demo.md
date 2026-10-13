@@ -16,8 +16,8 @@ cloud/tests/edge_node_client.py
 
 在项目的 `cloud` 目录下执行：
 
-```powershell
-.\.venv\Scripts\python.exe tests\edge_node_client.py
+```bash
+uv run python tests/edge_node_client.py
 ```
 
 脚本启动成功后会在终端输出访问地址，例如：

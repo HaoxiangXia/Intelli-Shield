@@ -75,10 +75,10 @@
 
 依赖：Python ≥ 3.13。`cloud/` 目录下：
 
-```powershell
-uv sync                                         # 同步依赖（首次或 pyproject 变更后）
+```bash
+uv sync                               # 同步依赖（亦可在根目录执行 uv sync --all-packages）
 # 按需修改 .env（MQTT broker、端口、可选 LLM 配置等）
-.\.venv\Scripts\python.exe -m backend.app       # 启动（默认 0.0.0.0:5000）
+uv run python -m backend.app          # 启动（默认 0.0.0.0:5000）
 ```
 
 启动后访问 `http://localhost:5000` 即可看到前端 SPA（前提是已经构建过前端，详见下文）。
@@ -96,8 +96,8 @@ bun run build        # 生产构建，产物输出到 frontend/dist/
 
 ### 3) 仿真演示（无需真实设备）
 
-```powershell
-.\.venv\Scripts\python.exe tests\edge_node_client.py
+```bash
+uv run python tests/edge_node_client.py
 ```
 
 启动后会在终端打印访问 URL（如 `http://localhost:51247`），自动在厂区地图上演示 3 台叉车按剧本巡航、触发碰撞预警、行人预警与报警解除。详细剧本、路线与调参说明见 [`docs/simulation-demo.md`](docs/simulation-demo.md)。
