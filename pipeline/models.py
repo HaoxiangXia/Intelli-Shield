@@ -12,6 +12,23 @@ class AlarmLevel(str, Enum):
     CRITICAL = "CRITICAL"
 
 
+class RedZoneState(str, Enum):
+    INSIDE = "INSIDE"      # < 0m: Pedestrian feet stepped inside red laser exclusion zone
+    BUFFER = "BUFFER"      # 0 ~ 0.3m: Within outer perimeter buffer zone
+    SAFE = "SAFE"          # > 0.3m: Outside red safety zone
+
+
+@dataclass
+class RedZoneEvaluation:
+    state: RedZoneState = RedZoneState.SAFE
+    min_dist_px: float = float("inf")  # Negative if inside polygon, positive if outside
+    min_dist_m: float = float("inf")   # Estimated metric distance (meters)
+    buffer_thresh_px: float = 22.0     # Adaptive buffer threshold in pixels (0.28m)
+    violating_pedestrians: List[BoundingBox] = field(default_factory=list)
+    polygons: List[List[Tuple[int, int]]] = field(default_factory=list)
+    has_detected_lasers: bool = False
+
+
 @dataclass
 class BoundingBox:
     x1: float
@@ -31,6 +48,7 @@ class PerceptionResult:
     pedestrians: List[BoundingBox] = field(default_factory=list)
     detections: List[BoundingBox] = field(default_factory=list)
     min_distance_px: Optional[float] = None
+    red_zone: Optional[RedZoneEvaluation] = None
 
 
 @dataclass
@@ -43,6 +61,8 @@ class GatingDecision:
     static_forklifts: List[BoundingBox] = field(default_factory=list)
     min_dynamic_distance_px: Optional[float] = None
     reason: str = ""
+    red_zone: Optional[RedZoneEvaluation] = None
+
 
 @dataclass
 class OmniJevProbes:
@@ -64,6 +84,8 @@ class FrameDecision:
     alarm_level: AlarmLevel
     reasons: List[str] = field(default_factory=list)
     gating: Optional[GatingDecision] = None
+    red_zone: Optional[RedZoneEvaluation] = None
 
     def to_dict(self) -> dict:
         return asdict(self)
+

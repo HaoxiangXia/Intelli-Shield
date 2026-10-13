@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 
 from .models import BoundingBox, PerceptionResult
+from .red_zone import RedZoneEngine
 
 try:
     from ultralytics import YOLO
@@ -45,6 +46,7 @@ class YOLODetector:
         self.output_layers = []
         self.classes: List[str] = []
         self.ultralytics_model = None
+        self.red_zone_engine = RedZoneEngine()
 
         self._init_detector()
 
@@ -139,6 +141,7 @@ class YOLODetector:
                     elif raw_cls_name == "forkTruck":
                         result.forklifts.append(bbox)
             result.min_distance_px = self._calc_min_distance(result.pedestrians, result.forklifts)
+            result.red_zone = self.red_zone_engine.evaluate(frame_bgr, result.forklifts, result.pedestrians)
             return result
 
         # Path B: Ultralytics PyTorch fallback
@@ -169,6 +172,7 @@ class YOLODetector:
                         result.forklifts.append(bbox)
 
             result.min_distance_px = self._calc_min_distance(result.pedestrians, result.forklifts)
+            result.red_zone = self.red_zone_engine.evaluate(frame_bgr, result.forklifts, result.pedestrians)
             return result
 
         return result

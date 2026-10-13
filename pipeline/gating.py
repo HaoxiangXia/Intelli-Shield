@@ -94,6 +94,26 @@ class SpatialTemporalGate:
     def evaluate(self, perception: PerceptionResult) -> GatingDecision:
         """Evaluate perception detections and decide whether to open OmniJev gate."""
         frame_id = perception.frame_id
+        red_zone = perception.red_zone
+
+        # Priority Override: Physical Red-Zone Intrusion or Buffer Violation
+        # If worker entered red laser perimeter, physical safety constraint is violated.
+        # Motionless or geometric gating MUST NOT suppress this hazard.
+        if red_zone is not None and red_zone.state.value in {"INSIDE", "BUFFER"}:
+            self._update_forklift_tracking(perception.forklifts, frame_id)
+            return GatingDecision(
+                should_trigger=True,
+                active_pedestrians=perception.pedestrians,
+                active_forklifts=perception.forklifts,
+                driver_pedestrians=[],
+                static_forklifts=[],
+                min_dynamic_distance_px=red_zone.min_dist_px,
+                reason=(
+                    f"Red-Zone safety breach: State={red_zone.state.value}, "
+                    f"dist={red_zone.min_dist_px:.1f}px ({red_zone.min_dist_m:.2f}m)"
+                ),
+                red_zone=red_zone,
+            )
 
         # 1. Quick exit if either class is missing
         if not perception.pedestrians or not perception.forklifts:
@@ -106,6 +126,7 @@ class SpatialTemporalGate:
                 static_forklifts=[],
                 min_dynamic_distance_px=None,
                 reason="Pedestrian or forklift missing in frame",
+                red_zone=red_zone,
             )
 
         # 2. Filter by ROI Geofence
@@ -122,6 +143,7 @@ class SpatialTemporalGate:
                 static_forklifts=[],
                 min_dynamic_distance_px=None,
                 reason="All pedestrians outside designated ROI danger zone",
+                red_zone=red_zone,
             )
 
         if not forks_in_roi:
@@ -134,6 +156,7 @@ class SpatialTemporalGate:
                 static_forklifts=[],
                 min_dynamic_distance_px=None,
                 reason="All forklifts outside designated ROI danger zone",
+                red_zone=red_zone,
             )
 
         # 3. Driver Exclusion (check if person is sitting inside forklift/cabin)
@@ -162,6 +185,7 @@ class SpatialTemporalGate:
                 static_forklifts=[],
                 min_dynamic_distance_px=None,
                 reason=f"All {len(driver_pedestrians)} pedestrian(s) identified as vehicle drivers (Driver Exclusion)",
+                red_zone=red_zone,
             )
 
         # 4. Motionless Cancellation (静止对消)
@@ -176,6 +200,7 @@ class SpatialTemporalGate:
                 static_forklifts=static_forklifts,
                 min_dynamic_distance_px=None,
                 reason=f"All {len(static_forklifts)} forklift(s) in ROI are stationary (Motionless Cancellation)",
+                red_zone=red_zone,
             )
 
         # 5. Dynamic Spatial Proximity
@@ -193,6 +218,7 @@ class SpatialTemporalGate:
                     f"Dynamic risk detected: active pedestrian and moving forklift within "
                     f"{min_dynamic_dist:.1f}px (threshold: {self.trigger_distance_px:.1f}px)"
                 ),
+                red_zone=red_zone,
             )
         else:
             dist_desc = f"{min_dynamic_dist:.1f}px" if min_dynamic_dist is not None else "N/A"
@@ -204,6 +230,7 @@ class SpatialTemporalGate:
                 static_forklifts=static_forklifts,
                 min_dynamic_distance_px=min_dynamic_dist,
                 reason=f"Ground worker and moving forklift separated beyond buffer ({dist_desc} > {self.trigger_distance_px:.1f}px)",
+                red_zone=red_zone,
             )
 
     def _is_box_in_roi(self, box: BoundingBox) -> bool:

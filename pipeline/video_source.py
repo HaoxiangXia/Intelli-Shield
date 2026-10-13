@@ -29,7 +29,7 @@ class VideoSource:
     def frames(self) -> Generator[Tuple[int, float, np.ndarray], None, None]:
         if cv2 is None:
             raise RuntimeError(
-                "OpenCV (cv2) is required to read video sources. Run 'uv pip install opencv-python-headless'"
+                "OpenCV (cv2) is required to read video sources. Run 'uv sync' or 'uv pip install \"opencv-python>=4.8,<5.0\"'"
             )
 
         if not os.path.exists(self.video_path):

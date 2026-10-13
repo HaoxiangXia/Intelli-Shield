@@ -1,13 +1,32 @@
-"""Risk fusion engine combining geometric perception metrics with OmniJev decision probes."""
+"""Risk fusion engine combining physical red-zone safety boundaries with OmniJev decision probes."""
 
 from __future__ import annotations
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
-from .models import AlarmLevel, FrameDecision, GatingDecision, OmniJevProbes, PerceptionResult
+from .models import (
+    AlarmLevel,
+    FrameDecision,
+    GatingDecision,
+    OmniJevProbes,
+    PerceptionResult,
+    RedZoneEvaluation,
+    RedZoneState,
+)
 
 
 class RiskFusionEngine:
-    """Arbitrates alarm level using dual-system inputs."""
+    """Arbitrates alarm level using dual-system inputs.
+
+    System Hierarchy:
+    1. Physical Boundary Layer (Floor): Red laser perimeter intrusion is a hard constraint.
+       - Pedestrian feet inside red line (< 0m) -> CRITICAL (One-vote veto)
+       - Pedestrian feet within proximity buffer (0 ~ 0.3m) -> WARNING
+    2. Cognitive Probe Layer (Context): OmniJev System 1 probes provide semantic attribution:
+       - Worker attention (unaware vs yielding)
+       - Threat severity score & collision probability
+    3. Predictive Trigger: High collision probability (>=0.7) can trigger proactive CRITICAL
+       even if worker has not yet crossed the red line.
+    """
 
     def __init__(
         self,
@@ -16,12 +35,29 @@ class RiskFusionEngine:
         dist_critical_px: float = 120.0,
         dist_warning_px: float = 250.0,
         threat_score_critical: float = 2.2,
+        hysteresis_trigger_frames: int = 1,
+        hysteresis_release_frames: int = 4,
     ):
         self.collision_prob_critical = collision_prob_critical
         self.collision_prob_warning = collision_prob_warning
         self.dist_critical_px = dist_critical_px
         self.dist_warning_px = dist_warning_px
         self.threat_score_critical = threat_score_critical
+        self.hysteresis_trigger_frames = hysteresis_trigger_frames
+        self.hysteresis_release_frames = hysteresis_release_frames
+
+        # Temporal state tracking
+        self._consecutive_critical = 0
+        self._consecutive_warning = 0
+        self._consecutive_safe = 0
+        self._last_alarm_level = AlarmLevel.NORMAL
+
+    def reset(self) -> None:
+        """Reset temporal hysteresis state."""
+        self._consecutive_critical = 0
+        self._consecutive_warning = 0
+        self._consecutive_safe = 0
+        self._last_alarm_level = AlarmLevel.NORMAL
 
     def arbitrate(
         self,
@@ -32,24 +68,52 @@ class RiskFusionEngine:
         gating: Optional[GatingDecision] = None,
     ) -> FrameDecision:
         reasons: List[str] = []
-        alarm_level = AlarmLevel.NORMAL
+        candidate_level = AlarmLevel.NORMAL
 
-        # Rule 1: No interaction if pedestrians or forklifts absent
+        # Rule 0: No interaction if pedestrians or forklifts absent
         if not perception.pedestrians or not perception.forklifts:
+            self._last_alarm_level = AlarmLevel.NORMAL
             return FrameDecision(
                 frame_id=frame_id,
                 timestamp=timestamp,
                 perception=perception,
                 probes=probes,
                 alarm_level=AlarmLevel.NORMAL,
-                reasons=["No co-occurring pedestrian and forklift in frame"],
+                reasons=["No pedestrian or forklift present in scene"],
+                gating=gating,
+                red_zone=perception.red_zone,
             )
-        # Spatial metric reference (prefer dynamic distance from gating if available)
-        dist = gating.min_dynamic_distance_px if (gating and gating.min_dynamic_distance_px is not None) else perception.min_distance_px
 
-        # Gating fast-path: if gating actively determined safe / motionless / driver-only
-        if gating is not None and not gating.should_trigger:
+        red_zone: Optional[RedZoneEvaluation] = (
+            perception.red_zone if perception.red_zone is not None else (gating.red_zone if gating else None)
+        )
+
+        # ---------------------------------------------------------
+        # Layer 1: Physical Red-Zone Hard Constraint (Floor Baseline)
+        # ---------------------------------------------------------
+        is_physically_breached = False
+        if red_zone is not None:
+            if red_zone.state == RedZoneState.INSIDE:
+                candidate_level = AlarmLevel.CRITICAL
+                is_physically_breached = True
+                reasons.append(
+                    f"【红光禁区侵入】人员双脚踏入叉车红光安全隔离线内侧 "
+                    f"(侵入深度: {-red_zone.min_dist_px:.1f}px / {-red_zone.min_dist_m:.2f}m)"
+                )
+            elif red_zone.state == RedZoneState.BUFFER:
+                candidate_level = AlarmLevel.WARNING
+                is_physically_breached = True
+                reasons.append(
+                    f"【红光外沿缓冲预警】人员双脚处于红光外沿临界区 "
+                    f"(间距: {red_zone.min_dist_px:.1f}px / {red_zone.min_dist_m:.2f}m <= 0.30m)"
+                )
+
+        # ---------------------------------------------------------
+        # Layer 2: Fast-Path Gating check (Only if NO physical breach)
+        # ---------------------------------------------------------
+        if not is_physically_breached and gating is not None and not gating.should_trigger:
             reasons.append(f"OmniJev probe gated (Fast-Path NORMAL): {gating.reason}")
+            self._last_alarm_level = AlarmLevel.NORMAL
             return FrameDecision(
                 frame_id=frame_id,
                 timestamp=timestamp,
@@ -58,53 +122,114 @@ class RiskFusionEngine:
                 alarm_level=AlarmLevel.NORMAL,
                 reasons=reasons,
                 gating=gating,
+                red_zone=red_zone,
             )
 
-        if gating is not None and gating.should_trigger:
-            reasons.append(f"Gating trigger: {gating.reason}")
-
-        if dist is not None:
-            if dist < self.dist_critical_px:
-                reasons.append(f"Spatial distance ({dist:.1f}px) within critical buffer ({self.dist_critical_px}px)")
-            elif dist < self.dist_warning_px:
-                reasons.append(f"Spatial distance ({dist:.1f}px) within warning buffer ({self.dist_warning_px}px)")
-        # OmniJev System 1 Decision Probes
+        # ---------------------------------------------------------
+        # Layer 3: Cognitive Probe Fusion & Context Attribution
+        # ---------------------------------------------------------
         if probes is not None:
-            # Check collision probability
+            # Probe A: Calibrated Collision Risk
             if probes.collision_risk >= self.collision_prob_critical:
-                alarm_level = AlarmLevel.CRITICAL
+                candidate_level = AlarmLevel.CRITICAL
                 reasons.append(
-                    f"OmniJev P(collision) = {probes.collision_risk:.2f} >= {self.collision_prob_critical:.2f}"
+                    f"OmniJev P(collision) = {probes.collision_risk:.2f} >= {self.collision_prob_critical:.2f} (高危轨迹)"
                 )
             elif probes.collision_risk >= self.collision_prob_warning:
-                alarm_level = max(alarm_level, AlarmLevel.WARNING, key=lambda x: [AlarmLevel.NORMAL, AlarmLevel.WARNING, AlarmLevel.CRITICAL].index(x))
+                if candidate_level == AlarmLevel.NORMAL:
+                    candidate_level = AlarmLevel.WARNING
                 reasons.append(
                     f"OmniJev P(collision) = {probes.collision_risk:.2f} >= {self.collision_prob_warning:.2f}"
                 )
 
-            # Check threat score
+            # Probe B: Hazard Threat Score
             if probes.threat_score >= self.threat_score_critical:
-                alarm_level = AlarmLevel.CRITICAL
-                reasons.append(f"Hazard threat score = {probes.threat_score:.2f} >= {self.threat_score_critical:.2f}")
+                candidate_level = AlarmLevel.CRITICAL
+                reasons.append(
+                    f"Hazard threat score = {probes.threat_score:.2f} >= {self.threat_score_critical:.2f}"
+                )
 
-            # Check worker attention
-            unaware = probes.worker_awareness.get("unaware/distracted", 0.0)
-            if unaware > 0.65 and alarm_level != AlarmLevel.NORMAL:
-                reasons.append(f"High worker distraction probability: {unaware:.2f}")
+            # Probe C: Worker Attention / Awareness Context
+            unaware = probes.worker_awareness.get(
+                "unaware", probes.worker_awareness.get("unaware/distracted", 0.0)
+            )
+            yielding = probes.worker_awareness.get("yielding", 0.0)
+
+            if unaware >= 0.50:
+                if candidate_level != AlarmLevel.NORMAL:
+                    reasons.append(f"【盲区背对/分心】工人注意力缺失 P(unaware) = {unaware:.2f}")
+            elif yielding >= 0.50:
+                reasons.append(f"【工人注视避让】工人面向叉车注意观察 P(yielding) = {yielding:.2f}")
         else:
-            # Fallback to pure geometric distance if probes unavailable
-            if dist is not None:
+            # Fallback to spatial geometric distance when probes unavailable
+            dist = (
+                gating.min_dynamic_distance_px
+                if (gating and gating.min_dynamic_distance_px is not None)
+                else perception.min_distance_px
+            )
+            if dist is not None and not is_physically_breached:
                 if dist < self.dist_critical_px:
-                    alarm_level = AlarmLevel.CRITICAL
+                    candidate_level = AlarmLevel.CRITICAL
+                    reasons.append(f"几何距离 ({dist:.1f}px) < 紧急阈值 ({self.dist_critical_px:.1f}px)")
                 elif dist < self.dist_warning_px:
-                    alarm_level = AlarmLevel.WARNING
+                    if candidate_level == AlarmLevel.NORMAL:
+                        candidate_level = AlarmLevel.WARNING
+                    reasons.append(f"几何距离 ({dist:.1f}px) < 预警阈值 ({self.dist_warning_px:.1f}px)")
+
+        # ---------------------------------------------------------
+        # Layer 4: Temporal Hysteresis Smoothing
+        # ---------------------------------------------------------
+        final_level = self._apply_hysteresis(candidate_level, frame_id)
 
         return FrameDecision(
             frame_id=frame_id,
             timestamp=timestamp,
             perception=perception,
             probes=probes,
-            alarm_level=alarm_level,
+            alarm_level=final_level,
             reasons=reasons,
             gating=gating,
+            red_zone=red_zone,
         )
+
+    def _apply_hysteresis(self, candidate: AlarmLevel, frame_id: int) -> AlarmLevel:
+        """Smooths alarm transitions to eliminate single-frame visual jitter."""
+        if frame_id == 0 or self._last_alarm_level is None:
+            self._last_alarm_level = candidate
+            return candidate
+
+        if candidate == AlarmLevel.CRITICAL:
+            self._consecutive_critical += 1
+            self._consecutive_warning = 0
+            self._consecutive_safe = 0
+            if self._consecutive_critical >= self.hysteresis_trigger_frames:
+                self._last_alarm_level = AlarmLevel.CRITICAL
+                return AlarmLevel.CRITICAL
+            return self._last_alarm_level
+
+        if candidate == AlarmLevel.WARNING:
+            self._consecutive_warning += 1
+            self._consecutive_critical = 0
+            self._consecutive_safe = 0
+            if self._last_alarm_level == AlarmLevel.CRITICAL:
+                # Stepping down from CRITICAL requires release frames
+                if self._consecutive_warning >= self.hysteresis_release_frames:
+                    self._last_alarm_level = AlarmLevel.WARNING
+                    return AlarmLevel.WARNING
+                return AlarmLevel.CRITICAL
+            else:
+                self._last_alarm_level = AlarmLevel.WARNING
+                return AlarmLevel.WARNING
+
+        # Candidate is NORMAL
+        self._consecutive_safe += 1
+        self._consecutive_critical = 0
+        self._consecutive_warning = 0
+        if self._last_alarm_level != AlarmLevel.NORMAL:
+            if self._consecutive_safe >= self.hysteresis_release_frames:
+                self._last_alarm_level = AlarmLevel.NORMAL
+                return AlarmLevel.NORMAL
+            return self._last_alarm_level
+
+        self._last_alarm_level = AlarmLevel.NORMAL
+        return AlarmLevel.NORMAL

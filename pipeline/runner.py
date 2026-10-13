@@ -91,6 +91,9 @@ def run_pipeline(
         f_cnt = len(decision.perception.forklifts)
         dist_str = f"{decision.perception.min_distance_px:.1f}px" if decision.perception.min_distance_px else "N/A"
 
+        rz = decision.red_zone
+        rz_str = f"RedZone: {rz.state.value}({rz.min_dist_px:+.1f}px/{rz.min_dist_m:+.2f}m)" if rz and rz.min_dist_px != float("inf") else "RedZone: SAFE"
+
         probe_str = "Gated (Skip OmniJev)"
         if gate_decision and not gate_decision.should_trigger:
             probe_str = f"Gate [SHUT]: {gate_decision.reason[:36]}"
@@ -101,7 +104,7 @@ def run_pipeline(
             probe_str = "Gate [OPEN] -> Probes Unavailable (Timeout/Mock)"
 
         print(
-            f"Frame #{frame_id:04d} | {status_color} | Ped: {p_cnt} | Forklift: {f_cnt} | Dist: {dist_str:>7} | {probe_str}"
+            f"Frame #{frame_id:04d} | {status_color} | {rz_str} | Ped: {p_cnt} | Forklift: {f_cnt} | Dist: {dist_str:>7} | {probe_str}"
         )
         processed_frames += 1
         if max_frames > 0 and processed_frames >= max_frames:
