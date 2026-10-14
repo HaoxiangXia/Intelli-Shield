@@ -2,69 +2,148 @@
   <div class="trend-page">
     <main class="main-content-inner">
 
-      <!-- 统计磁贴 -->
+      <header class="page-header">
+        <div>
+          <h1>险情下降趋势</h1>
+          <div class="subtitle">
+            Hazard Trend · {{ summary.deployMonth }} 系统接入前后对照
+          </div>
+        </div>
+        <span class="mock-badge" title="本页面数值为答辩演示用模拟数据，非生产环境实测结果">
+          演示数据 MOCK
+        </span>
+      </header>
+
+      <!-- 前后对比磁贴 -->
       <div class="stats-cards">
-        <div class="card">
-          <div class="card-icon-wrap peak">
-            <TrendingUp :size="18" />
+        <div class="stat-card">
+          <div class="stat-head">
+            <TrendingDown :size="15" class="stat-icon drop" />
+            <span class="stat-title">月均险情上报量</span>
           </div>
-          <div class="card-info">
-            <div class="title">今日报警高峰</div>
-            <div class="value" ref="peak">0</div>
+          <div class="stat-value">
+            {{ summary.preAvgTotal }}
+            <span class="arrow">→</span>
+            {{ summary.postAvgTotal }}
           </div>
+          <div class="stat-delta down">▼ {{ summary.totalDropPct }}%</div>
         </div>
-        <div class="card">
-          <div class="card-icon-wrap total">
-            <AlertTriangle :size="18" />
+
+        <div class="stat-card">
+          <div class="stat-head">
+            <ShieldCheck :size="15" class="stat-icon ok" />
+            <span class="stat-title">误报率</span>
           </div>
-          <div class="card-info">
-            <div class="title">累计报警总数</div>
-            <div class="value" ref="total">0</div>
+          <div class="stat-value">
+            {{ summary.preAvgFalseRate }}%
+            <span class="arrow">→</span>
+            {{ summary.postAvgFalseRate }}%
           </div>
+          <div class="stat-delta down">▼ {{ summary.falseRateDropPp }} pp</div>
         </div>
-        <div class="card">
-          <div class="card-icon-wrap pending">
-            <Clock :size="18" />
+
+        <div class="stat-card">
+          <div class="stat-head">
+            <ShieldAlert :size="15" class="stat-icon warn" />
+            <span class="stat-title">真实险情 (复核确认)</span>
           </div>
-          <div class="card-info">
-            <div class="title">待处理项</div>
-            <div class="value" ref="pending">0</div>
+          <div class="stat-value">
+            {{ summary.preAvgReal }}
+            <span class="arrow">→</span>
+            {{ summary.postAvgReal }}
           </div>
+          <div class="stat-delta down">▼ {{ summary.realDropPct }}%</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-head">
+            <Target :size="15" class="stat-icon cyan" />
+            <span class="stat-title">每起险情伴随误报</span>
+          </div>
+          <div class="stat-value">
+            {{ summary.falsePerReal.pre }}
+            <span class="arrow">→</span>
+            {{ summary.falsePerReal.post }}
+          </div>
+          <div class="stat-delta neutral">信噪比改善</div>
         </div>
       </div>
 
+      <!-- 趋势图 -->
       <div class="card glass trend-card">
-
-        <!-- Header -->
         <div class="card-header">
-          <h3 class="card-title">报警趋势分析</h3>
-          <span class="card-meta">{{ rangeText }}</span>
-        </div>
-
-        <!-- 控制区 -->
-        <div class="controls">
+          <h3 class="card-title">{{ chartTitle }}</h3>
           <div class="tabs">
             <button
               v-for="r in ranges"
               :key="r.value"
               :class="{ active: range === r.value }"
-              @click="changeRange(r.value)"
+              @click="range = r.value"
             >
               {{ r.label }}
             </button>
           </div>
         </div>
 
-        <!-- 图表 -->
+        <div class="legend-note">
+          <span class="legend-tag pre">系统接入前</span>
+          <span>人工巡检 + 事后追溯，险情靠人眼发现</span>
+          <span class="legend-sep"></span>
+          <span class="legend-tag post">系统接入后</span>
+          <span>红光禁区 + YOLO 感知 + OneJev 认知探针三层仲裁，险情持续下降</span>
+        </div>
+
         <div class="chart-panel glass-inner">
           <LineChart
             :series="chartSeries"
             :labels="chartLabels"
-            :height="'360px'"
+            :height="'380px'"
+            :showLegend="false"
+            :enableDataZoom="false"
             :options="chartOptions"
           />
         </div>
+      </div>
 
+      <!-- 季度汇总表 -->
+      <div class="card glass quarter-card">
+        <div class="card-header">
+          <h3 class="card-title">季度汇总</h3>
+          <span class="card-meta">由月度数据聚合推导</span>
+        </div>
+        <div class="table-wrap">
+          <table class="quarter-table">
+            <thead>
+              <tr>
+                <th>季度</th>
+                <th>月均险情</th>
+                <th>险情总数</th>
+                <th>真实险情</th>
+                <th>误报</th>
+                <th>误报率</th>
+                <th>阶段</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="q in quarterlyRows" :key="q.quarter">
+                <td class="mono">{{ q.quarter }}</td>
+                <td class="mono">{{ q.avgMonthly }}</td>
+                <td class="mono">{{ q.total }}</td>
+                <td class="mono ok">{{ q.real }}</td>
+                <td class="mono danger">{{ q.false }}</td>
+                <td class="mono">
+                  <span class="fp-bar">
+                    <i :style="{ width: `${q.falseRate}%` }"></i>
+                  </span>
+                  {{ q.falseRate }}%
+                </td>
+                <td>
+                  <span class="stage-tag" :class="stageOf(q.quarter)">{{ stageLabel(q.quarter) }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </main>
@@ -72,281 +151,361 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
-import { TrendingUp, AlertTriangle, Clock } from 'lucide-vue-next'
-import api from '../lib/api'
+import { ref, computed } from 'vue'
+import { TrendingDown, ShieldCheck, ShieldAlert, Target } from 'lucide-vue-next'
 import LineChart from '../components/LineChart.vue'
+import {
+  summary,
+  monthlyRows,
+  quarterlyRows
+} from '../data/trendData'
 
-const range = ref('day')
-
-const chartLabels = ref([])
-const chartSeries = ref([])
-
-// 三台叉车
-const devices = ['FORK-001', 'FORK-002', 'FORK-003']
+const range = ref('month')
 
 const ranges = [
-  { label: '日', value: 'day' },
-  { label: '周', value: 'week' },
-  { label: '月', value: 'month' }
+  { label: '月度', value: 'month' },
+  { label: '季度', value: 'quarter' }
 ]
 
-const rangeText = computed(() => ranges.find(r => r.value === range.value)?.label)
-
-// 统计数字 DOM 引用
-const peak = ref(null)
-const total = ref(null)
-const pending = ref(null)
-
-// ECharts dataZoom 配置
-const chartOptions = {
-  dataZoom: [
-    {
-      type: 'slider',
-      show: true,
-      height: 20,
-      handleSize: 16,
-      handleStyle: {
-        color: '#888',
-        borderWidth: 1,
-        borderColor: '#aaa',
-        borderRadius: 8
-      },
-      bottom: 10,
-      start: 80,
-      end: 100,
-      showDetail: false
-    },
-    {
-      type: 'inside',
-      start: 80,
-      end: 100,
-      zoomLock: false
-    }
-  ]
+const COLOR = {
+  total: '#dc2626'
 }
 
-// 获取数据
-async function fetchData() {
-  try {
-    const res = await api.get('/api/trend', {
-      params: { type: range.value }
-    })
+const chartTitle = computed(() =>
+  range.value === 'month' ? '月度险情趋势' : '季度险情趋势'
+)
 
-    const data = res.data || {}
+const chartLabels = computed(() =>
+  range.value === 'month'
+    ? monthlyRows.map(r => r.month.slice(2))
+    : quarterlyRows.map(q => q.quarter)
+)
 
-    // X轴
-    chartLabels.value = data.labels || []
+const rows = computed(() => (range.value === 'month' ? monthlyRows : quarterlyRows))
 
-    // 三台车折线 + 不同颜色
-    chartSeries.value = [
-      { name: 'FORK-001', data: data.fork1 || [], color: '#3b82f6', smooth: true },
-      { name: 'FORK-002', data: data.fork2 || [], color: '#10b981', smooth: true },
-      { name: 'FORK-003', data: data.fork3 || [], color: '#f43f5e', smooth: true } // 红色
-    ]
+// 月度视图在接入月画分界线; 季度视图按阶段整段染色
+const markLine = computed(() =>
+  range.value === 'month' ? [{ xAxis: summary.deployMonth.slice(2) }] : []
+)
 
-    // 更新统计磁贴
-    await nextTick()
-    updateStats()
+const markLineLabel = computed(() =>
+  range.value === 'month'
+    ? {
+        show: true,
+        formatter: `系统接入 · 险情下降 ${summary.totalDropPct}%`,
+        position: 'insideEndBottom',
+        rotate: 0,
+        distance: [0, 6],
+        color: '#0f172a',
+        fontSize: 11,
+        fontWeight: 700,
+        backgroundColor: 'rgba(2,132,199,0.14)',
+        padding: [4, 7],
+        borderRadius: 3
+      }
+    : undefined
+)
 
-  } catch (e) {
-    console.error('趋势数据加载失败', e)
+// 主趋势: 险情总量单线, 视觉上只保留一条, 保证"整体下降"一眼可读。
+// 真实/误报的拆分放在下方季度表里, 不再叠到图上互相干扰。
+const chartSeries = computed(() => {
+  const total = {
+    name: '险情数量',
+    data: rows.value.map(r => r.total),
+    color: COLOR.total,
+    lineWidth: 4,
+    emphasisWidth: 6
   }
+
+  if (range.value === 'month') {
+    return [{ ...total, markLine: markLine.value, markLineLabel: markLineLabel.value }]
+  }
+
+  return [{ ...total, type: 'bar', area: false, barMaxWidth: 64 }]
+})
+
+const chartOptions = computed(() => ({
+  dataZoom: [],
+  grid: { left: 52, right: 24, top: 40, bottom: 32 },
+  yAxis: {
+    name: '险情笔数',
+    nameTextStyle: { color: '#64748b', fontSize: 10, align: 'left' },
+    nameGap: 12
+  }
+}))
+
+// 季度所属阶段: 2026Q1 含接入月(03), 计入"接入后"
+function stageOf(quarter) {
+  const [y, q] = quarter.split('Q')
+  const key = `${y}-${String((Number(q) - 1) * 3 + 1).padStart(2, '0')}`
+  return key >= summary.deployMonth ? 'stage-post' : 'stage-pre'
 }
 
-// 更新统计磁贴数字
-function updateStats() {
-  const allData = chartSeries.value.flatMap(s => s.data)
-  const maxVal = Math.max(...allData)
-  const sumVal = allData.reduce((acc, v) => acc + v, 0)
-  const pendingVal = Math.floor(sumVal * 0.3) // 模拟待处理项
-
-  if (peak.value) peak.value.innerText = maxVal
-  if (total.value) total.value.innerText = sumVal
-  if (pending.value) pending.value.innerText = pendingVal
+function stageLabel(quarter) {
+  return stageOf(quarter) === 'stage-post' ? '接入后' : '接入前'
 }
-
-function changeRange(r) {
-  range.value = r
-  fetchData()
-}
-
-onMounted(fetchData)
 </script>
 
 <style scoped>
 .trend-page {
-  min-height: 100vh;
+  height: 100%;
+  overflow-y: auto;
 }
 
-/* 自定义布局容器 */
 .main-content-inner {
-  padding: 28px 32px;
+  padding: 20px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.mock-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--safety-amber);
+  border: 1px dashed var(--safety-amber);
+  background: var(--safety-amber-dim);
+  padding: 3px 8px;
+  letter-spacing: 0.04em;
+}
+
+/* ── 磁贴 ───────────────────────────────────────────────────────────── */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-machined);
+  padding: 13px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.stat-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-icon.drop { color: var(--emergency-red); }
+.stat-icon.ok { color: var(--nominal-green); }
+.stat-icon.warn { color: var(--safety-amber); }
+.stat-icon.cyan { color: var(--telemetry-cyan); }
+
+.stat-title {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.stat-value .arrow {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 3px;
+}
+
+.stat-delta {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.stat-delta.down { color: var(--nominal-green); }
+.stat-delta.neutral { color: var(--telemetry-cyan); }
+
+/* ── 卡片 ───────────────────────────────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow:
-    0 8px 32px rgba(30, 64, 175, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-machined);
 }
 
 .glass-inner {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.12)),
-    rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 10px 24px rgba(30, 64, 175, 0.05);
+  background: var(--bg-panel-subtle);
+  border: 1px solid var(--border-machined);
 }
 
-/* 统计磁贴 */
-.stats-cards {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.stats-cards .card {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: transform 0.2s;
-  border: 1px solid rgba(255, 255, 255, 0.26);
-  box-shadow:
-    0 8px 24px rgba(140, 120, 180, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.card-icon-wrap {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.card-icon-wrap.peak {
-  background: rgba(2, 132, 199, 0.12);
-  color: #0284c7;
-}
-
-.card-icon-wrap.total {
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
-}
-
-.card-icon-wrap.pending {
-  background: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
-}
-
-.card-info {
-  text-align: left;
-}
-
-.stats-cards .card:hover {
-  transform: translateY(-4px);
-}
-
-.stats-cards .title {
-  font-size: 13px;
-  color: var(--text-secondary, #475569);
-  margin-bottom: 4px;
-}
-.stats-cards .value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ff4d4f; /* 告警红 */
-}
-
-/* 卡片 */
-.trend-card {
-  padding: 20px;
-  animation: fade-in 0.6s ease;
-  border-radius: 24px;
-}
-
-.trend-card:hover {
-  box-shadow:
-    0 16px 48px rgba(140, 120, 180, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+.trend-card,
+.quarter-card {
+  padding: 16px 18px;
 }
 
 .card-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .card-title {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 600;
-  color: #3a3550;
-  letter-spacing: 0.01em;
+  color: var(--text-main);
 }
 
 .card-meta {
-  font-size: 11px;
-  color: #8a8aa8;
-  background: rgba(255, 255, 255, 0.25);
-  padding: 4px 10px;
-  border-radius: 999px;
-  backdrop-filter: blur(4px);
+  font-size: 10px;
+  color: var(--text-muted);
+  background: var(--bg-panel-subtle);
+  border: 1px solid var(--border-machined);
+  padding: 3px 9px;
 }
 
-/* 控制区 */
-.controls {
+.tabs {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
+  gap: 4px;
 }
 
-/* tabs */
 .tabs button {
-  margin-left: 10px;
-  padding: 6px 12px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255,255,255,0.2);
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border-machined);
+  background: transparent;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s;
-  color: #5c5678;
+  transition: all 0.15s;
 }
 
 .tabs button:hover {
-  background: rgba(255,255,255,0.35);
+  border-color: var(--border-bright);
 }
 
 .tabs button.active {
-  background: rgba(184,169,232,0.45);
-  color: #3a3550;
+  background: var(--telemetry-cyan);
+  border-color: var(--telemetry-cyan);
+  color: #fff;
+}
+
+.legend-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.legend-tag {
+  font-weight: 700;
+  padding: 2px 7px;
+  border: 1px solid currentColor;
+  font-size: 10px;
+}
+
+.legend-tag.pre {
+  color: var(--text-muted);
+}
+
+.legend-tag.post {
+  color: var(--telemetry-cyan);
+}
+
+.legend-sep {
+  width: 1px;
+  height: 12px;
+  background: var(--border-machined);
+  margin: 0 4px;
 }
 
 .chart-panel {
-  border-radius: 22px;
-  padding: 18px 18px 10px;
-  min-height: 400px;
+  padding: 10px;
 }
+
+/* ── 季度表 ─────────────────────────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.quarter-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.quarter-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border-machined);
+  white-space: nowrap;
+}
+
+.quarter-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-machined);
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.quarter-table tbody tr:hover td {
+  background: var(--bg-panel-subtle);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.mono.ok { color: var(--nominal-green); font-weight: 600; }
+.mono.danger { color: var(--safety-amber); font-weight: 600; }
+
+.fp-bar {
+  display: inline-block;
+  width: 44px;
+  height: 6px;
+  background: var(--bg-panel-subtle);
+  border: 1px solid var(--border-machined);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.fp-bar i {
+  display: block;
+  height: 100%;
+  background: var(--safety-amber);
+}
+
+.stage-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border: 1px solid currentColor;
+}
+
+.stage-tag.stage-pre { color: var(--text-muted); }
+.stage-tag.stage-post { color: var(--telemetry-cyan); }
 </style>
