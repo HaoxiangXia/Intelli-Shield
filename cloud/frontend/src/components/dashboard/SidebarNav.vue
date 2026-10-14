@@ -23,18 +23,16 @@
 <script setup>
 import {
   LayoutDashboard,
-  TrendingUp,
   ClipboardList,
-  Cpu,
-  ScrollText
+  TrendingUp,
+  Video
 } from 'lucide-vue-next'
 
 const menuItems = [
   { name: '态势总览', icon: LayoutDashboard, path: '/' },
-  { name: '趋势分析', icon: TrendingUp, path: '/trend' },
   { name: '隐患台账', icon: ClipboardList, path: '/history' },
-  { name: '设备集群', icon: Cpu, path: '/devices' },
-  { name: '运行日志', icon: ScrollText, path: '/logs' }
+  { name: '趋势分析', icon: TrendingUp, path: '/trend' },
+  { name: '视频感知阵列', icon: Video, path: '/devices' }
 ]
 </script>
 
