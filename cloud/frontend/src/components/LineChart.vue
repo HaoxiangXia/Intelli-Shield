@@ -131,10 +131,13 @@ function renderChart() {
   chartInstance.setOption({
     ...baseOption,
     ...props.options,
-    grid: {
-      ...baseOption.grid,
-      ...(props.options?.grid || {}),
-    },
+    // 轴配置与 grid 一样做合并, 否则调用方传 options 时会把 type/data 全冲掉
+    grid: { ...baseOption.grid, ...(props.options?.grid || {}) },
+    xAxis: { ...baseOption.xAxis, ...(props.options?.xAxis || {}) },
+    yAxis: { ...baseOption.yAxis, ...(props.options?.yAxis || {}) },
+    legend: props.options?.legend
+      ? { ...baseOption.legend, ...props.options.legend }
+      : baseOption.legend,
   })
 }
 
