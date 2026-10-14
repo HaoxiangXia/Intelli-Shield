@@ -8,7 +8,10 @@
         </div>
 
         <div class="controls">
-          <button @click="fetchHistory">刷新</button>
+          <button @click="fetchHistory" class="refresh-btn">
+            <RefreshCw :size="13" class="btn-icon" />
+            <span>刷新</span>
+          </button>
         </div>
 
         <div class="table-wrap">
@@ -38,7 +41,8 @@
                     type="button"
                     @click="showPhoto(item)"
                   >
-                    查看照片
+                    <Image :size="13" class="btn-icon" />
+                    <span>查看照片</span>
                   </button>
                   <span v-else class="no-photo">无照片</span>
                 </td>
@@ -53,7 +57,9 @@
       <div class="modal-content glass image-modal-content">
         <div class="modal-header">
           <h3>报警照片 - {{ selectedHistory?.device_id || '-' }}</h3>
-          <button @click="showImageModal = false" class="modal-close" aria-label="关闭">×</button>
+          <button @click="showImageModal = false" class="modal-close" aria-label="关闭">
+            <X :size="16" />
+          </button>
         </div>
         <div class="modal-body">
           <img
@@ -77,6 +83,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { RefreshCw, Image, X } from 'lucide-vue-next'
 import api from '../lib/api'
 
 const historyData = ref([])
@@ -168,7 +175,8 @@ onMounted(fetchHistory)
   flex-shrink: 0;
 }
 
-.controls button {
+.controls button,
+.refresh-btn {
   padding: 6px 12px;
   border-radius: 10px;
   border: none;
@@ -176,8 +184,10 @@ onMounted(fetchHistory)
   color: #3a3550;
   cursor: pointer;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-
 .controls button:hover {
   background: rgba(184,169,232,0.35);
 }
@@ -260,8 +270,14 @@ onMounted(fetchHistory)
   color: #9f1f1f;
   font-weight: 600;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
+.btn-icon {
+  flex-shrink: 0;
+}
 .view-btn:hover {
   background: rgba(240, 160, 160, 0.34);
 }
@@ -318,11 +334,12 @@ onMounted(fetchHistory)
   border: none;
   border-radius: 50%;
   background: rgba(255,255,255,0.5);
-  font-size: 20px;
   color: #5c5678;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .modal-body {
   display: flex;
   flex-direction: column;

@@ -35,7 +35,10 @@
             <option value="未知">未知</option>
           </select>
           <input v-model="filterDevice" class="filter-control" type="text" placeholder="设备ID搜索" />
-          <button @click="resetFilters" class="filter-action" type="button">重置筛选</button>
+          <button @click="resetFilters" class="filter-action" type="button">
+            <RotateCcw :size="13" class="btn-icon" />
+            <span>重置筛选</span>
+          </button>
         </div>
 
         <div class="table-wrap">
@@ -78,7 +81,8 @@
                 <td class="time-col">{{ dev.last_seen || '-' }}</td>
                 <td>
                   <button v-if="dev.alarm_status === 1" @click.stop="showDeviceImages(dev.device_id)" class="img-btn">
-                    查看
+                    <Image :size="13" class="btn-icon" />
+                    <span>查看</span>
                   </button>
                   <span v-else>-</span>
                 </td>
@@ -94,7 +98,9 @@
       <div class="modal-content glass">
         <div class="modal-header">
           <h3>设备详情 - {{ selectedDeviceId }}</h3>
-          <button @click="showDeviceModal = false" class="modal-close" aria-label="关闭">×</button>
+          <button @click="showDeviceModal = false" class="modal-close" aria-label="关闭">
+            <X :size="16" />
+          </button>
         </div>
         <div class="modal-body">
           <div v-if="loadingDeviceDetail" class="empty-state">加载中...</div>
@@ -137,7 +143,9 @@
       <div class="modal-content glass">
         <div class="modal-header">
           <h3>报警图片 - {{ selectedDeviceId }}</h3>
-          <button @click="showImageModal = false" class="modal-close" aria-label="关闭">×</button>
+          <button @click="showImageModal = false" class="modal-close" aria-label="关闭">
+            <X :size="16" />
+          </button>
         </div>
         <div class="modal-body">
           <div v-if="loadingImages" class="empty-state">加载中...</div>
@@ -155,6 +163,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { RotateCcw, Image, X } from 'lucide-vue-next'
 import { io } from 'socket.io-client'
 import api from '../lib/api'
 import { getAuthToken } from '../lib/auth'
@@ -557,6 +566,9 @@ onMounted(() => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .filter-action:hover {
@@ -661,6 +673,10 @@ onMounted(() => {
   transform: translateY(-1px);
 }
 
+
+.btn-icon {
+  flex-shrink: 0;
+}
 .empty-state {
   text-align: center;
   padding: 36px 16px;

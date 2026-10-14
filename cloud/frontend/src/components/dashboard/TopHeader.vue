@@ -10,6 +10,7 @@
 
     <div class="system-meta-section">
       <div class="system-clock">
+        <Clock :size="13" class="clock-icon" />
         <span class="clock-time">{{ systemTime }}</span>
       </div>
     </div>
@@ -18,6 +19,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { Clock } from 'lucide-vue-next'
 
 const systemTime = ref('')
 let timer = null
@@ -107,6 +109,10 @@ onUnmounted(() => {
   color: var(--text-secondary);
 }
 
+.clock-icon {
+  color: var(--telemetry-cyan);
+  flex-shrink: 0;
+}
 .clock-time {
   color: var(--text-main);
   font-weight: 600;

@@ -56,7 +56,7 @@ const menuItems = [
     </svg>`
   },
   {
-    path: '/trend',   // ✅ 新增（就这一块）
+    path: '/trend',
     label: '趋势分析',
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="3 17 9 11 13 15 21 7"/>

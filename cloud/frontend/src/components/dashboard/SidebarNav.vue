@@ -8,7 +8,7 @@
         class="nav-item"
         active-class="active"
       >
-        <span class="nav-code">{{ item.code }}</span>
+        <component :is="item.icon" :size="15" class="nav-icon" />
         <span class="nav-text-cn">{{ item.name }}</span>
       </router-link>
     </div>
@@ -21,12 +21,20 @@
 </template>
 
 <script setup>
+import {
+  LayoutDashboard,
+  TrendingUp,
+  ClipboardList,
+  Cpu,
+  ScrollText
+} from 'lucide-vue-next'
+
 const menuItems = [
-  { name: '态势总览', code: '01', path: '/' },
-  { name: '趋势分析', code: '02', path: '/trend' },
-  { name: '隐患台账', code: '03', path: '/history' },
-  { name: '设备集群', code: '04', path: '/devices' },
-  { name: '运行日志', code: '05', path: '/logs' }
+  { name: '态势总览', icon: LayoutDashboard, path: '/' },
+  { name: '趋势分析', icon: TrendingUp, path: '/trend' },
+  { name: '隐患台账', icon: ClipboardList, path: '/history' },
+  { name: '设备集群', icon: Cpu, path: '/devices' },
+  { name: '运行日志', icon: ScrollText, path: '/logs' }
 ]
 </script>
 
@@ -62,11 +70,10 @@ const menuItems = [
   background: transparent;
 }
 
-.nav-code {
-  font-family: var(--font-mono);
-  font-size: 11px;
+.nav-icon {
+  flex-shrink: 0;
   color: var(--text-muted);
-  width: 16px;
+  transition: color 0.15s ease;
 }
 
 .nav-text-cn {
@@ -88,7 +95,7 @@ const menuItems = [
   color: var(--telemetry-cyan);
   font-weight: 700;
 }
-.nav-item.active .nav-code {
+.nav-item.active .nav-icon {
   color: var(--telemetry-cyan);
 }
 

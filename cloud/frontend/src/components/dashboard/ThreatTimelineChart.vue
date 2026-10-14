@@ -3,15 +3,30 @@
     <div class="threat-header">
       <span class="threat-title">时序危险走势与三向红光空间防御通道 (30秒连续序列)</span>
       <div class="keyframe-dots">
-        <span class="kf-badge">#0025 🛡️ 红光外安全</span>
-        <span class="kf-arrow">➔</span>
-        <span class="kf-badge">#0068 ⚠️ 0~0.3m缓冲带</span>
-        <span class="kf-arrow">➔</span>
-        <span class="kf-badge kf-danger">#0200 🚨 越过红线侵入</span>
-        <span class="kf-arrow">➔</span>
-        <span class="kf-badge kf-danger">#0575 ⚡ 红区高危交汇</span>
-        <span class="kf-arrow">➔</span>
-        <span class="kf-badge">#0700 🛡️ 驶离红线复位</span>
+        <span class="kf-badge">
+          <ShieldCheck :size="11" class="kf-icon safe" />
+          <span>#0025 红光外安全</span>
+        </span>
+        <ChevronRight :size="10" class="kf-arrow" />
+        <span class="kf-badge">
+          <AlertCircle :size="11" class="kf-icon warn" />
+          <span>#0068 0~0.3m缓冲带</span>
+        </span>
+        <ChevronRight :size="10" class="kf-arrow" />
+        <span class="kf-badge kf-danger">
+          <AlertTriangle :size="11" class="kf-icon danger" />
+          <span>#0200 越过红线侵入</span>
+        </span>
+        <ChevronRight :size="10" class="kf-arrow" />
+        <span class="kf-badge kf-danger">
+          <Zap :size="11" class="kf-icon danger" />
+          <span>#0575 红区高危交汇</span>
+        </span>
+        <ChevronRight :size="10" class="kf-arrow" />
+        <span class="kf-badge">
+          <Shield :size="11" class="kf-icon safe" />
+          <span>#0700 驶离红线复位</span>
+        </span>
       </div>
     </div>
     
@@ -51,33 +66,33 @@
           </g>
 
           <!-- ================= 方案 4: 时空门控活动区间条 (Gate Activity Ribbon) ================= -->
-          <!-- 门控活动通道底槽 -->
-          <rect x="52" y="60" width="544" height="15" fill="#f1f5f9" stroke="#cbd5e1" rx="2" />
+          <!-- 门控活动通道底槽 (与上方风险曲线共用 0~600 时间轴) -->
+          <rect x="0" y="60" width="600" height="15" fill="#f1f5f9" stroke="#cbd5e1" rx="2" />
 
           <!-- 区间 1: 0s ~ 2.4s 红光外安全 -->
-          <rect x="54" y="62" width="44" height="11" fill="rgba(16, 185, 129, 0.14)" stroke="rgba(16, 185, 129, 0.35)" rx="2" />
-          <text x="76" y="70.5" fill="#047857" font-size="6.8" font-family="'PingFang SC', sans-serif" font-weight="600" text-anchor="middle">
+          <rect x="2.2" y="62" width="48.7" height="11" fill="rgba(16, 185, 129, 0.14)" stroke="rgba(16, 185, 129, 0.35)" rx="2" />
+          <text x="26.6" y="70.5" fill="#047857" font-size="6.8" font-family="'PingFang SC', sans-serif" font-weight="600" text-anchor="middle">
             安全区
           </text>
 
           <!-- 区间 2: 2.4s ~ 3.5s 0~0.3m 缓冲预警 -->
-          <rect x="100" y="62" width="24" height="11" fill="rgba(245, 158, 11, 0.22)" stroke="#d97706" rx="2" />
-          <text x="112" y="70.5" fill="#b45309" font-size="6.5" font-family="'PingFang SC', sans-serif" font-weight="700" text-anchor="middle">
+          <rect x="53.1" y="62" width="26.6" height="11" fill="rgba(245, 158, 11, 0.22)" stroke="#d97706" rx="2" />
+          <text x="66.4" y="70.5" fill="#b45309" font-size="6.5" font-family="'PingFang SC', sans-serif" font-weight="700" text-anchor="middle">
             0.3m
           </text>
 
           <!-- 区间 3: 3.6s ~ 23.2s 红光禁区侵入 (<0m 一票否决 + OneJev 协同) -->
-          <rect x="126" y="61.5" width="356" height="12" fill="rgba(220, 38, 38, 0.22)" stroke="#dc2626" stroke-width="1.2" rx="2">
+          <rect x="81.9" y="61.5" width="394.1" height="12" fill="rgba(220, 38, 38, 0.22)" stroke="#dc2626" stroke-width="1.2" rx="2">
             <animate attributeName="opacity" values="0.75;1;0.75" dur="1.2s" repeatCount="indefinite" />
           </rect>
-          <text x="304" y="70.5" fill="#991b1b" font-size="8" font-family="'PingFang SC', sans-serif" font-weight="700" text-anchor="middle">
-            🚨 侵入三向红光安全线 (&lt;0m 一票否决 CRITICAL + 唤醒 OneJev 107ms)
+          <text x="279" y="70.5" fill="#991b1b" font-size="8" font-family="'PingFang SC', sans-serif" font-weight="700" text-anchor="middle">
+            [一票否决] 侵入三向红光安全线 (&lt;0m 一票否决 CRITICAL + 唤醒 OneJev 107ms)
           </text>
 
           <!-- 区间 4: 23.5s ~ 30s 驶离红线复位 -->
-          <rect x="484" y="62" width="110" height="11" fill="rgba(16, 185, 129, 0.14)" stroke="rgba(16, 185, 129, 0.35)" rx="2" />
-          <text x="539" y="70.5" fill="#047857" font-size="7" font-family="'PingFang SC', sans-serif" font-weight="600" text-anchor="middle">
-            🛡️ 驶离红线复位 (&gt;0.3m)
+          <rect x="478.2" y="62" width="121.8" height="11" fill="rgba(16, 185, 129, 0.14)" stroke="rgba(16, 185, 129, 0.35)" rx="2" />
+          <text x="539.1" y="70.5" fill="#047857" font-size="7" font-family="'PingFang SC', sans-serif" font-weight="600" text-anchor="middle">
+            [复位安全] 驶离红线复位 (&gt;0.3m)
           </text>
           <!-- 动态播放指示针 (随着视频播放同步移动) -->
           <line
@@ -119,7 +134,14 @@
 
 <script setup>
 import { computed } from 'vue'
-
+import {
+  ShieldCheck,
+  AlertCircle,
+  AlertTriangle,
+  Zap,
+  Shield,
+  ChevronRight
+} from 'lucide-vue-next'
 const props = defineProps({
   activeHazard: {
     type: Boolean,
@@ -137,8 +159,8 @@ const props = defineProps({
 
 const playheadX = computed(() => {
   const cur = Math.max(0, Math.min(30.08, Number(props.currentTime) || 0))
-  // Map 0~30.08 seconds to X range: 52 to 594
-  return 52 + (cur / 30.08) * (594 - 52)
+  // Map 0~30.08 seconds to X range: 0 to 600 (与风险曲线同轴)
+  return (cur / 30.08) * 600
 })
 
 const linePath = computed(() => {
@@ -189,6 +211,9 @@ const areaPath = computed(() => {
 .kf-badge {
   color: var(--text-secondary);
   font-size: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .kf-badge.kf-danger {
@@ -196,9 +221,25 @@ const areaPath = computed(() => {
   font-weight: 700;
 }
 
+.kf-icon {
+  flex-shrink: 0;
+}
+
+.kf-icon.safe {
+  color: var(--nominal-green);
+}
+
+.kf-icon.warn {
+  color: var(--safety-amber);
+}
+
+.kf-icon.danger {
+  color: var(--emergency-red);
+}
+
 .kf-arrow {
   color: var(--border-bright);
-  font-size: 8px;
+  flex-shrink: 0;
 }
 
 .threat-body {

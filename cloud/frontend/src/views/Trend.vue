@@ -2,19 +2,34 @@
   <div class="trend-page">
     <main class="main-content-inner">
 
-      <!-- 🔹 新增统计磁贴 -->
+      <!-- 统计磁贴 -->
       <div class="stats-cards">
         <div class="card">
-          <div class="title">今日报警高峰</div>
-          <div class="value" ref="peak">0</div>
+          <div class="card-icon-wrap peak">
+            <TrendingUp :size="18" />
+          </div>
+          <div class="card-info">
+            <div class="title">今日报警高峰</div>
+            <div class="value" ref="peak">0</div>
+          </div>
         </div>
         <div class="card">
-          <div class="title">累计报警总数</div>
-          <div class="value" ref="total">0</div>
+          <div class="card-icon-wrap total">
+            <AlertTriangle :size="18" />
+          </div>
+          <div class="card-info">
+            <div class="title">累计报警总数</div>
+            <div class="value" ref="total">0</div>
+          </div>
         </div>
         <div class="card">
-          <div class="title">待处理项</div>
-          <div class="value" ref="pending">0</div>
+          <div class="card-icon-wrap pending">
+            <Clock :size="18" />
+          </div>
+          <div class="card-info">
+            <div class="title">待处理项</div>
+            <div class="value" ref="pending">0</div>
+          </div>
         </div>
       </div>
 
@@ -58,6 +73,7 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { TrendingUp, AlertTriangle, Clock } from 'lucide-vue-next'
 import api from '../lib/api'
 import LineChart from '../components/LineChart.vue'
 
@@ -66,7 +82,7 @@ const range = ref('day')
 const chartLabels = ref([])
 const chartSeries = ref([])
 
-// 🔹 三台叉车
+// 三台叉车
 const devices = ['FORK-001', 'FORK-002', 'FORK-003']
 
 const ranges = [
@@ -77,12 +93,12 @@ const ranges = [
 
 const rangeText = computed(() => ranges.find(r => r.value === range.value)?.label)
 
-// 🔹 统计数字 DOM 引用
+// 统计数字 DOM 引用
 const peak = ref(null)
 const total = ref(null)
 const pending = ref(null)
 
-// 🔹 ECharts dataZoom 配置
+// ECharts dataZoom 配置
 const chartOptions = {
   dataZoom: [
     {
@@ -110,7 +126,7 @@ const chartOptions = {
   ]
 }
 
-// 🔹 获取数据
+// 获取数据
 async function fetchData() {
   try {
     const res = await api.get('/api/trend', {
@@ -119,10 +135,10 @@ async function fetchData() {
 
     const data = res.data || {}
 
-    // ✅ X轴
+    // X轴
     chartLabels.value = data.labels || []
 
-    // ✅ 三台车折线 + 不同颜色
+    // 三台车折线 + 不同颜色
     chartSeries.value = [
       { name: 'FORK-001', data: data.fork1 || [], color: '#3b82f6', smooth: true },
       { name: 'FORK-002', data: data.fork2 || [], color: '#10b981', smooth: true },
@@ -138,7 +154,7 @@ async function fetchData() {
   }
 }
 
-// 🔹 更新统计磁贴数字
+// 更新统计磁贴数字
 function updateStats() {
   const allData = chartSeries.value.flatMap(s => s.data)
   const maxVal = Math.max(...allData)
@@ -163,7 +179,7 @@ onMounted(fetchData)
   min-height: 100vh;
 }
 
-/* ⚠️ 不能再用 Dashboard 的 main-content */
+/* 自定义布局容器 */
 .main-content-inner {
   padding: 28px 32px;
 }
@@ -191,7 +207,7 @@ onMounted(fetchData)
     0 10px 24px rgba(30, 64, 175, 0.05);
 }
 
-/* 🔹 统计磁贴 */
+/* 统计磁贴 */
 .stats-cards {
   display: flex;
   gap: 20px;
@@ -203,8 +219,10 @@ onMounted(fetchData)
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 12px;
-  padding: 16px;
-  text-align: center;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   transition: transform 0.2s;
   border: 1px solid rgba(255, 255, 255, 0.26);
   box-shadow:
@@ -212,16 +230,44 @@ onMounted(fetchData)
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
+.card-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon-wrap.peak {
+  background: rgba(2, 132, 199, 0.12);
+  color: #0284c7;
+}
+
+.card-icon-wrap.total {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+.card-icon-wrap.pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.card-info {
+  text-align: left;
+}
+
 .stats-cards .card:hover {
   transform: translateY(-4px);
 }
 
 .stats-cards .title {
-  font-size: 14px;
-  color: #000; /* 🔹 字体黑色 */
-  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--text-secondary, #475569);
+  margin-bottom: 4px;
 }
-
 .stats-cards .value {
   font-size: 24px;
   font-weight: bold;

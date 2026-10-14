@@ -29,7 +29,10 @@
             <option value="sec">安全</option>
           </select>
           <input v-model="filterDevice" class="filter-control" type="text" placeholder="设备ID搜索" />
-          <button @click="resetFilters" class="filter-action" type="button">重置筛选</button>
+          <button @click="resetFilters" class="filter-action" type="button">
+            <RotateCcw :size="13" class="btn-icon" />
+            <span>重置筛选</span>
+          </button>
         </div>
 
         <div class="table-wrap">
@@ -76,6 +79,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import { RotateCcw } from 'lucide-vue-next'
 import api from '../lib/api'
 
 const logs = ref([])
@@ -261,7 +265,14 @@ onMounted(() => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   justify-self: start;
+}
+
+.btn-icon {
+  flex-shrink: 0;
 }
 
 .filter-action:hover {
