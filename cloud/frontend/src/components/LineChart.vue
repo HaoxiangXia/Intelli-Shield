@@ -109,20 +109,46 @@ function renderChart() {
     series: props.series.map((s, i) => {
       const color = s.color || defaultColors[i]?.line || defaultColors[0].line
       const areaColor = s.areaColor || defaultColors[i]?.area || defaultColors[0].area
-      return {
+      const type = s.type || 'line'
+      const base = {
         name: s.name,
-        type: 'line',
+        type,
         data: s.data,
-        smooth: 0.4,
         showSymbol: false,
+        barMaxWidth: s.barMaxWidth || 26,
+        emphasis: { focus: 'series' }
+      }
+
+      // 柱状系列不需要平滑/面积/标记线
+      if (type === 'bar') {
+        return {
+          ...base,
+          itemStyle: { color, borderRadius: s.borderRadius ?? [2, 2, 0, 0] }
+        }
+      }
+
+      return {
+        ...base,
+        smooth: 0.4,
         lineStyle: { color, width: s.lineWidth || 3 },
-        emphasis: { focus: 'series', lineStyle: { width: s.emphasisWidth || 5 } },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: areaColor[0] },
-            { offset: 1, color: areaColor[1] },
-          ]),
-        },
+        emphasis: { ...base.emphasis, lineStyle: { width: s.emphasisWidth || 5 } },
+        areaStyle: s.area === false
+          ? undefined
+          : {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: areaColor[0] },
+                { offset: 1, color: areaColor[1] },
+              ]),
+            },
+        markLine: s.markLine
+          ? {
+              silent: true,
+              symbol: 'none',
+              data: s.markLine,
+              lineStyle: { color, type: 'dashed', width: 1.5 },
+              label: s.markLineLabel
+            }
+          : undefined
       }
     }),
     dataZoom: props.enableDataZoom ? defaultDataZoom : [],
