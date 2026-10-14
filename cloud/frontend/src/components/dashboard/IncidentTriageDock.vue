@@ -7,37 +7,53 @@
     <!-- 待复核告警卡片 (PRD 4.4 规范) -->
     <div
       class="active-hazard-card"
-      :class="{ 'resolved-card': !activeHazard }"
+      :class="{ 'resolved-card': !isCardPending }"
     >
       <div class="hazard-title-row">
         <div class="hazard-badge">
-          <span class="rec-dot" v-if="activeHazard"></span>
-          <span :style="{ color: activeHazard ? 'var(--emergency-red)' : 'var(--nominal-green)' }">
-            {{ activeHazard ? '待复核临界险情 (帧 #0575)' : '✔ 警报已核验排除 (已解挂)' }}
+          <span class="rec-dot" v-if="isCardPending"></span>
+          <span :style="{ color: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }" class="hazard-text">
+            <template v-if="isCardPending">
+              <AlertOctagon :size="13" class="badge-icon-hazard" />
+              <span>待复核{{ cardIncident?.level === 'CRITICAL' ? '临界' : '接近' }}险情 (帧 #{{ cardIncident?.frameId }})</span>
+            </template>
+            <template v-else-if="cardIncident">
+              <CheckCircle2 :size="13" class="badge-icon-resolved" />
+              <span>警报已核验{{ cardIncident.status === 'confirmed' ? '属实' : '排除' }} ({{ cardIncident.id }})</span>
+            </template>
+            <template v-else>
+              <CheckCircle2 :size="13" class="badge-icon-resolved" />
+              <span>暂无待复核险情</span>
+            </template>
           </span>
         </div>
-        <span class="hazard-time">{{ activeHazard ? '23.00秒 实时抓拍' : '已归档闭环' }}</span>
+        <span class="hazard-time">
+          <template v-if="cardIncident">
+            {{ cardIncident.startTime.toFixed(2) }}秒 · 持续 {{ cardIncident.durationSec.toFixed(2) }}秒
+          </template>
+          <template v-else>等待告警流入</template>
+        </span>
       </div>
 
       <!-- 三路认知探针遥测仪 -->
       <div class="probe-triad-box">
         <div class="probe-triad-title">
           <span>OmniJev 三路认知探针遥测</span>
-          <span style="color:var(--text-muted)">RTX 3090 集群 · 107.4毫秒</span>
+          <span style="color:var(--text-muted)">RTX 3090 集群 · {{ cardIncident?.latencyMs ?? 107.4 }}毫秒</span>
         </div>
         <div class="probe-triad-grid">
           <div class="probe-metric-item">
             <span class="p-label">1. 碰撞风险概率</span>
             <span
               class="p-val"
-              :style="{ color: activeHazard ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
+              :style="{ color: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
             >
-              {{ activeHazard ? '78.5%' : '12.0%' }}
+              {{ cardIncident ? `${cardIncident.collisionRisk}%` : '--' }}
             </span>
             <div class="p-bar-wrap">
               <div
                 class="p-bar-fill"
-                :style="{ width: activeHazard ? '78.5%' : '12%', background: activeHazard ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
+                :style="{ width: `${cardIncident?.collisionRisk ?? 0}%`, background: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
               ></div>
             </div>
           </div>
@@ -46,14 +62,15 @@
             <span class="p-label">2. 工人注意力状态</span>
             <span
               class="p-val"
-              :style="{ color: activeHazard ? 'var(--safety-amber)' : 'var(--nominal-green)', fontSize: '11px' }"
+              :style="{ color: isCardPending ? 'var(--safety-amber)' : 'var(--nominal-green)', fontSize: '11px' }"
             >
-              {{ activeHazard ? '分心背对 60%' : '安全隔离 85%' }}
+              <template v-if="cardIncident">{{ (cardIncident.awareness * 100).toFixed(0) }}% 分心背对</template>
+              <template v-else>--</template>
             </span>
             <div class="p-bar-wrap">
               <div
                 class="p-bar-fill"
-                :style="{ width: activeHazard ? '60%' : '85%', background: activeHazard ? 'var(--safety-amber)' : 'var(--nominal-green)' }"
+                :style="{ width: `${(cardIncident?.awareness ?? 0) * 100}%`, background: isCardPending ? 'var(--safety-amber)' : 'var(--nominal-green)' }"
               ></div>
             </div>
           </div>
@@ -62,14 +79,15 @@
             <span class="p-label">3. 综合危害烈度</span>
             <span
               class="p-val"
-              :style="{ color: activeHazard ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
+              :style="{ color: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
             >
-              {{ activeHazard ? '2.48 / 3.0' : '0.45 / 3.0' }}
+              <template v-if="cardIncident">{{ cardIncident.threatScore }} / 3.0</template>
+              <template v-else>--</template>
             </span>
             <div class="p-bar-wrap">
               <div
                 class="p-bar-fill"
-                :style="{ width: activeHazard ? '82%' : '15%', background: activeHazard ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
+                :style="{ width: `${((cardIncident?.threatScore ?? 0) / 3) * 100}%`, background: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
               ></div>
             </div>
           </div>
@@ -77,51 +95,65 @@
       </div>
 
       <!-- 真实高清关键帧抓拍切片 -->
-      <div class="hd-snapshot-container" @click="showHdModal = true" title="点击放大查看 1080P 高清逐帧原图">
+      <div v-if="cardIncident" class="hd-snapshot-container" @click="showHdModal = true" title="点击放大查看 1080P 高清逐帧原图">
         <span class="hd-badge-overlay">
-          {{ activeHazard ? 'CCTV-04 抓拍 #0575 (足底越过红光线 -0.88m · 一票否决)' : 'CCTV-04 抓拍 #0025 (红光线外 +2.27m 安全隔离)' }}
+          CCTV-04 抓拍 #{{ cardIncident.keyframe.id }} ({{ cardIncident.keyframe.label }})
+          · 物理间距 {{ cardIncident.minDistPx }}px / {{ cardIncident.minDistM }}m
         </span>
-        <span class="hd-action-tip">🔍 点击放大展开 1080P 逐帧研判</span>
+        <span class="hd-action-tip">
+          <Maximize2 :size="11" class="tip-icon" />
+          <span>点击放大展开 1080P 逐帧研判</span>
+        </span>
 
         <img
-          :src="activeHazard ? '/samples/cctv/keyframes/keyframe_0575_04_CRITICAL_HAZARD.png' : '/samples/cctv/keyframes/keyframe_0025_01_NORMAL_SAFE.png'"
+          :src="`/samples/cctv/keyframes/${cardIncident.keyframe.file}`"
           alt="CCTV 关键帧抓拍"
           class="snapshot-real-img"
         />
       </div>
 
       <div class="hazard-caption">
-        <strong>{{ activeHazard ? '双系统分层仲裁结论:' : '核验结论 (责任人解除):' }}</strong>
-        {{ activeHazard 
-          ? '【紧急】工人双脚踏入叉车三向红光警戒线内侧 (-0.88m / ZONE_INSIDE)，物理硬约束一票否决直出 CRITICAL；叠加 OmniJev 探针检出分心背对 65.0%，已触发声光急停阻断。'
-          : `经安全责任人现场视频复核，判定为【${resolvedReason}】。威胁排除，大屏复位，样本已提交算法微调队列。`
-        }}
+        <strong>{{ isCardPending ? '双系统分层仲裁依据:' : '核验结论 (责任人):' }}</strong>
+        <template v-if="isCardPending && cardIncident">
+          物理间距最近 {{ cardIncident.minDistPx }}px ({{ cardIncident.minDistM }}m)，
+          {{ cardIncident.reasons?.length ? cardIncident.reasons.join('；') : '多帧连续越阈' }}。
+        </template>
+        <template v-else-if="cardIncident">
+          经安全责任人现场复核，判定为【{{ cardIncident.status === 'confirmed' ? '险情属实' : resolvedReason }}】，
+          样本已提交算法微调队列。
+        </template>
+        <template v-else>当前无待复核险情，实时流持续监听中。</template>
       </div>
 
       <!-- 责任人一键核验按钮区域 (PRD 4.4 规范) -->
       <div class="verification-actions">
-        <template v-if="activeHazard">
+        <template v-if="isCardPending">
           <div class="action-btn-row">
             <button
               class="action-confirm-hazard"
               @click="handleConfirmHazard"
               title="确认确实存在危险，触发对讲并归入台账，沉淀为正样本"
             >
-              <span>🚨 确认属实 - 紧迫隐患</span>
+              <AlertTriangle :size="14" class="btn-icon" />
+              <span>确认属实 - 紧迫隐患</span>
             </button>
             <button
               class="action-exclude-false"
               @click="showFalseModal = true"
               title="属于专人指挥或特种作业，排除警报，沉淀为难负例"
             >
-              <span>🛡️ 判定误报 - 排除警报</span>
+              <ShieldCheck :size="14" class="btn-icon" />
+              <span>判定误报 - 排除警报</span>
             </button>
           </div>
         </template>
         <template v-else>
           <div class="resolved-banner">
-            <span>✔ 警报解除流程已闭环</span>
-            <span style="font-weight:700;">高难负例样本已沉淀</span>
+            <div class="resolved-banner-left">
+              <CheckCircle2 :size="14" class="resolved-icon" />
+              <span>本轮核验已闭环</span>
+            </div>
+            <span style="font-weight:700;">已核验 {{ reviewedCount }} / {{ visibleIncidents.length }} 段</span>
           </div>
         </template>
       </div>
@@ -149,7 +181,7 @@
           :class="{ active: currentTab === 'all' }"
           @click="currentTab = 'all'"
         >
-          全部 ({{ incidents.length }})
+          全部 ({{ visibleIncidents.length }})
         </button>
         <button
           class="stream-tab"
@@ -172,12 +204,18 @@
           v-for="item in filteredIncidents"
           :key="item.id"
           class="incident-row"
-          :class="{ active: item.isActive }"
+          :class="{ active: rowView(item).isActive }"
+          @click="locateIncident(item)"
+          title="点击定位到该告警时刻"
         >
-          <span class="row-time">{{ item.time }}</span>
-          <span class="row-device">{{ item.device }}</span>
-          <span class="tag-pill" :class="item.tagClass">{{ item.tagText }}</span>
-          <span class="row-meta">{{ item.meta }}</span>
+          <span class="row-time">{{ rowView(item).time }}</span>
+          <span class="row-device">{{ rowView(item).device }}</span>
+          <span class="tag-pill" :class="rowView(item).tagClass">{{ rowView(item).tagText }}</span>
+          <span class="row-meta">{{ rowView(item).meta }}</span>
+        </div>
+        <div v-if="filteredIncidents.length === 0" class="incident-empty">
+          <template v-if="visibleIncidents.length === 0">暂无告警记录 · 播放推进后自动累积</template>
+          <template v-else>该分类下暂无记录</template>
         </div>
       </div>
     </div>
@@ -186,8 +224,13 @@
     <div class="modal-backdrop" :class="{ open: showFalseModal }">
       <div class="modal-dialog">
         <div class="modal-header">
-          <span>🛡️ 责任人判定误报 · 选择排除核验依据</span>
-          <span class="close-btn" @click="showFalseModal = false">✕</span>
+          <div class="modal-title-with-icon">
+            <ShieldAlert :size="15" class="modal-icon" />
+            <span>责任人判定误报 · 选择排除核验依据</span>
+          </div>
+          <button class="close-btn" @click="showFalseModal = false" aria-label="关闭">
+            <X :size="16" />
+          </button>
         </div>
         <div class="modal-body">
           <p class="modal-desc">
@@ -229,7 +272,9 @@
       <div class="modal-dialog hd-modal-dialog">
         <div class="modal-header">
           <span>高清画幅逐帧研判与现场实景监控 (CCTV-04 1920×1080@25帧/秒)</span>
-          <span class="close-btn" @click="showHdModal = false">✕</span>
+          <button class="close-btn" @click="showHdModal = false" aria-label="关闭">
+            <X :size="16" />
+          </button>
         </div>
         <div class="modal-tabs">
           <button
@@ -237,21 +282,24 @@
             :class="{ active: hdViewMode === 'keyframe' }"
             @click="hdViewMode = 'keyframe'"
           >
-            🖼️ 算法探针标注关键帧 (#0575)
+            <Image :size="13" class="tab-icon" />
+            <span>算法探针标注关键帧 (#0575)</span>
           </button>
           <button
             class="modal-tab-btn"
             :class="{ active: hdViewMode === 'video' }"
             @click="hdViewMode = 'video'"
           >
-            📹 现场实景监控视频 (output_video7.mp4)
+            <Video :size="13" class="tab-icon" />
+            <span>现场实景监控视频 (output_video7.mp4)</span>
           </button>
           <button
             class="modal-tab-btn"
             :class="{ active: hdViewMode === 'sequence' }"
             @click="hdViewMode = 'sequence'"
           >
-            🎞️ 全时序处置时间切片 (5帧序列)
+            <Film :size="13" class="tab-icon" />
+            <span>全时序处置时间切片 (5帧序列)</span>
           </button>
         </div>
 
@@ -259,8 +307,8 @@
           <!-- 1. 标注关键帧视图 -->
           <div class="hd-stage-wrap" v-if="hdViewMode === 'keyframe'">
             <img
-              src="/samples/cctv/keyframes/keyframe_0575_04_CRITICAL_HAZARD.png"
-              alt="1080P 标注关键帧 0575"
+              :src="cardIncident ? `/samples/cctv/keyframes/${cardIncident.keyframe.file}` : ''"
+              :alt="cardIncident ? `1080P 标注关键帧 ${cardIncident.keyframe.id}` : '无关键帧'"
               class="hd-modal-media"
             />
           </div>
@@ -302,8 +350,13 @@
 
           <div class="hd-meta-footer">
             <span>现场位置: 仓库主干道 (中转区南段)</span>
-            <span>物理间距: 111.4像素 | 碰撞风险: 78.5% | 综合烈度: 2.48 / 3.0</span>
-            <span style="color:var(--telemetry-cyan);">OmniJev 延迟: 107.4毫秒</span>
+            <span v-if="cardIncident">
+              险情段 {{ cardIncident.id }} ({{ cardIncident.startTime.toFixed(2) }}s ~ {{ cardIncident.endTime.toFixed(2) }}s)
+              | 物理间距: {{ cardIncident.minDistPx }}像素 ({{ cardIncident.minDistM }}m)
+              | 碰撞风险: {{ cardIncident.collisionRisk }}%
+              | 综合烈度: {{ cardIncident.threatScore }} / 3.0
+            </span>
+            <span style="color:var(--telemetry-cyan);">OmniJev 延迟: {{ cardIncident?.latencyMs ?? 107.4 }}毫秒</span>
           </div>
         </div>
 
@@ -316,16 +369,29 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import {
+  AlertOctagon,
+  CheckCircle2,
+  Maximize2,
+  AlertTriangle,
+  ShieldCheck,
+  ShieldAlert,
+  X,
+  Image,
+  Video,
+  Film
+} from 'lucide-vue-next'
+import { useCctvMetadata } from '../../composables/useCctvMetadata'
 
 const props = defineProps({
-  activeHazard: {
-    type: Boolean,
-    default: true
+  currentTime: {
+    type: Number,
+    default: 0
   }
 })
 
-const emit = defineEmits(['confirm-hazard', 'exclude-false'])
+const emit = defineEmits(['confirm-hazard', 'exclude-false', 'pending-change', 'locate-incident'])
 
 const showFalseModal = ref(false)
 const showHdModal = ref(false)
@@ -334,128 +400,210 @@ const selectedReason = ref('现场专人指挥作业')
 const resolvedReason = ref('现场专人指挥作业')
 
 const flywheelText = ref('待标注采样')
-const flywheelColor = ref('#c084fc')
+const flywheelColor = ref('#7c3aed')
 
 const currentTab = ref('all')
 
-const incidents = ref([
-  {
-    id: 1,
-    time: '17:12:00',
-    device: 'CCTV-04 (中转区南段)',
-    type: 'critical',
-    tagClass: 'tag-critical',
-    tagText: '待复核',
-    meta: '111.4像素 / 78.5%',
-    isActive: true,
-    isPending: true,
-    isLedger: false
-  },
-  {
-    id: 2,
-    time: '17:11:54',
-    device: 'CCTV-04 (集装箱卡车旁)',
-    type: 'warning',
-    tagClass: 'tag-warning',
-    tagText: '接近预警',
-    meta: '184像素 / 48.0%',
-    isActive: false,
-    isPending: false,
-    isLedger: false
-  },
-  {
-    id: 3,
-    time: '17:11:44',
-    device: 'CCTV-04 (北通廊道)',
-    type: 'resolved',
-    tagClass: 'tag-resolved',
-    tagText: '误报解除',
-    meta: '难负例',
-    isActive: false,
-    isPending: false,
-    isLedger: false
-  },
-  {
-    id: 4,
-    time: '17:08:22',
-    device: 'CCTV-02 (冲压A线)',
-    type: 'ledger',
-    tagClass: 'tag-warning',
-    tagText: '已入台账',
-    meta: '正样本',
-    isActive: false,
-    isPending: false,
-    isLedger: true
-  },
-  {
-    id: 5,
-    time: '17:02:18',
-    device: 'CCTV-01 (焊接工段)',
-    type: 'resolved',
-    tagClass: 'tag-resolved',
-    tagText: '误报解除',
-    meta: '难负例',
-    isActive: false,
-    isPending: false,
-    isLedger: false
-  },
-  {
-    id: 6,
-    time: '16:58:05',
-    device: 'CCTV-04 (主通廊交汇)',
-    type: 'ledger',
-    tagClass: 'tag-critical',
-    tagText: '已入台账',
-    meta: '正样本',
-    isActive: false,
-    isPending: false,
-    isLedger: true
-  }
-])
+// ── 关键帧切片 (与 public/samples/cctv/keyframes/ 一一对应) ──────────────
+const KEYFRAMES = [
+  { t: 1.0, id: '0025', file: 'keyframe_0025_01_NORMAL_SAFE.png', label: '正常安全' },
+  { t: 8.0, id: '0200', file: 'keyframe_0200_02_WARNING_BUFFER.png', label: '预警缓冲' },
+  { t: 13.0, id: '0325', file: 'keyframe_0325_03_WARNING_APPROACH.png', label: '接近警示' },
+  { t: 23.0, id: '0575', file: 'keyframe_0575_04_CRITICAL_HAZARD.png', label: '临界碰撞' },
+  { t: 28.0, id: '0700', file: 'keyframe_0700_05_NORMAL_CLEARED.png', label: '复位安全' }
+]
 
-const pendingCount = computed(() => incidents.value.filter(i => i.isPending).length)
-const ledgerCount = computed(() => incidents.value.filter(i => i.isLedger).length)
+function nearestKeyframe(t) {
+  return KEYFRAMES.reduce((best, kf) =>
+    Math.abs(kf.t - t) < Math.abs(best.t - t) ? kf : best
+  )
+}
 
-const filteredIncidents = computed(() => {
-  if (currentTab.value === 'pending') {
-    return incidents.value.filter(i => i.isPending)
+// ── 告警段落提取 ────────────────────────────────────────────────────────
+// 连续非 NORMAL 帧合并为一段险情; 短于 MIN_EPISODE_FRAMES 的单帧抖动丢弃。
+const MIN_EPISODE_FRAMES = 8 // 25fps 下约 0.32s
+
+function summarizeEpisode(run) {
+  // 峰值帧: 碰撞风险概率优先, 其次综合危害烈度
+  let peak = run[0]
+  for (const f of run) {
+    const a = f.probes?.collision_risk || 0
+    const b = peak.probes?.collision_risk || 0
+    if (a > b || (a === b && (f.probes?.threat_score || 0) > (peak.probes?.threat_score || 0))) {
+      peak = f
+    }
   }
-  if (currentTab.value === 'ledger') {
-    return incidents.value.filter(i => i.isLedger)
+
+  // 物理间距取段落内最危险值
+  let minDistPx = Infinity
+  let minDistM = Infinity
+  for (const f of run) {
+    if (Number.isFinite(f.min_dist_px)) minDistPx = Math.min(minDistPx, f.min_dist_px)
+    const m = f.red_zone?.min_dist_m
+    if (m !== null && m !== undefined && Number.isFinite(Number(m))) {
+      minDistM = Math.min(minDistM, Number(m))
+    }
   }
-  return incidents.value
+
+  const p = peak.probes || {}
+  const last = run[run.length - 1]
+  return {
+    id: `EP-${peak.frame_id}`,
+    frameId: peak.frame_id,
+    startTime: run[0].timestamp,
+    endTime: last.timestamp,
+    durationSec: +(last.timestamp - run[0].timestamp).toFixed(2),
+    frameCount: run.length,
+    level: peak.alarm_level,
+    minDistPx: Number.isFinite(minDistPx) ? +minDistPx.toFixed(1) : null,
+    minDistM: Number.isFinite(minDistM) ? +minDistM.toFixed(2) : null,
+    collisionRisk: +((p.collision_risk ?? 0) * 100).toFixed(1),
+    threatScore: +(p.threat_score ?? 0).toFixed(2),
+    awareness: +(p.worker_awareness?.unaware ?? 0).toFixed(2),
+    latencyMs: p.latency_ms ?? 107.4,
+    reasons: peak.reasons || [],
+    status: 'pending', // pending | confirmed | resolved
+    keyframe: nearestKeyframe(peak.timestamp),
+    isLedger: false
+  }
+}
+
+function buildEpisodes(frames) {
+  const episodes = []
+  let run = []
+  const flush = () => {
+    if (run.length >= MIN_EPISODE_FRAMES) episodes.push(summarizeEpisode(run))
+    run = []
+  }
+  for (const f of frames) {
+    if (f.alarm_level === 'NORMAL') flush()
+    else run.push(f)
+  }
+  flush()
+  // 核验队列按发生时刻正序, 展示列表按时刻倒序 (最新在上)
+  return episodes.sort((a, b) => a.startTime - b.startTime)
+}
+
+const { frames: cctvFrames, load: loadMetadata } = useCctvMetadata()
+
+const episodes = ref([])
+// 播放高水位: 记录曾经播放到的最远时刻, 回拖不会让已发生的告警从流水里消失
+const maxReachedTime = ref(0)
+
+watch(
+  () => props.currentTime,
+  (t) => {
+    const v = Number(t) || 0
+    if (v > maxReachedTime.value) maxReachedTime.value = v
+  },
+  { immediate: true }
+)
+
+onMounted(async () => {
+  const frames = await loadMetadata()
+  if (frames.length) episodes.value = buildEpisodes(frames)
 })
 
-function handleConfirmHazard() {
-  flywheelText.value = '✔ 标注为正样本 (已入微调池)'
-  flywheelColor.value = '#30d158'
-  
-  const activeItem = incidents.value.find(i => i.id === 1)
-  if (activeItem) {
-    activeItem.tagText = '已入台账'
-    activeItem.isPending = false
-    activeItem.isLedger = true
-  }
+// 已发生 (播放水位越过) 且仍待复核的段落
+const visibleIncidents = computed(() =>
+  episodes.value.filter(e => e.startTime <= maxReachedTime.value)
+)
 
-  emit('confirm-hazard')
+const incidents = visibleIncidents
+
+const pendingIncident = computed(
+  () => visibleIncidents.value.find(e => e.status === 'pending') || null
+)
+
+const hasPending = computed(() => pendingIncident.value !== null)
+
+watch(
+  hasPending,
+  (v) => emit('pending-change', v),
+  { immediate: true }
+)
+
+const reviewedCount = computed(() => visibleIncidents.value.filter(e => e.status !== 'pending').length)
+
+// 顶部卡片数据源: 有待复核则显示该条, 否则回落到最近一次核验结论
+const activeIncident = computed(() => pendingIncident.value || null)
+const lastReviewed = computed(() => {
+  const done = visibleIncidents.value.filter(e => e.status !== 'pending')
+  return done.length ? done[done.length - 1] : null
+})
+
+// 卡片展示对象: 待复核险情 -> 进行中; 全部核验完 -> 最近一条结论
+const cardIncident = computed(() => pendingIncident.value || lastReviewed.value)
+
+const isCardPending = computed(() => pendingIncident.value !== null)
+
+const pendingCount = computed(() => visibleIncidents.value.filter(e => e.status === 'pending').length)
+const ledgerCount = computed(() => visibleIncidents.value.filter(e => e.isLedger).length)
+
+const filteredIncidents = computed(() => {
+  // 最新告警排在最前
+  const rows = [...visibleIncidents.value].sort((a, b) => b.startTime - a.startTime)
+  if (currentTab.value === 'pending') return rows.filter(i => i.status === 'pending')
+  if (currentTab.value === 'ledger') return rows.filter(i => i.isLedger)
+  return rows
+})
+
+function rowView(i) {
+  if (i.status === 'pending') {
+    return {
+      time: i.startTime.toFixed(2) + '秒',
+      device: `CCTV-04 (帧 #${i.frameId})`,
+      tagClass: i.level === 'CRITICAL' ? 'tag-critical' : 'tag-warning',
+      tagText: i.level === 'CRITICAL' ? '待复核' : '接近预警',
+      meta: `${i.minDistPx ?? '--'}像素 / ${i.collisionRisk}%`,
+      isActive: i.id === activeIncident.value?.id
+    }
+  }
+  if (i.status === 'confirmed') {
+    return {
+      time: i.startTime.toFixed(2) + '秒',
+      device: `CCTV-04 (帧 #${i.frameId})`,
+      tagClass: 'tag-warning',
+      tagText: '已入台账',
+      meta: '正样本',
+      isActive: false
+    }
+  }
+  return {
+    time: i.startTime.toFixed(2) + '秒',
+    device: `CCTV-04 (帧 #${i.frameId})`,
+    tagClass: 'tag-resolved',
+    tagText: '误报解除',
+    meta: '难负例',
+    isActive: false
+  }
+}
+
+function handleConfirmHazard() {
+  const target = pendingIncident.value
+  if (!target) return
+  target.status = 'confirmed'
+  target.isLedger = true
+  flywheelText.value = '已标注为正样本 (已入微调池)'
+  flywheelColor.value = '#15803d'
+  emit('confirm-hazard', target)
 }
 
 function submitFalseAlarm() {
+  const target = pendingIncident.value
+  if (!target) return
   showFalseModal.value = false
   resolvedReason.value = selectedReason.value
-  
-  flywheelText.value = '✔ 标注为高难负例 (反哺降误报)'
-  flywheelColor.value = '#30d158'
 
-  const activeItem = incidents.value.find(i => i.id === 1)
-  if (activeItem) {
-    activeItem.tagClass = 'tag-resolved'
-    activeItem.tagText = '误报解除'
-    activeItem.meta = '难负例'
-    activeItem.isPending = false
-  }
+  target.status = 'resolved'
+  flywheelText.value = '已标注为高难负例 (反哺降误报)'
+  flywheelColor.value = '#15803d'
 
-  emit('exclude-false', selectedReason.value)
+  emit('exclude-false', selectedReason.value, target)
+}
+
+function locateIncident(i) {
+  emit('locate-incident', i.startTime)
 }
 
 defineExpose({
@@ -718,7 +866,8 @@ defineExpose({
   align-items: center;
   justify-content: space-between;
   font-size: 11px;
-  color: #e9d5ff;
+  /* 面板底色为浅色 (白底叠 8% 紫), 必须用深色前景, 浅紫在此不可读 */
+  color: #5b21b6;
 }
 
 .flywheel-tag {
@@ -763,6 +912,13 @@ defineExpose({
 .incident-table-wrap {
   flex: 1;
   overflow-y: auto;
+}
+
+.incident-empty {
+  padding: 28px 14px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
 .incident-row {
@@ -1026,5 +1182,77 @@ defineExpose({
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
+}
+
+.hazard-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge-icon-hazard {
+  color: #991b1b;
+  flex-shrink: 0;
+}
+
+.badge-icon-resolved {
+  color: #14532d;
+  flex-shrink: 0;
+}
+
+.hd-action-tip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tip-icon {
+  flex-shrink: 0;
+}
+
+.resolved-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.resolved-icon {
+  flex-shrink: 0;
+}
+
+.modal-title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-icon {
+  color: var(--safety-amber);
+  flex-shrink: 0;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+.close-btn:hover {
+  color: #fff;
+}
+
+.modal-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab-icon {
+  flex-shrink: 0;
 }
 </style>

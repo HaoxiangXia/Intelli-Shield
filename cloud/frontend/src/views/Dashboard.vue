@@ -4,6 +4,7 @@
     <div class="tactical-column">
       <div class="radar-section">
         <TacticalRadarTwin
+          ref="radarRef"
           :active-hazard="isHazardActive"
           @time-update="onTimeUpdate"
           @open-hd="handleOpenHd"
@@ -22,15 +23,19 @@
     <div class="triage-column">
       <IncidentTriageDock
         ref="triageDockRef"
-        :active-hazard="isHazardActive"
+        :current-time="videoCurrentTime"
         @confirm-hazard="onConfirmHazard"
         @exclude-false="onExcludeFalse"
+        @pending-change="onPendingChange"
+        @locate-incident="onLocateIncident"
       />
     </div>
 
     <!-- 全局浮动广播通知 -->
     <div class="notification-toast" :class="[{ show: toastVisible }, toastTypeClass]">
-      <div class="toast-icon">{{ toastIcon }}</div>
+      <div class="toast-icon">
+        <component :is="toastIconComp" :size="20" class="toast-icon-svg" />
+      </div>
       <div class="toast-content">
         <div class="toast-title">{{ toastTitle }}</div>
         <div class="toast-message">{{ toastMessage }}</div>
@@ -40,13 +45,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
+import { Megaphone, ShieldCheck } from 'lucide-vue-next'
 import TacticalRadarTwin from '../components/dashboard/TacticalRadarTwin.vue'
 import ThreatTimelineChart from '../components/dashboard/ThreatTimelineChart.vue'
 import IncidentTriageDock from '../components/dashboard/IncidentTriageDock.vue'
 
 const isHazardActive = ref(true)
 const videoCurrentTime = ref(0)
+const radarRef = ref(null)
 function onTimeUpdate(t) {
   videoCurrentTime.value = t
 }
@@ -55,15 +62,15 @@ const triageDockRef = ref(null)
 
 // 浮动通知系统
 const toastVisible = ref(false)
-const toastIcon = ref('📢')
+const toastIconComp = shallowRef(Megaphone)
 const toastTitle = ref('')
 const toastMessage = ref('')
 const toastTypeClass = ref('toast-hazard')
 let toastTimer = null
 
-function triggerToast(icon, title, message, isDanger = true) {
+function triggerToast(iconComp, title, message, isDanger = true) {
   if (toastTimer) clearTimeout(toastTimer)
-  toastIcon.value = icon
+  toastIconComp.value = iconComp
   toastTitle.value = title
   toastMessage.value = message
   toastTypeClass.value = isDanger ? 'toast-hazard' : 'toast-nominal'
@@ -81,23 +88,32 @@ function handleOpenHd() {
 }
 
 // PRD 4.4 责任人核验响应处理
-function onConfirmHazard() {
+function onConfirmHazard(incident) {
   triggerToast(
-    '📢',
+    Megaphone,
     '现场对讲喊话已开启 · 归入《隐患台账》',
-    '系统已向叉车下发减速制动指令，调度中心广播已通报：“通廊人员背向危险，请立即避让！”',
+    `险情段 ${incident.id} (帧 #${incident.frameId}) 已确认属实，系统已向叉车下发减速制动指令，调度中心广播已通报：“通廊人员背向危险，请立即避让！”`,
     true
   )
 }
 
-function onExcludeFalse(reason) {
-  isHazardActive.value = false
+function onExcludeFalse(reason, incident) {
   triggerToast(
-    '🛡️',
+    ShieldCheck,
     '警报已核验排除 · 样本沉淀为高难负例',
-    `责任人核验依据：【${reason}】。大屏已恢复绿色常态，样本已反哺目标检测与认知探针模型训练池。`,
+    `险情段 ${incident.id} (帧 #${incident.frameId}) 核验依据：【${reason}】。样本已反哺目标检测与认知探针模型训练池。`,
     false
   )
+}
+
+// 核验队列变化时同步大屏告警态 (是否还有待复核险情)
+function onPendingChange(has) {
+  isHazardActive.value = has
+}
+
+// 点击告警流水行 -> 视频定位到该段起点
+function onLocateIncident(sec) {
+  if (radarRef.value) radarRef.value.seekTo(sec)
 }
 </script>
 
@@ -172,7 +188,18 @@ function onExcludeFalse(reason) {
 }
 
 .toast-icon {
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast-hazard .toast-icon {
+  color: var(--emergency-red);
+}
+
+.toast-nominal .toast-icon {
+  color: var(--nominal-green);
 }
 
 .toast-title {

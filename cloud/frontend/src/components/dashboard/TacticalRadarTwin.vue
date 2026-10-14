@@ -12,7 +12,8 @@
           :class="{ 'is-running': isRunning }"
           @click="togglePlay"
         >
-          <span class="btn-icon">{{ isRunning ? '⏸' : '▶' }}</span>
+          <Pause v-if="isRunning" :size="13" class="btn-icon" />
+          <Play v-else :size="13" class="btn-icon" />
           <span>{{ isRunning ? '暂停推演演示' : '开始运行演示' }}</span>
         </button>
 
@@ -22,12 +23,14 @@
           :class="{ active: showAiOverlay }"
           @click="showAiOverlay = !showAiOverlay"
         >
-          <span>🎯 {{ showAiOverlay ? '隐藏 AI 实时标注层' : '显示 AI 实时标注层' }}</span>
+          <Crosshair :size="13" class="tool-btn-icon" />
+          <span>{{ showAiOverlay ? '隐藏 AI 实时标注层' : '显示 AI 实时标注层' }}</span>
         </button>
 
         <!-- 重置按钮 -->
         <button class="tool-btn" @click="resetToBeginning">
-          <span>⟲ 重置片头</span>
+          <RotateCcw :size="13" class="tool-btn-icon" />
+          <span>重置片头</span>
         </button>
       </div>
     </div>
@@ -188,19 +191,24 @@
           <div class="keyframe-jump-strip">
             <span class="strip-label">关键时序节点跳转:</span>
             <button class="seek-chip" @click="seekTo(1.0)">
-              01秒 红光外安全 (帧 #0025)
+              <ShieldCheck :size="12" class="chip-icon safe-icon" />
+              <span>01秒 红光外安全 (帧 #0025)</span>
             </button>
             <button class="seek-chip" @click="seekTo(2.7)">
-              03秒 0~0.3m缓冲预警 (帧 #0068)
+              <AlertCircle :size="12" class="chip-icon warn-icon" />
+              <span>03秒 0~0.3m缓冲预警 (帧 #0068)</span>
             </button>
             <button class="seek-chip chip-critical" @click="seekTo(8.0)">
-              🚨 08秒 越过红线告警 (帧 #0200)
+              <AlertTriangle :size="12" class="chip-icon danger-icon" />
+              <span>08秒 越过红线告警 (帧 #0200)</span>
             </button>
             <button class="seek-chip chip-critical" @click="seekTo(23.0)">
-              🚨 23秒 红区内高危交汇 (帧 #0575)
+              <Flame :size="12" class="chip-icon danger-icon" />
+              <span>23秒 红区内高危交汇 (帧 #0575)</span>
             </button>
             <button class="seek-chip" @click="seekTo(28.0)">
-              28秒 驶离红线复位 (帧 #0700)
+              <Shield :size="12" class="chip-icon safe-icon" />
+              <span>28秒 驶离红线复位 (帧 #0700)</span>
             </button>
           </div>
         </div>
@@ -211,6 +219,18 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import {
+  Play,
+  Pause,
+  Crosshair,
+  RotateCcw,
+  ShieldCheck,
+  AlertCircle,
+  AlertTriangle,
+  Flame,
+  Shield
+} from 'lucide-vue-next'
+import { useCctvMetadata } from '../../composables/useCctvMetadata'
 
 const props = defineProps({
   activeHazard: {
@@ -229,8 +249,8 @@ const showAiOverlay = ref(true)
 const currentTime = ref(0)
 const duration = ref(30.08)
 
-// JSON 帧数据集 (从 HPC 生成的 752 帧元数据载入)
-const metadataFrames = ref([])
+// JSON 帧数据集 (从 HPC 生成的 752 帧元数据载入, 与告警流水共享同一单例)
+const { frames: metadataFrames, load: loadMetadata } = useCctvMetadata()
 const videoNativeW = ref(1920)
 const videoNativeH = ref(1080)
 
@@ -372,13 +392,13 @@ const scaledFootAnchors = computed(() => {
 
   const distM = rz.min_dist_m !== null && rz.min_dist_m !== undefined ? Number(rz.min_dist_m) : 0
   let color = '#10b981'
-  let badgeText = `足底锚点: 红线外 +${distM.toFixed(2)}m`
+  let badgeText = `[安全] 红线外 +${distM.toFixed(2)}m`
   if (rz.state === 'INSIDE') {
     color = '#ff3b30'
-    badgeText = `🚨 足底越过红线: ${distM.toFixed(2)}m`
+    badgeText = `[越界] 足底越过红线: ${distM.toFixed(2)}m`
   } else if (rz.state === 'BUFFER') {
     color = '#ff9f0a'
-    badgeText = `⚠️ 0~0.3m缓冲带: +${distM.toFixed(2)}m`
+    badgeText = `[缓冲] 0~0.3m缓冲带: +${distM.toFixed(2)}m`
   }
 
   return anchors.slice(0, 1).map(([fx, fy]) => ({
@@ -481,17 +501,11 @@ function resetToBeginning() {
   seekTo(0)
 }
 
-// 载入 HPC 生成的 752 帧元数据
+// 载入 HPC 生成的 752 帧元数据 (全局单例, 与告警流水共用同一份数据)
 async function loadHpcMetadata() {
-  try {
-    const res = await fetch('/samples/cctv/benchmarks/cctv_frames_metadata.json')
-    if (res.ok) {
-      const data = await res.json()
-      metadataFrames.value = data.frames || []
-      console.log(`[Intelli-Shield] 成功载入 ${metadataFrames.value.length} 帧 HPC 算法元数据`)
-    }
-  } catch (err) {
-    console.error('[Intelli-Shield] 载入算法元数据失败:', err)
+  const loaded = await loadMetadata()
+  if (loaded.length) {
+    console.log(`[Intelli-Shield] 成功载入 ${loaded.length} 帧 HPC 算法元数据`)
   }
 }
 
@@ -508,6 +522,9 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateDisplayMetrics)
 })
+
+// 供父组件定位到指定告警时刻
+defineExpose({ seekTo })
 </script>
 
 <style scoped>
@@ -577,7 +594,17 @@ onUnmounted(() => {
 }
 
 .btn-icon {
-  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.tool-btn-icon {
+  flex-shrink: 0;
+}
+
+.run-control-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .tool-btn {
@@ -788,8 +815,30 @@ onUnmounted(() => {
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
+.chip-icon {
+  flex-shrink: 0;
+}
+
+.safe-icon {
+  color: var(--nominal-green);
+}
+
+.warn-icon {
+  color: var(--safety-amber);
+}
+
+.danger-icon {
+  color: var(--emergency-red);
+}
+
+.seek-chip.chip-critical:hover .danger-icon {
+  color: #000;
+}
 .seek-chip:hover {
   background: var(--bg-panel-subtle);
   border-color: var(--telemetry-cyan);
