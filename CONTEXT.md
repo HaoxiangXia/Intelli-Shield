@@ -13,13 +13,12 @@ The front-stage vision model (YOLO26 Nano) responsible for bounding-box detectio
 _Avoid_: Decision model, AI core, detector only, YOLO11
 
 **Decision Layer**:
-The System 1 multimodal decision model (OmniJev) operating via single forward pass to output calibrated probabilities for risk, attention, and threat levels without generating text tokens.
-_Avoid_: LLM, chatbot, generative model, slow thinking
+The System 1 multimodal cognitive model (OmniJev) operating via single forward pass on every processed frame to output calibrated probabilities for risk, attention, dangerous worker behavior, and threat severity without generating text tokens.
+_Avoid_: LLM, chatbot, generative model, slow thinking, sporadic invocation
 
 **Decision Probe**:
-A structured query (`Noul`, `Choice`, `Score`) evaluated directly against image and prompt inputs in a single forward pass to yield calibrated probabilities.
+A structured query (`Noul`, `Choice`, `Score`) evaluated directly against image and prompt inputs in a single forward pass on every frame. Currently encompasses collision probability, worker attention, hazardous worker behavior, and threat score.
 _Avoid_: Prompt prompt-engineering, text completion, conversation
-
 **Scene Input**:
 The visual feed passed to the decision layer, currently evaluated as full-frame CCTV imagery before considering localized dynamic cropping.
 _Avoid_: Thumbnail, raw crop, bbox
@@ -34,14 +33,30 @@ _Avoid_: Daemon, background process, cron
 **Risk Fusion Engine**:
 The arbitration component that combines geometric metrics (distance, trajectory, velocity) with OmniJev's calibrated probabilities into definitive alert levels (`NORMAL`, `WARNING`, `CRITICAL`).
 
-**Spatial-Temporal Gate**:
-The pre-probe filtering mechanism (migrated and enhanced from the advisor's legacy C++ `IsCarAway` algorithm) that excludes on-board drivers, cancels motionless vehicles, and enforces ROI geofences before invoking OmniJev.
-_Avoid_: Simple threshold, OpenCV filter, C++ wrapper
+**Pre-Perception Sanitizer**:
+The spatial pre-filtering mechanism that sanitizes visual detections (e.g., excluding on-board drivers via Intersection-over-Person) and validates ground anchors before dispatching full-frame imagery to OmniJev on every frame.
+_Avoid_: Spatial-temporal compute gate, frame skipper, bypass filter
+
+**Hazardous Worker Behavior**:
+Specific non-compliant or high-risk worker states (such as smartphone distraction or turning back to oncoming machinery) detected directly by OmniJev's cognitive probes.
+_Avoid_: Generic distraction, posture anomaly, rule-based skeleton analysis
+
+**Fleet Power Interlock**:
+The active safety mechanism commanding immediate traction power cutoff and audible/visual alarms across all forklifts localized in the camera view whenever risk exceeds critical threshold.
+_Avoid_: Physical AEB pedal control, manual handbrake, individual vehicle steering
+
+**Two-Stage Safety Clearance**:
+The human-in-the-loop arbitration state machine requiring an initial hazard confirmation followed by a mandatory secondary on-site clearance verification before vehicle power can be restored.
+_Avoid_: Single-click dismissal, auto-resume timer, unverified power recovery
+
+**Audit Sample Feedback Repository**:
+The multimodal archival repository capturing synchronized CCTV snapshots, model probe predictions, and safety officer audit labels to provide verified training corpora for continuous model fine-tuning and federated learning aggregation.
+_Avoid_: Raw video archive, simple server access log, unstructured telemetry dump, data flywheel buzzword
 
 **Cognitive Decision Architecture**:
 The theoretical framework grounding the system in Kahneman's System 1 (Fast Intuition):
 - **Front-Stage Spatial Perception**: Lightweight YOLO model outputting bounding boxes and coarse geometric anchors.
-- **Spatial-Temporal Gating**: Self-developed lightweight filter (0.5ms) excluding drivers and stationary vehicles, saving >70% remote GPU compute.
-- **Cognitive Decision Layer**: OmniJev evaluated via single forward pass (~107ms, ZERO generative tokens, 0 external LLM APIs) on remote RTX 3090, outputting calibrated probabilities for risk, worker attention, and threat level.
-- **Asymmetric Risk Fusion**: Geometry overrides model at critical thresholds (<120px) to guarantee functional safety.
+- **Pre-Perception Sanitization**: Geometry filter excluding in-cab drivers to prevent false positives.
+- **Full-Frame Cognitive Decision Layer**: OmniJev evaluated via single forward pass (~107ms, ZERO generative tokens) on every processed frame across 4 synchronized probes.
+- **Asymmetric Risk Fusion & Interlock**: Geometry and probe risk arbitration triggering fleet power interlock and two-stage safety clearance.
 _Avoid_: Generative LLM, Chatbot, external API, slow text generation, token streaming
