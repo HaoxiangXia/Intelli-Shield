@@ -73,11 +73,6 @@ async def api_device_latest_image(device_id: str):
     return JSONResponse(app_service.get_device_latest_image_payload(device_id))
 
 
-@router.post("/api/upload-image-legacy")
-async def api_upload_image_legacy():
-    return JSONResponse({"error": "单图上传已废弃，请使用 /api/upload-image 批量上传"}, status_code=410)
-
-
 @router.post("/api/upload-image")
 async def api_upload_image(
     device_id: str = Form(...),
@@ -117,7 +112,47 @@ async def api_device_alarm_sessions(device_id: str, limit: int = Query(20, ge=1,
 @router.get("/api/trend")
 async def api_trend(type: str = Query("day")):
     return JSONResponse(app_service.get_trend_payload(type))
+@router.get("/api/cctv/timeline-analysis")
+async def api_cctv_timeline_analysis(cctv_id: str = Query("CCTV-04")):
+    payload = app_service.get_cctv_timeline_analysis(cctv_id)
+    return JSONResponse(payload)
 
+@router.post("/api/alarms/{session_id}/confirm")
+async def api_confirm_alarm(session_id: int, request: Request):
+    data = {}
+    try:
+        data = await request.json()
+    except Exception:
+        pass
+    reviewer_id = data.get("reviewer_id", "safety_officer_01")
+    hazard_label = data.get("hazard_label", "back_facing_vehicle")
+    res = app_service.confirm_alarm_service(session_id, reviewer_id, hazard_label)
+    return JSONResponse(res)
+
+
+@router.post("/api/alarms/{session_id}/clear")
+async def api_clear_alarm(session_id: int, request: Request):
+    data = {}
+    try:
+        data = await request.json()
+    except Exception:
+        pass
+    reviewer_id = data.get("reviewer_id", "safety_officer_01")
+    res = app_service.clear_alarm_service(session_id, reviewer_id)
+    return JSONResponse(res)
+
+
+@router.post("/api/alarms/{session_id}/false-alarm")
+async def api_false_alarm(session_id: int, request: Request):
+    data = {}
+    try:
+        data = await request.json()
+    except Exception:
+        pass
+    reason = data.get("reason", "现场专人指挥作业")
+    reviewer_id = data.get("reviewer_id", "safety_officer_01")
+    res = app_service.false_alarm_service(session_id, reason, reviewer_id)
+    return JSONResponse(res)
 
 @router.get("/images/{file_path:path}")
 async def serve_image(file_path: str):

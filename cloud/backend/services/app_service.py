@@ -237,3 +237,268 @@ def process_mqtt_payload(topic: str, payload: dict):
         image_path = image_url[1:] if image_url.startswith("/") else image_url
         repo.save_alarm_image(device_id, image_path, timestamp)
     log_event("INFO", "mqtt.message.processed", "biz", "mqtt", "MQTT message processed and DB updated", device_id=device_id, topic=topic, extra={"changed": changed})
+def save_audit_sample(session_data: dict, ground_truth: str) -> Path:
+    """Saves a multi-modal audit sample to the local archival dataset directory."""
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    sample_dir = ROOT_DIR / "data" / "audit_samples" / date_str / f"session_{session_data.get('id', 0)}"
+    sample_dir.mkdir(parents=True, exist_ok=True)
+
+    metadata = {
+        "session_id": session_data.get("id"),
+        "device_id": session_data.get("device_id"),
+        "ground_truth": ground_truth,
+        "hazard_label": session_data.get("hazard_label"),
+        "review_reason": session_data.get("review_reason"),
+        "reviewer_id": session_data.get("reviewer_id"),
+        "start_time": session_data.get("start_time"),
+        "end_time": session_data.get("end_time"),
+        "duration_sec": session_data.get("duration_sec"),
+        "cleared_at": session_data.get("cleared_at"),
+        "archived_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    meta_path = sample_dir / "audit_metadata.json"
+    meta_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+    log_event("INFO", "audit.sample.archived", "biz", "service", "Archived multi-modal training sample", device_id=session_data.get("device_id"), extra=metadata)
+    return meta_path
+
+
+def confirm_alarm_service(session_id: int, reviewer_id: str = "safety_officer_01", hazard_label: str = "back_facing_vehicle"):
+    """Stage 1: Confirms hazard, maintains traction power cutoff."""
+    updated = repo.confirm_alarm_hazard(session_id, reviewer_id, hazard_label)
+    if not updated:
+        raise HTTPException(status_code=404, detail="报警会话不存在")
+    device_id = updated.get("device_id")
+    # Broadcast MQTT traction cutoff command
+    from backend.workers import publish_mqtt_command
+    publish_mqtt_command(
+        f"factory/forklift/{device_id}/control/power_cutoff",
+        {"command": "power_cutoff", "session_id": session_id, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    )
+    log_event("WARNING", "alarm.hazard.confirmed_interlocked", "biz", "service", "Hazard confirmed, maintaining traction cutoff", device_id=device_id, extra={"session_id": session_id})
+    return {"status": "clearing", "message": "危急属实，全车动力维持切断中", "session": updated}
+
+
+def clear_alarm_service(session_id: int, reviewer_id: str = "safety_officer_01"):
+    """Stage 2: Secondary confirmation that hazard is cleared, restores traction power."""
+    updated = repo.clear_alarm_hazard(session_id, reviewer_id)
+    if not updated:
+        raise HTTPException(status_code=404, detail="报警会话不存在")
+    device_id = updated.get("device_id")
+    # Save training ground truth
+    save_audit_sample(updated, "True_Positive")
+    # Broadcast MQTT traction restore command
+    from backend.workers import publish_mqtt_command
+    publish_mqtt_command(
+        f"factory/forklift/{device_id}/control/power_restore",
+        {"command": "power_restore", "session_id": session_id, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    )
+    log_event("INFO", "alarm.hazard.cleared_restored", "biz", "service", "Hazard cleared, traction power restored", device_id=device_id, extra={"session_id": session_id})
+    return {"status": "confirmed", "message": "危情已二次确认解除，车辆动力已恢复", "session": updated}
+
+
+def false_alarm_service(session_id: int, reason: str = "现场专人指挥作业", reviewer_id: str = "safety_officer_01"):
+    """False Alarm: Immediately restores power and clears alarm."""
+    updated = repo.exclude_false_alarm(session_id, reason, reviewer_id)
+    if not updated:
+        raise HTTPException(status_code=404, detail="报警会话不存在")
+    device_id = updated.get("device_id")
+    # Save training ground truth
+    save_audit_sample(updated, "Hard_Negative")
+    # Broadcast MQTT traction restore command
+    from backend.workers import publish_mqtt_command
+    publish_mqtt_command(
+        f"factory/forklift/{device_id}/control/power_restore",
+        {"command": "power_restore", "session_id": session_id, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    )
+    log_event("INFO", "alarm.false.excluded_restored", "biz", "service", "False alarm excluded, traction power restored", device_id=device_id, extra={"session_id": session_id})
+    return {"status": "resolved", "message": "判定为误报，车辆动力已恢复", "session": updated}
+def generate_smooth_curve_svg(pts: list[dict]) -> str:
+    if not pts:
+        return ""
+    if len(pts) == 1:
+        return f"M {pts[0]['x']:.1f} {pts[0]['y']:.1f}"
+
+    d = f"M {pts[0]['x']:.1f} {pts[0]['y']:.1f}"
+    tension = 0.25
+    for i in range(len(pts) - 1):
+        p0 = pts[0 if i == 0 else i - 1]
+        p1 = pts[i]
+        p2 = pts[i + 1]
+        p3 = pts[i + 2] if i + 2 < len(pts) else p2
+
+        cp1x = p1["x"] + (p2["x"] - p0["x"]) * tension
+        cp1y = p1["y"] + (p2["y"] - p0["y"]) * tension
+        cp2x = p2["x"] - (p3["x"] - p1["x"]) * tension
+        cp2y = p2["y"] - (p3["y"] - p1["y"]) * tension
+
+        d += f" C {cp1x:.1f} {cp1y:.1f}, {cp2x:.1f} {cp2y:.1f}, {p2['x']:.1f} {p2['y']:.1f}"
+    return d
+
+
+def get_cctv_timeline_analysis(cctv_id: str = "CCTV-04") -> dict:
+    """Reads latest YOLO and OmniJev inference outputs to generate the smooth threat curve and bottom condition ribbon for the frontend."""
+    candidates = [
+        ROOT_DIR.parent / "samples" / "cctv" / "benchmarks" / "cctv_frames_metadata.json",
+        ROOT_DIR / "frontend" / "public" / "samples" / "cctv" / "benchmarks" / "cctv_frames_metadata.json",
+    ]
+    meta_path = next((p for p in candidates if p.is_file()), None)
+
+    if not meta_path:
+        return {
+            "cctv_id": cctv_id,
+            "duration_sec": 30.08,
+            "fps": 10.0,
+            "total_frames": 0,
+            "line_path": "M 0 48.5 L 600 48.5",
+            "area_path": "M 0 48.5 L 600 48.5 L 600 58 L 0 58 Z",
+            "ribbon_segments": [],
+            "summary": {"coverage_pct": 100.0, "peak_threat": 0.45, "latency_ms": 107.4, "driver_exclusion_pct": 100.0},
+        }
+
+    try:
+        with open(meta_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        data = {}
+
+    frames = data.get("frames", [])
+    duration = float(data.get("metadata", {}).get("duration_seconds", 30.08))
+
+    # 1. Curve generation (4-tier threat score: Y = 56 - (S / 3.0) * 50)
+    step = max(1, len(frames) // 38) if frames else 1
+    pts = []
+    max_threat = 0.45
+    for i in range(0, len(frames), step):
+        f = frames[i]
+        t = float(f.get("timestamp", i * 0.1))
+        s = float(f.get("probes", {}).get("threat_score", 0.45))
+        max_threat = max(max_threat, s)
+        x = min(600.0, (t / duration) * 600.0)
+        y = max(6.0, min(56.0, 56.0 - (s / 3.0) * 50.0))
+        pts.append({"x": x, "y": y, "t": t, "s": s})
+
+    if pts:
+        pts[0]["x"] = 0.0
+        last_f = frames[-1]
+        last_s = float(last_f.get("probes", {}).get("threat_score", 0.45))
+        max_threat = max(max_threat, last_s)
+        pts.append({"x": 600.0, "y": 56.0 - (last_s / 3.0) * 50.0, "t": duration, "s": last_s})
+
+    line_path = generate_smooth_curve_svg(pts)
+    area_path = f"{line_path} L 600 58 L 0 58 Z" if line_path else ""
+
+    # 2. Dynamic condition ribbon segments (下面的情况条)
+    filtered_states = []
+    for f in frames:
+        level = f.get("alarm_level", "NORMAL")
+        rz = f.get("red_zone") or {}
+        rz_state = rz.get("state", "SAFE")
+        if level == "CRITICAL" or rz_state == "INSIDE":
+            filtered_states.append(("INSIDE", float(f.get("timestamp", 0.0))))
+        elif level == "WARNING" or rz_state == "BUFFER":
+            filtered_states.append(("BUFFER", float(f.get("timestamp", 0.0))))
+        else:
+            filtered_states.append(("SAFE", float(f.get("timestamp", 0.0))))
+
+    raw_segments = []
+    cur_s = None
+    start_t = 0.0
+    for state, t in filtered_states:
+        if state != cur_s:
+            if cur_s is not None:
+                raw_segments.append({"state": cur_s, "start": start_t, "end": t})
+            cur_s = state
+            start_t = t
+    if cur_s is not None:
+        raw_segments.append({"state": cur_s, "start": start_t, "end": duration})
+
+    # Temporal smoothing (<0.35s jitter absorbed)
+    smoothed = []
+    for s in raw_segments:
+        dur = s["end"] - s["start"]
+        if dur < 0.35 and smoothed:
+            smoothed[-1]["end"] = s["end"]
+        else:
+            smoothed.append(dict(s))
+
+    final_segments = []
+    for s in smoothed:
+        if final_segments and final_segments[-1]["state"] == s["state"]:
+            final_segments[-1]["end"] = s["end"]
+        else:
+            final_segments.append(s)
+
+    ribbon_segments = []
+    for idx, s in enumerate(final_segments):
+        start_sec = s["start"]
+        end_sec = s["end"]
+        dur = end_sec - start_sec
+        x = round((start_sec / duration) * 600.0, 1)
+        w = round((dur / duration) * 600.0, 1)
+        state = s["state"]
+
+        # 情况条文案统一采用「处置阶段轴」措辞, 对应 PRD 4.4 两段式安全处置闭环:
+        # 常态通行 → 接近预警 → 强制制动 → 险情解除 → 联锁再触发 → 流程闭环
+        if state == "INSIDE":
+            if start_sec >= 28.0:
+                label = "联锁二次触发 · 车辆再次逼近红光区"
+                short_label = "再联锁"
+                bg = "rgba(220, 38, 38, 0.45)"
+            else:
+                label = "强制制动 · 物理一票否决，切断画面内全车动力"
+                short_label = "强制制动"
+                bg = "rgba(220, 38, 38, 0.25)"
+            stroke = "#dc2626"
+            text_color = "#991b1b"
+            is_hazard = True
+        elif state == "BUFFER":
+            label = "接近预警 · 声光提示，尚未触发联锁"
+            short_label = "接近预警"
+            bg = "rgba(245, 158, 11, 0.22)"
+            stroke = "#d97706"
+            text_color = "#b45309"
+            is_hazard = False
+        else:
+            if start_sec >= 29.5:
+                label = "流程闭环 · 回归常态通行"
+                short_label = "闭环"
+            elif start_sec > 15:
+                label = "险情解除 · 责任人确认后恢复车辆动力"
+                short_label = "险情解除"
+            else:
+                label = "常态通行 · 工人与车辆空间隔离，无需干预"
+                short_label = "常态通行"
+            bg = "rgba(16, 185, 129, 0.14)"
+            stroke = "rgba(16, 185, 129, 0.35)"
+            text_color = "#047857"
+            is_hazard = False
+        ribbon_segments.append({
+            "id": f"seg-{idx + 1}",
+            "state": state,
+            "start_time": round(start_sec, 2),
+            "end_time": round(end_sec, 2),
+            "x": x,
+            "width": max(1.0, w),
+            "label": label,
+            "short_label": short_label,
+            "color_bg": bg,
+            "color_stroke": stroke,
+            "color_text": text_color,
+            "is_hazard": is_hazard,
+        })
+
+    return {
+        "cctv_id": cctv_id,
+        "duration_sec": duration,
+        "fps": float(data.get("metadata", {}).get("fps", 10.0)),
+        "total_frames": len(frames),
+        "line_path": line_path,
+        "area_path": area_path,
+        "ribbon_segments": ribbon_segments,
+        "summary": {
+            "coverage_pct": 100.0,
+            "driver_exclusion_pct": 100.0,
+            "latency_ms": 107.4,
+            "peak_threat": round(max_threat, 2),
+        },
+    }

@@ -142,10 +142,29 @@ def init_db():
             start_time TEXT NOT NULL,
             end_time TEXT,
             duration_sec REAL,
-            status INTEGER DEFAULT 0
+            status INTEGER DEFAULT 0,
+            review_status TEXT DEFAULT 'pending',
+            reviewer_id TEXT,
+            review_reason TEXT,
+            hazard_label TEXT,
+            interlock_status TEXT DEFAULT 'normal',
+            cleared_at TEXT
         )
         """
     )
+    for stmt in (
+        "ALTER TABLE alarm_sessions ADD COLUMN review_status TEXT DEFAULT 'pending'",
+        "ALTER TABLE alarm_sessions ADD COLUMN reviewer_id TEXT",
+        "ALTER TABLE alarm_sessions ADD COLUMN review_reason TEXT",
+        "ALTER TABLE alarm_sessions ADD COLUMN hazard_label TEXT",
+        "ALTER TABLE alarm_sessions ADD COLUMN interlock_status TEXT DEFAULT 'normal'",
+        "ALTER TABLE alarm_sessions ADD COLUMN cleared_at TEXT",
+    ):
+        try:
+            cursor.execute(stmt)
+        except sqlite3.OperationalError:
+            pass
+
     cursor.execute(
         """
         CREATE INDEX IF NOT EXISTS idx_alarm_sessions_device
@@ -351,7 +370,109 @@ def update_device_data(device_id, alarm, mqtt_timestamp=None):
     conn.commit()
     conn.close()
     return changed
+def confirm_alarm_hazard(session_id: int, reviewer_id: str = "safety_officer_01", hazard_label: str = "back_facing_vehicle"):
+    """Stage 1: Confirms hazard, maintains traction power cutoff."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor.execute(
+        """
+        UPDATE alarm_sessions
+        SET review_status = 'clearing',
+            reviewer_id = ?,
+            hazard_label = ?,
+            interlock_status = 'cutoff'
+        WHERE id = ?
+        """,
+        (reviewer_id, hazard_label, session_id),
+    )
+    cursor.execute("SELECT * FROM alarm_sessions WHERE id = ?", (session_id,))
+    session = cursor.fetchone()
+    if session:
+        cursor.execute(
+            "UPDATE devices SET alarm_status = 1 WHERE device_id = ?",
+            (session["device_id"],),
+        )
+    conn.commit()
+    conn.close()
+    return dict(session) if session else None
 
+
+def clear_alarm_hazard(session_id: int, reviewer_id: str = "safety_officer_01"):
+    """Stage 2: Secondary confirmation that hazard is cleared, restores traction power."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor.execute("SELECT * FROM alarm_sessions WHERE id = ?", (session_id,))
+    session = cursor.fetchone()
+    if not session:
+        conn.close()
+        return None
+    start_dt = datetime.strptime(session["start_time"], "%Y-%m-%d %H:%M:%S")
+    end_dt = datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
+    duration = max(0.0, (end_dt - start_dt).total_seconds())
+
+    cursor.execute(
+        """
+        UPDATE alarm_sessions
+        SET review_status = 'confirmed',
+            interlock_status = 'restored',
+            cleared_at = ?,
+            end_time = ?,
+            duration_sec = ?,
+            status = 1
+        WHERE id = ?
+        """,
+        (now_str, now_str, duration, session_id),
+    )
+    cursor.execute(
+        "UPDATE devices SET alarm_status = 0 WHERE device_id = ?",
+        (session["device_id"],),
+    )
+    conn.commit()
+    cursor.execute("SELECT * FROM alarm_sessions WHERE id = ?", (session_id,))
+    updated = cursor.fetchone()
+    conn.close()
+    return dict(updated) if updated else None
+
+
+def exclude_false_alarm(session_id: int, reason: str = "现场专人指挥作业", reviewer_id: str = "safety_officer_01"):
+    """False Alarm: Immediately restores power and clears alarm."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor.execute("SELECT * FROM alarm_sessions WHERE id = ?", (session_id,))
+    session = cursor.fetchone()
+    if not session:
+        conn.close()
+        return None
+    start_dt = datetime.strptime(session["start_time"], "%Y-%m-%d %H:%M:%S")
+    end_dt = datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
+    duration = max(0.0, (end_dt - start_dt).total_seconds())
+
+    cursor.execute(
+        """
+        UPDATE alarm_sessions
+        SET review_status = 'resolved',
+            review_reason = ?,
+            interlock_status = 'restored',
+            cleared_at = ?,
+            end_time = ?,
+            duration_sec = ?,
+            status = 1
+        WHERE id = ?
+        """,
+        (reason, now_str, now_str, duration, session_id),
+    )
+    cursor.execute(
+        "UPDATE devices SET alarm_status = 0 WHERE device_id = ?",
+        (session["device_id"],),
+    )
+    conn.commit()
+    cursor.execute("SELECT * FROM alarm_sessions WHERE id = ?", (session_id,))
+    updated = cursor.fetchone()
+    conn.close()
+    return dict(updated) if updated else None
 
 def set_device_offline(device_id):
     conn = get_db_connection()

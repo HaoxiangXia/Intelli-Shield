@@ -31,16 +31,33 @@ def _is_mqtt_success(reason_code):
     value = getattr(reason_code, "value", reason_code)
     return value == 0 or str(reason_code).lower() == "success"
 
+GLOBAL_WORKER_MANAGER: WorkerManager | None = None
+
+
+def publish_mqtt_command(topic: str, payload: dict) -> bool:
+    """Publishes a control command to the MQTT broker (e.g., power cutoff or restore)."""
+    global GLOBAL_WORKER_MANAGER
+    if GLOBAL_WORKER_MANAGER and GLOBAL_WORKER_MANAGER.mqtt_client:
+        try:
+            GLOBAL_WORKER_MANAGER.mqtt_client.publish(topic, json.dumps(payload))
+            log_event("INFO", "mqtt.control.published", "biz", "mqtt", "Published control command via MQTT", topic=topic, extra=payload)
+            return True
+        except Exception as exc:
+            log_event("ERROR", "mqtt.control.publish_failed", "ops", "mqtt", "Failed to publish MQTT control command", topic=topic, error=str(exc))
+            return False
+    return False
+
 
 class WorkerManager:
     def __init__(self, sio):
+        global GLOBAL_WORKER_MANAGER
+        GLOBAL_WORKER_MANAGER = self
         self.sio = sio
         self.stop_event = asyncio.Event()
         self.loop = None
         self.tasks = []
         self.mqtt_client = None
         self.mqtt_thread = None
-
     async def start(self):
         repo.init_db()
         repo.init_device_positions()
