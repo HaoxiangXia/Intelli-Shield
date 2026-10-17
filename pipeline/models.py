@@ -70,10 +70,11 @@ class OmniJevProbes:
     collision_risk: float
     # Probe 2: Choice worker attention distribution
     worker_awareness: Dict[str, float]
-    # Probe 3: Score expected hazard rating [0.0, 3.0]
-    threat_score: float
+    # Probe 3: Choice worker hazard behaviors (phone_distracted, back_facing_vehicle, etc.)
+    worker_hazard_behavior: Dict[str, float] = field(default_factory=dict)
+    # Probe 4: Score expected hazard rating [0.0, 3.0] (4-tier standard)
+    threat_score: float = 0.0
     latency_ms: float = 0.0
-
 
 @dataclass
 class FrameDecision:
@@ -85,7 +86,9 @@ class FrameDecision:
     reasons: List[str] = field(default_factory=list)
     gating: Optional[GatingDecision] = None
     red_zone: Optional[RedZoneEvaluation] = None
+    # Fleet Traction Interlock control signal (PRD 3.3 / 4.4)
+    interlock_engaged: bool = False
+    interlocked_forklifts: List[BoundingBox] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return asdict(self)
-

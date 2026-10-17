@@ -24,9 +24,6 @@ def run_pipeline(
     names_path: str = "models/voc-hebei.names",
     conf_threshold: float = 0.25,
     max_frames: int = 0,
-    enable_gating: bool = True,
-    gating_dist_px: float = 250.0,
-    static_frames: int = 3,
 ):
     print("=" * 60)
     print("  Intelli-Shield: CCTV + YOLO + OmniJev System 1 Pipeline")
@@ -36,7 +33,7 @@ def run_pipeline(
     if replay_log:
         print(f"Replay Log File: {replay_log}")
     print(f"Target FPS     : {target_fps}")
-    print(f"OmniJev Gating : {'ENABLED (SpatialTemporalGate)' if enable_gating else 'DISABLED'}")
+    print("OmniJev Probing: UNCONDITIONAL PER-FRAME (10 FPS Synchronized)")
     print("-" * 60)
 
     video = VideoSource(video_path=video_path, target_fps=target_fps, loop=False)
@@ -48,35 +45,20 @@ def run_pipeline(
     )
     engine = OmniJevEngine(endpoint_url=endpoint, replay_log_path=replay_log)
     fusion = RiskFusionEngine()
-    gate = (
-        SpatialTemporalGate(
-            trigger_distance_px=gating_dist_px,
-            static_frame_threshold=static_frames,
-        )
-        if enable_gating
-        else None
-    )
+    gate = SpatialTemporalGate()
     processed_frames = 0
     t0 = time.time()
     for frame_id, timestamp, frame_bgr in video.frames():
         # 1. Perception Layer (YOLO)
         perception = detector.detect(frame_bgr, frame_id, timestamp)
 
-        # 2. Decision Layer (SpatialTemporalGate -> OmniJev Probes)
-        gate_decision = None
-        should_probe = False
+        # 2. Pre-Perception Sanitization (Driver Exclusion)
+        gate_decision = gate.evaluate(perception) if gate is not None else None
 
-        if enable_gating and gate is not None:
-            gate_decision = gate.evaluate(perception)
-            should_probe = gate_decision.should_trigger
-        else:
-            should_probe = bool(perception.pedestrians and perception.forklifts)
+        # 3. Decision Layer (Unconditional Per-Frame OmniJev 4-Probe Inference)
+        probes = engine.evaluate(frame_bgr, frame_id)
 
-        probes = None
-        if should_probe:
-            probes = engine.evaluate(frame_bgr, frame_id)
-
-        # 3. Risk Fusion Engine
+        # 4. Risk Fusion & Fleet Interlock Engine
         decision: FrameDecision = fusion.arbitrate(
             frame_id, timestamp, perception, probes, gating=gate_decision
         )
@@ -94,17 +76,19 @@ def run_pipeline(
         rz = decision.red_zone
         rz_str = f"RedZone: {rz.state.value}({rz.min_dist_px:+.1f}px/{rz.min_dist_m:+.2f}m)" if rz and rz.min_dist_px != float("inf") else "RedZone: SAFE"
 
-        probe_str = "Gated (Skip OmniJev)"
-        if gate_decision and not gate_decision.should_trigger:
-            probe_str = f"Gate [SHUT]: {gate_decision.reason[:36]}"
-        elif decision.probes:
+        probe_str = "OmniJev: Probes Unavailable"
+        if decision.probes:
             p = decision.probes
-            probe_str = f"Gate [OPEN] -> P(coll)={p.collision_risk:.2f} | Score={p.threat_score:.1f} | {p.latency_ms:.0f}ms"
-        elif gate_decision and gate_decision.should_trigger:
-            probe_str = "Gate [OPEN] -> Probes Unavailable (Timeout/Mock)"
+            hazard_info = ""
+            if p.worker_hazard_behavior:
+                top_hazard = max(p.worker_hazard_behavior.items(), key=lambda kv: kv[1])
+                hazard_info = f" | {top_hazard[0]}:{top_hazard[1]:.2f}"
+            probe_str = f"OmniJev -> P(coll)={p.collision_risk:.2f} | Score={p.threat_score:.1f}{hazard_info} | {p.latency_ms:.0f}ms"
+
+        interlock_flag = " | 🛑 [INTERLOCK CUTOFF]" if decision.interlock_engaged else ""
 
         print(
-            f"Frame #{frame_id:04d} | {status_color} | {rz_str} | Ped: {p_cnt} | Forklift: {f_cnt} | Dist: {dist_str:>7} | {probe_str}"
+            f"Frame #{frame_id:04d} | {status_color}{interlock_flag} | {rz_str} | Ped: {p_cnt} | Forklift: {f_cnt} | Dist: {dist_str:>7} | {probe_str}"
         )
         processed_frames += 1
         if max_frames > 0 and processed_frames >= max_frames:
@@ -126,9 +110,6 @@ def main():
     parser.add_argument("--names", type=str, default="models/voc-hebei.names", help="YOLOv4 class names path")
     parser.add_argument("--conf", type=float, default=0.25, help="Detection confidence threshold")
     parser.add_argument("--max-frames", type=int, default=0, help="Max frames to process (0 = all)")
-    parser.add_argument("--no-gating", action="store_true", help="Disable spatial-temporal gating filter")
-    parser.add_argument("--gating-dist", type=float, default=250.0, help="Gating distance trigger threshold in px")
-    parser.add_argument("--static-frames", type=int, default=3, help="Consecutive frames to cancel stationary forklift")
     args = parser.parse_args()
 
     run_pipeline(
@@ -141,11 +122,6 @@ def main():
         names_path=args.names,
         conf_threshold=args.conf,
         max_frames=args.max_frames,
-        enable_gating=not args.no_gating,
-        gating_dist_px=args.gating_dist,
-        static_frames=args.static_frames,
     )
-
-
 if __name__ == "__main__":
     main()

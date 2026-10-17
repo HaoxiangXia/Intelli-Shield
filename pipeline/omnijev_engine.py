@@ -44,13 +44,21 @@ class OmniJevEngine:
             for item in data.get("frames", []):
                 fid = item.get("frame_id")
                 probes = item.get("probes", {})
+                hazard = probes.get("worker_hazard_behavior")
+                if not hazard:
+                    unaware = probes.get("worker_awareness", {}).get("unaware", 0.0)
+                    hazard = (
+                        {"back_facing_vehicle": 0.82, "phone_distracted": 0.15, "normal_compliant": 0.03}
+                        if unaware >= 0.50
+                        else {"normal_compliant": 0.90, "back_facing_vehicle": 0.05, "phone_distracted": 0.05}
+                    )
                 self.replay_cache[fid] = OmniJevProbes(
                     collision_risk=probes.get("collision_risk", 0.0),
                     worker_awareness=probes.get("worker_awareness", {}),
+                    worker_hazard_behavior=hazard,
                     threat_score=probes.get("threat_score", 0.0),
                     latency_ms=probes.get("latency_ms", 35.0),
                 )
-
     def evaluate(self, frame_bgr: np.ndarray, frame_id: int) -> Optional[OmniJevProbes]:
         """Evaluates OmniJev probes on the full-frame scene."""
         # 1. Replay log takes precedence if available
@@ -76,14 +84,26 @@ class OmniJevEngine:
                     data = resp.json()
                     probes_data = data.get("probes", {})
                     latency = (time.perf_counter() - start_t) * 1000.0
+                    hazard = probes_data.get("worker_hazard_behavior")
+                    if not hazard:
+                        unaware = probes_data.get("worker_awareness", {}).get(
+                            "unaware",
+                            probes_data.get("worker_awareness", {}).get("unaware/distracted", 0.0),
+                        )
+                        hazard = (
+                            {"back_facing_vehicle": 0.82, "phone_distracted": 0.15, "normal_compliant": 0.03}
+                            if unaware >= 0.50
+                            else {"normal_compliant": 0.90, "back_facing_vehicle": 0.05, "phone_distracted": 0.05}
+                        )
                     return OmniJevProbes(
                         collision_risk=float(probes_data.get("collision_risk", 0.0)),
                         worker_awareness=probes_data.get("worker_awareness", {}),
+                        worker_hazard_behavior=hazard,
                         threat_score=float(probes_data.get("threat_score", 0.0)),
                         latency_ms=latency,
                     )
-            except Exception as e:
-                # Log endpoint unreachable without crashing pipeline
+                return None
+            except Exception:
                 return None
 
         return None

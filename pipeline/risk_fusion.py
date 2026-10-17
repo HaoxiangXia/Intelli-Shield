@@ -109,22 +109,12 @@ class RiskFusionEngine:
                 )
 
         # ---------------------------------------------------------
-        # Layer 2: Fast-Path Gating check (Only if NO physical breach)
+        # Layer 2: Pre-Perception Driver Sanitization Check
         # ---------------------------------------------------------
-        if not is_physically_breached and gating is not None and not gating.should_trigger:
-            reasons.append(f"OmniJev probe gated (Fast-Path NORMAL): {gating.reason}")
-            self._last_alarm_level = AlarmLevel.NORMAL
-            return FrameDecision(
-                frame_id=frame_id,
-                timestamp=timestamp,
-                perception=perception,
-                probes=None,
-                alarm_level=AlarmLevel.NORMAL,
-                reasons=reasons,
-                gating=gating,
-                red_zone=red_zone,
-            )
-
+        # Driver-in-cab pedestrians are sanitized in gating/perception;
+        # OmniJev inference proceeds per-frame without compute-saving bypasses.
+        if gating is not None and gating.driver_pedestrians:
+            reasons.append(f"Sanitized {len(gating.driver_pedestrians)} driver(s) inside forklift cabs")
         # ---------------------------------------------------------
         # Layer 3: Cognitive Probe Fusion & Context Attribution
         # ---------------------------------------------------------
@@ -149,7 +139,7 @@ class RiskFusionEngine:
                     f"Hazard threat score = {probes.threat_score:.2f} >= {self.threat_score_critical:.2f}"
                 )
 
-            # Probe C: Worker Attention / Awareness Context
+            # Probe C: Worker Attention & Hazardous Behavior Attribution
             unaware = probes.worker_awareness.get(
                 "unaware", probes.worker_awareness.get("unaware/distracted", 0.0)
             )
@@ -160,7 +150,18 @@ class RiskFusionEngine:
                     reasons.append(f"【盲区背对/分心】工人注意力缺失 P(unaware) = {unaware:.2f}")
             elif yielding >= 0.50:
                 reasons.append(f"【工人注视避让】工人面向叉车注意观察 P(yielding) = {yielding:.2f}")
-        else:
+
+            # Probe D: Worker Hazardous Behavior Quantization (PRD 3.2)
+            if probes.worker_hazard_behavior:
+                phone = probes.worker_hazard_behavior.get("phone_distracted", 0.0)
+                back = probes.worker_hazard_behavior.get("back_facing_vehicle", 0.0)
+                blindspot = probes.worker_hazard_behavior.get("standing_in_blindspot", 0.0)
+                if phone >= 0.50:
+                    reasons.append(f"【严重违章】工人低头看手机 P(phone) = {phone:.2f}")
+                elif back >= 0.50:
+                    reasons.append(f"【视线盲区】工人背对驶来叉车 P(back) = {back:.2f}")
+                elif blindspot >= 0.50:
+                    reasons.append(f"【盲区停留】工人处于通道视线盲区 P(blindspot) = {blindspot:.2f}")
             # Fallback to spatial geometric distance when probes unavailable
             dist = (
                 gating.min_dynamic_distance_px
@@ -181,6 +182,18 @@ class RiskFusionEngine:
         # ---------------------------------------------------------
         final_level = self._apply_hysteresis(candidate_level, frame_id)
 
+        # ---------------------------------------------------------
+        # Layer 5: Fleet Power Interlock Activation (PRD 3.3 / 4.4)
+        # ---------------------------------------------------------
+        interlock_engaged = False
+        interlocked_forklifts: List[BoundingBox] = []
+        if final_level == AlarmLevel.CRITICAL:
+            interlock_engaged = True
+            interlocked_forklifts = list(perception.forklifts)
+            reasons.append(
+                f"🛑 【全车动力切断】已向画面内全部在编叉车 ({len(interlocked_forklifts)}台) 触发动力切断与制动联锁"
+            )
+
         return FrameDecision(
             frame_id=frame_id,
             timestamp=timestamp,
@@ -190,8 +203,9 @@ class RiskFusionEngine:
             reasons=reasons,
             gating=gating,
             red_zone=red_zone,
+            interlock_engaged=interlock_engaged,
+            interlocked_forklifts=interlocked_forklifts,
         )
-
     def _apply_hysteresis(self, candidate: AlarmLevel, frame_id: int) -> AlarmLevel:
         """Smooths alarm transitions to eliminate single-frame visual jitter."""
         if frame_id == 0 or self._last_alarm_level is None:
