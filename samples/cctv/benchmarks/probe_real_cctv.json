@@ -1,12 +1,18 @@
 {
   "probes": {
-    "collision_risk": 0.785,
+    "collision_risk": 0.857,
     "worker_awareness": {
-      "unaware": 0.6,
-      "yielding": 0.25,
-      "separated": 0.15
+      "unaware/distracted": 0.006,
+      "actively looking/yielding": 0.922,
+      "physically separated in walkway": 0.072
     },
-    "threat_score": 2.48,
+    "worker_hazard_behavior": {
+      "phone_distracted": 0.04,
+      "back_facing_vehicle": 0.369,
+      "standing_in_blindspot": 0.243,
+      "normal_compliant": 0.348
+    },
+    "threat_score": 1.39,
     "latency_ms": 107.4
   }
 }
