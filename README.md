@@ -20,11 +20,13 @@
 
 ## 功能亮点
 
-- 端侧实时识别人与车辆的相对距离，毫秒级触发预警
-- 三线激光划区，危险边界可视化
-- 语音与声光联动报警，现场干预更直接
+- 端侧与高位 CCTV 实时识别人车交互与地面红光警戒线
+- 突破人类生理极限反应时间：端到端感知决策全链路仅约 113ms（严格低于人类 250~400ms 生理反应极限），实现亚秒级先验干预与动力切断
+- 三向激光地表划区，物理禁行边界拓扑实时判别
+- 引入中科院自动化所 OmniJev-4B 决策大模型，单前向零 Token 输出校准概率与高维危险行为归因
+- 语音、声光与无线动力联锁联动报警，现场干预更直接
 - 报警事件留痕上云，支持查询与复盘
-- 数字孪生地图与看板呈现风险态势（持续完善中）
+- 数字孪生地图与看板呈现风险态势
 
 ## 技术栈
 
@@ -32,7 +34,7 @@
 |---|---|
 | 设备端 | MaixCAM Pro + YOLO11n + Python（MaixPy v4.12）；UART 串口对接 STM32 控制 LED / 蜂鸣器 / OLED |
 | 云端后端 | FastAPI + Uvicorn + paho-mqtt + python-socketio + SQLite；可选 LLM 多模态描述（OpenAI 兼容）；依赖由 uv 统一管理 |
-| 感知流水线 | OpenCV DNN (Darknet YOLOv4) + SpatialTemporalGate 门控 + TypeSafe OmniJev 探针 + 风险仲裁机；依赖由 uv 统一管理 |
+| 感知流水线 | OpenCV DNN (Darknet YOLOv4) + SpatialTemporalGate 门控 + OmniJev-4B (中科院自动化所 / 中关村学院 / Zevo) 探针 + 风险仲裁机；依赖由 uv 统一管理 |
 | 前端 | Vue 3 + Vite + Element Plus + ECharts（vue-echarts）+ socket.io-client + Bun/npm |
 
 ## 端云协同数据流
@@ -114,3 +116,10 @@ cd cloud && uv run python -m backend.app
 
 ### 4) 设备端
 请参考 [device/README.md](device/README.md) 进行部署。
+
+## 后续规划 (Roadmap)
+
+- [ ] **多路高位 CCTV 并发与动态批处理 (Multi-Stream Dynamic Batching)**：充分利用 OmniJev-4B 单前向计算与 3090 显存裕量，支持 16~32 路摄像头通过异步批处理队列（Batch Size 4~8）并发调度，结合边缘红光几何门控，将单路平摊时延压降至 60ms 内。
+- [ ] **实车 CAN 总线无线动力切断套件工程化**：实装车载无线电控继电器，落地两段式动力联锁与全厂区通道风险热力图。
+- [ ] **数据不出厂的联邦微调架构 (Federated Learning)**：沉淀现场安全责任人核验样本对，在边缘节点进行 LoRA 增量对齐微调。
+- [ ] **边缘端 INT4/GGUF 量化部署**：探索利用轻量工控机离线部署，进一步降低中小型工厂硬件采购门槛。

@@ -60,3 +60,15 @@ The theoretical framework grounding the system in Kahneman's System 1 (Fast Intu
 - **Full-Frame Cognitive Decision Layer**: OmniJev evaluated via single forward pass (~107ms, ZERO generative tokens) on every processed frame across 4 synchronized probes.
 - **Asymmetric Risk Fusion & Interlock**: Geometry and probe risk arbitration triggering fleet power interlock and two-stage safety clearance.
 _Avoid_: Generative LLM, Chatbot, external API, slow text generation, token streaming
+
+**Virtual Hardware Interlock Console**:
+The digital twin telemetry and logic terminal that visualizes edge hardware GPIO states, relay interlock transitions, and sub-millisecond electrical latencies on screen.
+_Avoid_: Fake UI, dummy indicator, mock dashboard
+
+**EVT-1 Breadboard Prototype**:
+The first-stage desktop electrical validation hardware comprising the microcontroller, optocoupled relays, laser modules, and acoustic-optic beacons to verify circuit logic and microsecond command execution.
+_Avoid_: Toy circuit, temporary hack, breadboard mess
+
+**DVT-2 Industrial Enclosure & PCB Design**:
+The second-stage mechanical packaging (3D CAD chassis with heatsinks and IP65 glands) and customized PCB schematic/layout engineered for high-vibration forklift operating environments.
+_Avoid_: Conceptual drawing, unfinished product, pure 3D art

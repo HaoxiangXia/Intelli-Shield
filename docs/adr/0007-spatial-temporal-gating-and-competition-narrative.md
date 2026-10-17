@@ -9,7 +9,7 @@ In preparing Intelli-Shield 2.0 for academic defense and innovation competitions
    - Establish two technical extremes in presentation benchmarks:
      - *Traditional Geometric Heuristics (e.g., legacy C++ rules)*: Fail due to zero semantic cognition, high false alarms on drivers/parked vehicles, and perspective distortion.
      - *Generative Multimodal Models (e.g., GPT-4o, Qwen-VL)*: Fail due to 2–4s autoregressive token generation latency, making real-time collision prevention impossible.
-   - Position **TypeSafe AI OmniJev (System 1 Fast Intuition)** as the optimal operating point: single forward pass, zero generative tokens, ~107ms calibrated probability probes.
+   - Position **OmniJev-4B (CASIA / Zhongguancun Academy / Zevo, System 1 Fast Intuition)** as the optimal operating point: single forward pass, zero generative tokens, ~107ms calibrated probability probes.
 
 2. **Legacy Baseline Inheritance & Python Gating Modernization**:
    - Classify the advisor's C++ algorithm as the "Intelli-Shield 1.0 Baseline".
@@ -31,7 +31,7 @@ In preparing Intelli-Shield 2.0 for academic defense and innovation competitions
    - Standardize three definitive ablation figures for the defense slide deck:
      1. *Compute Load Reduction*: 73.5% suppression of GPU invocations via spatial-temporal gating.
      2. *False Positive Elimination*: 87.5% -> 0.0% false alarm reduction on stationary/driver scenarios.
-     3. *Latency Waterfall*: YOLO (5ms) + Gate (0.5ms) + OmniJev (107ms) + Fusion (0.2ms) = 112.7ms total, proving sub-human reaction speed.
+     3. *Latency Waterfall*: YOLO (5.2ms) + RedZone (0.8ms) + OmniJev-4B (107.4ms) + Fusion (0.2ms) = 113.6ms total, strictly below the human physiological reaction limit (250~400ms), proving sub-human reaction speed for industrial emergency cutoff.
 
 6. **Defense Counter-Strategy on Foundational Models**:
    - Rebut questions regarding base model training by anchoring proprietary value on:

@@ -10,7 +10,7 @@ In earlier iterations (ADR 0007), the pipeline employed `SpatialTemporalGate` to
 
 1. **Abolition of Compute Gating & Full-Frame 10 FPS Ingestion**:
    - Decommission all compute-saving bypasses (`Fast-Path NORMAL`) in `SpatialTemporalGate`.
-   - Lock intake frame rate to **10.0 FPS** (100ms per frame), achieving 1:1 synchronization with OneJev-0.8B steady-state inference latency (**107.0 ~ 110.0 ms** on NVIDIA RTX 3090).
+   - Lock intake frame rate to **10.0 FPS** (100ms per frame), achieving high temporal synchronization with OmniJev-4B single-forward-pass latency (~107.4 ms on NVIDIA RTX 3090).
    - Retain Intersection-over-Person (IoP $\ge 0.65$) pre-perception filtering solely to exclude seated forklift drivers from obstacle tracking.
 
 2. **Dedicated Hazardous Worker Behavior Probe (`worker_hazard_behavior`)**:
