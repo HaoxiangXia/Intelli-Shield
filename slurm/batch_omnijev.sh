@@ -23,4 +23,8 @@ OUTPUT=${2:-"samples/cctv/benchmarks/omnijev_results.json"}
 # source ~/.bashrc
 # conda activate omnijev
 
-python3 slurm/batch_omnijev.py --video "$VIDEO" --output "$OUTPUT" --stride 2 --model "OneJev-0.8B"
+export PYTHONPATH="${OMNIJEV_REPO_DIR:-$HOME/OmniJev}:${PYTHONPATH:-}"
+
+python3 slurm/batch_omnijev.py --video "$VIDEO" --output "$OUTPUT" --stride 2 \
+    --ckpt "${OMNIJEV_CKPT:-$HOME/models/OmniJev-4B}" \
+    --base "${OMNIJEV_BASE:-$HOME/models/Qwen3.5-4B}"

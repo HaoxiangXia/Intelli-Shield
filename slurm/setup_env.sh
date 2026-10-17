@@ -1,13 +1,18 @@
 #!/bin/bash
-# One-click environment setup script for Slurm RTX 3090 node (OmniJev / OneJev).
+# One-click environment setup script for Slurm RTX 3090 node.
+# Model: OmniJev-2B (中科院自动化所 / 北京中关村学院 / Zevo)
+# Repository: https://github.com/tinnel123666888/OmniJev
 
 set -e
 
 echo "=========================================================="
-echo " Setting up OmniJev / OneJev Environment on RTX 3090 Node"
+echo " Setting up OmniJev (MSO) Environment on RTX 3090 Node"
+echo " Model: OmniJev-2B  |  Base: Qwen3.5-2B"
 echo "=========================================================="
 
 ENV_NAME="omnijev"
+MODEL_DIR="${OMNIJEV_MODEL_DIR:-$HOME/models}"
+REPO_DIR="${OMNIJEV_REPO_DIR:-$HOME/OmniJev}"
 
 # 1. Check Conda
 if command -v conda &> /dev/null; then
@@ -39,16 +44,41 @@ $INSTALL_CMD torch torchvision --index-url https://download.pytorch.org/whl/cu12
 echo ">>> Installing FastAPI, OpenCV, and utilities..."
 $INSTALL_CMD fastapi uvicorn "opencv-python-headless>=4.8,<5.0" pydantic requests "numpy>=1.24" huggingface_hub
 
-# 5. Install OmniJev (qev) & Clone OneJev official repository
-echo ">>> Installing OmniJev runtime (qev)..."
-$INSTALL_CMD qev || $INSTALL_CMD git+https://github.com/OmniJev/OneJev.git || echo "Notice: Ensure network access to github.com/OmniJev/OneJev"
-# 6. Download Model Weights (PlayJev-0.8B for 30ms latency or OneJev-9B)
-echo ""
-echo ">>> To download the model weights to your cluster scratch space, run:"
-echo ">>> huggingface-cli download OmniJev/PlayJev-0.8B --local-dir ~/models/PlayJev-0.8B"
-echo ""
+# 5. Install OmniJev inference dependencies (transformers >= 5, peft, pillow)
+echo ">>> Installing OmniJev (MSO) inference stack..."
+$INSTALL_CMD "transformers>=5" peft pillow accelerate
 
+# 6. Clone OmniJev repository (provides mso package)
+echo ">>> Cloning OmniJev repository..."
+if [ -d "$REPO_DIR" ]; then
+    echo ">>> Repository already exists at $REPO_DIR, pulling latest..."
+    git -C "$REPO_DIR" pull || true
+else
+    git clone https://github.com/tinnel123666888/OmniJev.git "$REPO_DIR"
+fi
+# Install repo dependencies
+$INSTALL_CMD -r "$REPO_DIR/requirements.txt" || true
+
+# 7. Download Model Weights
+echo ""
+echo ">>> Downloading Qwen3.5-2B base model..."
+huggingface-cli download Qwen/Qwen3.5-2B --local-dir "$MODEL_DIR/Qwen3.5-2B" || \
+    echo "Notice: Download failed. Set HF_TOKEN or ensure network access to huggingface.co"
+
+echo ">>> Downloading OmniJev-2B LoRA checkpoint..."
+huggingface-cli download tinnel123/OmniJev-2B --revision v1.1 --local-dir "$MODEL_DIR/OmniJev-2B" || \
+    echo "Notice: Download failed. Set HF_TOKEN or ensure network access to huggingface.co"
+
+echo ""
 echo "=========================================================="
-echo " Setup Complete! Test GPU with:"
-echo " python3 -c \"import torch; print('CUDA Ready:', torch.cuda.is_available(), torch.cuda.get_device_name(0))\""
+echo " Setup Complete!"
+echo ""
+echo " Models installed to: $MODEL_DIR"
+echo " OmniJev repo at:     $REPO_DIR"
+echo ""
+echo " Test GPU:"
+echo "   python3 -c \"import torch; print('CUDA Ready:', torch.cuda.is_available(), torch.cuda.get_device_name(0))\""
+echo ""
+echo " Quick smoke test:"
+echo "   PYTHONPATH=$REPO_DIR python3 -c \"from mso.infer import MSO1; print('MSO1 import OK')\""
 echo "=========================================================="

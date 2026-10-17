@@ -34,6 +34,10 @@ echo ""
 # conda activate omnijev
 
 export PORT=${PORT}
-export OMNIJEV_MODEL="OneJev-0.8B"
+export OMNIJEV_CKPT="${OMNIJEV_CKPT:-$HOME/models/OmniJev-4B}"
+export OMNIJEV_BASE="${OMNIJEV_BASE:-$HOME/models/Qwen3.5-4B}"
+
+# Ensure mso package is importable from cloned repo
+export PYTHONPATH="${OMNIJEV_REPO_DIR:-$HOME/OmniJev}:${PYTHONPATH:-}"
 
 python3 slurm/serve_omnijev.py

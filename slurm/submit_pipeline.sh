@@ -23,10 +23,12 @@ source /archive/xhx/miniconda3/etc/profile.d/conda.sh
 conda activate omnijev
 
 export CUDA_VISIBLE_DEVICES=0
+export PYTHONPATH="/archive/xhx/OmniJev:${PYTHONPATH:-}"
 
 python3 /archive/xhx/Intelli-Shield/slurm/run_full_cctv_pipeline.py \
     --video /archive/xhx/Intelli-Shield/samples/cctv/videos/output_video7.mp4 \
     --output /archive/xhx/Intelli-Shield/samples/cctv/benchmarks/cctv_frames_metadata.json \
     --yolo /archive/xhx/Intelli-Shield/yolo26n.pt \
-    --model /archive/xhx/models/OneJev-0.8B \
+    --ckpt /archive/xhx/models/OmniJev-4B \
+    --base /archive/xhx/models/Qwen3.5-4B \
     --stride 1
