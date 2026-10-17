@@ -117,7 +117,7 @@
             <AlertCircle :size="18" class="pending-icon" />
             <div class="pending-title">采集端未接入</div>
             <div class="pending-desc">
-              该路摄像头尚未完成 HPC 端 YOLO + OneJev 时序推理，暂无实测帧元数据。
+              该路摄像头尚未完成 HPC 端 YOLO + OmniJev-4B 时序推理，暂无实测帧元数据。
             </div>
             <div class="pending-spec">
               规划接入后输出：感知帧元数据 · 红光禁区多边形 · 三路认知探针

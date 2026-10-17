@@ -90,7 +90,7 @@
           <span>人工巡检 + 事后追溯，险情靠人眼发现</span>
           <span class="legend-sep"></span>
           <span class="legend-tag post">系统接入后</span>
-          <span>红光禁区 + YOLO 感知 + OneJev 认知探针三层仲裁，险情持续下降</span>
+          <span>红光禁区 + YOLO 感知 + OmniJev-4B 认知探针三层仲裁，险情持续下降</span>
         </div>
 
         <div class="chart-panel glass-inner">

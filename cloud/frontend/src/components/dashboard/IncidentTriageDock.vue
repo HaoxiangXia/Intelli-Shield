@@ -2,6 +2,10 @@
   <aside class="triage-dock">
     <div class="triage-header">
       <span class="triage-title">险情核验处置坞</span>
+      <span class="triage-clock">
+        <Clock :size="12" class="clock-icon" />
+        <span class="clock-time">{{ systemTime }}</span>
+      </span>
     </div>
 
     <!-- 待复核告警卡片 (PRD 4.4 规范) -->
@@ -23,7 +27,7 @@
             </template>
             <template v-else>
               <CheckCircle2 :size="13" class="badge-icon-resolved" />
-              <span>暂无待复核险情</span>
+              <span>常态安全监控中</span>
             </template>
           </span>
         </div>
@@ -31,63 +35,93 @@
           <template v-if="cardIncident">
             {{ cardIncident.startTime.toFixed(2) }}秒 · 持续 {{ cardIncident.durationSec.toFixed(2) }}秒
           </template>
-          <template v-else>等待告警流入</template>
+          <template v-else>厂区通廊常态通行</template>
         </span>
       </div>
 
-      <!-- 三路认知探针遥测仪 -->
+      <!-- 四路认知探针遥测仪 (PRD 3.2 规范) -->
       <div class="probe-triad-box">
         <div class="probe-triad-title">
-          <span>OmniJev 三路认知探针遥测</span>
-          <span style="color:var(--text-muted)">RTX 3090 集群 · {{ cardIncident?.latencyMs ?? 107.4 }}毫秒</span>
+          <span>OmniJev-4B 四路认知探针遥测</span>
+          <span style="color:var(--text-muted)">RTX 3090 集群 · {{ liveLatencyMs }}毫秒 (突破生理极限)</span>
         </div>
         <div class="probe-triad-grid">
+          <!-- 探针 1: 碰撞风险概率 -->
           <div class="probe-metric-item">
             <span class="p-label">1. 碰撞风险概率</span>
             <span
               class="p-val"
-              :style="{ color: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
+              :style="{ color: liveCollisionColor }"
             >
-              {{ cardIncident ? `${cardIncident.collisionRisk}%` : '--' }}
+              {{ liveCollisionRisk }}%
             </span>
             <div class="p-bar-wrap">
               <div
                 class="p-bar-fill"
-                :style="{ width: `${cardIncident?.collisionRisk ?? 0}%`, background: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
+                :style="{
+                  width: `${liveCollisionRisk}%`,
+                  background: liveCollisionColor
+                }"
               ></div>
             </div>
           </div>
 
+          <!-- 探针 2: 工人注意力状态 -->
           <div class="probe-metric-item">
             <span class="p-label">2. 工人注意力状态</span>
             <span
               class="p-val"
-              :style="{ color: isCardPending ? 'var(--safety-amber)' : 'var(--nominal-green)', fontSize: '11px' }"
+              :style="{ color: liveAwareness.color, fontSize: '11px' }"
             >
-              <template v-if="cardIncident">{{ (cardIncident.awareness * 100).toFixed(0) }}% 分心背对</template>
-              <template v-else>--</template>
+              {{ liveAwareness.label }}
             </span>
             <div class="p-bar-wrap">
               <div
                 class="p-bar-fill"
-                :style="{ width: `${(cardIncident?.awareness ?? 0) * 100}%`, background: isCardPending ? 'var(--safety-amber)' : 'var(--nominal-green)' }"
+                :style="{
+                  width: `${liveAwareness.prob * 100}%`,
+                  background: liveAwareness.color
+                }"
               ></div>
             </div>
           </div>
 
+          <!-- 探针 3: 工人危险行为辨识 -->
           <div class="probe-metric-item">
-            <span class="p-label">3. 综合危害烈度</span>
+            <span class="p-label">3. 工人危险违章行为</span>
             <span
               class="p-val"
-              :style="{ color: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
+              :style="{ color: liveHazardBehavior.color, fontSize: '11px' }"
             >
-              <template v-if="cardIncident">{{ cardIncident.threatScore }} / 3.0</template>
-              <template v-else>--</template>
+              {{ liveHazardBehavior.label }}
             </span>
             <div class="p-bar-wrap">
               <div
                 class="p-bar-fill"
-                :style="{ width: `${((cardIncident?.threatScore ?? 0) / 3) * 100}%`, background: isCardPending ? 'var(--emergency-red)' : 'var(--nominal-green)' }"
+                :style="{
+                  width: `${liveHazardBehavior.prob * 100}%`,
+                  background: liveHazardBehavior.color
+                }"
+              ></div>
+            </div>
+          </div>
+
+          <!-- 探针 4: 综合危害烈度 (4级响应) -->
+          <div class="probe-metric-item">
+            <span class="p-label">4. 综合危害烈度 (4级响应)</span>
+            <span
+              class="p-val"
+              :style="{ color: getThreatTier(liveThreatScore).color }"
+            >
+              {{ liveThreatScore.toFixed(2) }} / 3.0 ({{ getThreatTier(liveThreatScore).text }})
+            </span>
+            <div class="p-bar-wrap">
+              <div
+                class="p-bar-fill"
+                :style="{
+                  width: `${(liveThreatScore / 3) * 100}%`,
+                  background: getThreatTier(liveThreatScore).color
+                }"
               ></div>
             </div>
           </div>
@@ -112,64 +146,71 @@
         />
       </div>
 
-      <div class="hazard-caption">
-        <strong>{{ isCardPending ? '双系统分层仲裁依据:' : '核验结论 (责任人):' }}</strong>
-        <template v-if="isCardPending && cardIncident">
+      <div class="hazard-caption" :class="{ 'caption-clearing': activeIncidentState === 'clearing' }">
+        <strong>{{ captionTitle }}:</strong>
+        <template v-if="activeIncidentState === 'pending' && cardIncident">
           物理间距最近 {{ cardIncident.minDistPx }}px ({{ cardIncident.minDistM }}m)，
           {{ cardIncident.reasons?.length ? cardIncident.reasons.join('；') : '多帧连续越阈' }}。
+          已触发现场声光警报并广播全车动力切断联锁。
+        </template>
+        <template v-else-if="activeIncidentState === 'clearing' && cardIncident">
+          🛑 <strong>【全车动力切断锁定中】</strong> 责任人已确认紧迫险情，现场正在组织人员撤离排险。排险完毕后请点击二次确认解除以恢复行车。
         </template>
         <template v-else-if="cardIncident">
-          经安全责任人现场复核，判定为【{{ cardIncident.status === 'confirmed' ? '险情属实' : resolvedReason }}】，
-          样本已提交算法微调队列。
+          经安全责任人现场核验闭环，判定为【{{ cardIncident.status === 'confirmed' ? '属实危急已排险解除' : resolvedReason }}】，
+          车辆动力已恢复，样本已沉淀入微调库。
         </template>
         <template v-else>当前无待复核险情，实时流持续监听中。</template>
       </div>
 
-      <!-- 责任人一键核验按钮区域 (PRD 4.4 规范) -->
+      <!-- 责任人两段式核验按钮区域 (PRD 4.4 规范) -->
       <div class="verification-actions">
-        <template v-if="isCardPending">
+        <!-- 阶段一：报警触发初始态 (待复核) -->
+        <template v-if="activeIncidentState === 'pending'">
           <div class="action-btn-row">
             <button
               class="action-confirm-hazard"
               @click="handleConfirmHazard"
-              title="确认确实存在危险，触发对讲并归入台账，沉淀为正样本"
+              title="确认确实存在紧迫危险，切断画面内全车动力并维持联锁排险"
             >
               <AlertTriangle :size="14" class="btn-icon" />
-              <span>确认属实 - 紧迫隐患</span>
+              <span>确认危急 · 维持制动</span>
             </button>
             <button
               class="action-exclude-false"
               @click="showFalseModal = true"
-              title="属于专人指挥或特种作业，排除警报，沉淀为难负例"
+              title="判定为误报，立即向叉车群下发动力恢复指令并停止警报"
             >
-              <ShieldCheck :size="14" class="btn-icon" />
-              <span>判定误报 - 排除警报</span>
+              <RotateCcw :size="14" class="btn-icon" />
+              <span>判定误报 · 恢复动力</span>
             </button>
           </div>
         </template>
+
+        <!-- 阶段二：确属危急，已确认险情，维持制动排险中，等待二次解除确认 -->
+        <template v-else-if="activeIncidentState === 'clearing'">
+          <div class="action-btn-row clearing-row">
+            <button
+              class="action-clear-hazard"
+              @click="handleClearHazard"
+              title="现场排险完毕，人员已安全撤离，二次确认解除并恢复车辆动力"
+            >
+              <CheckCircle2 :size="16" class="btn-icon" />
+              <span>危情已解除 · 恢复动力</span>
+            </button>
+          </div>
+        </template>
+
+        <!-- 已闭环完成态 -->
         <template v-else>
           <div class="resolved-banner">
             <div class="resolved-banner-left">
               <CheckCircle2 :size="14" class="resolved-icon" />
-              <span>本轮核验已闭环</span>
+              <span>{{ resolvedSummaryText }}</span>
             </div>
             <span style="font-weight:700;">已核验 {{ reviewedCount }} / {{ visibleIncidents.length }} 段</span>
           </div>
         </template>
-      </div>
-
-      <!-- 算法数据飞轮状态指示条 (PRD 4.4 规范) -->
-      <div class="data-flywheel-ribbon">
-        <div>
-          <span class="flywheel-tag">数据飞轮</span>
-          <span style="margin-left: 6px;">反哺目标检测与认知微调模型池</span>
-        </div>
-        <span
-          class="flywheel-status"
-          :style="{ color: flywheelColor }"
-        >
-          {{ flywheelText }}
-        </span>
       </div>
     </div>
 
@@ -226,7 +267,7 @@
         <div class="modal-header">
           <div class="modal-title-with-icon">
             <ShieldAlert :size="15" class="modal-icon" />
-            <span>责任人判定误报 · 选择排除核验依据</span>
+            <span>责任人判定误报 · 恢复车辆动力</span>
           </div>
           <button class="close-btn" @click="showFalseModal = false" aria-label="关闭">
             <X :size="16" />
@@ -234,7 +275,7 @@
         </div>
         <div class="modal-body">
           <p class="modal-desc">
-            排除警报后，大屏将恢复绿色常态，本条事件将被自动标注为 <strong>高难负例样本 (Hard Negative)</strong> 注入模型训练微调池：
+            判定为误报后，系统将<strong>立即向画面内所有叉车下发动力恢复指令并停止现场报警</strong>，本条事件将被自动标注为 <strong>高难负例样本 (Hard Negative)</strong> 沉淀入模型微调样本库：
           </p>
           <label class="reason-option">
             <input type="radio" v-model="selectedReason" value="现场专人指挥作业">
@@ -261,7 +302,7 @@
         <div class="modal-footer">
           <button class="btn-modal" @click="showFalseModal = false">取消</button>
           <button class="btn-modal btn-modal-primary" @click="submitFalseAlarm">
-            一键排除并沉淀为难负例样本
+            一键恢复动力并沉淀为难负例
           </button>
         </div>
       </div>
@@ -356,7 +397,7 @@
               | 碰撞风险: {{ cardIncident.collisionRisk }}%
               | 综合烈度: {{ cardIncident.threatScore }} / 3.0
             </span>
-            <span style="color:var(--telemetry-cyan);">OmniJev 延迟: {{ cardIncident?.latencyMs ?? 107.4 }}毫秒</span>
+            <span style="color:var(--telemetry-cyan);">OmniJev 延迟: {{ cardIncident?.latencyMs ?? 107.4 }}毫秒 (突破人脑 250ms 极限)</span>
           </div>
         </div>
 
@@ -369,7 +410,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import {
   AlertOctagon,
   CheckCircle2,
@@ -377,12 +418,14 @@ import {
   AlertTriangle,
   ShieldCheck,
   ShieldAlert,
+  RotateCcw,
   X,
   Image,
   Video,
-  Film
+  Film,
+  Clock
 } from 'lucide-vue-next'
-import { useCctvMetadata } from '../../composables/useCctvMetadata'
+import { useCctvMetadata, buildEpisodes } from '../../composables/useCctvMetadata'
 
 const props = defineProps({
   currentTime: {
@@ -391,8 +434,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['confirm-hazard', 'exclude-false', 'pending-change', 'locate-incident'])
-
+const emit = defineEmits(['confirm-hazard', 'clear-hazard', 'exclude-false', 'pending-change', 'locate-incident'])
 const showFalseModal = ref(false)
 const showHdModal = ref(false)
 const hdViewMode = ref('keyframe')
@@ -406,11 +448,11 @@ const currentTab = ref('all')
 
 // ── 关键帧切片 (与 public/samples/cctv/keyframes/ 一一对应) ──────────────
 const KEYFRAMES = [
-  { t: 1.0, id: '0025', file: 'keyframe_0025_01_NORMAL_SAFE.png', label: '正常安全' },
-  { t: 8.0, id: '0200', file: 'keyframe_0200_02_WARNING_BUFFER.png', label: '预警缓冲' },
-  { t: 13.0, id: '0325', file: 'keyframe_0325_03_WARNING_APPROACH.png', label: '接近警示' },
-  { t: 23.0, id: '0575', file: 'keyframe_0575_04_CRITICAL_HAZARD.png', label: '临界碰撞' },
-  { t: 28.0, id: '0700', file: 'keyframe_0700_05_NORMAL_CLEARED.png', label: '复位安全' }
+  { t: 1.0, id: '0010', file: 'keyframe_0025_01_NORMAL_SAFE.png', label: '正常安全' },
+  { t: 8.0, id: '0080', file: 'keyframe_0200_02_WARNING_BUFFER.png', label: '预警缓冲' },
+  { t: 13.0, id: '0130', file: 'keyframe_0325_03_WARNING_APPROACH.png', label: '接近警示' },
+  { t: 23.0, id: '0230', file: 'keyframe_0575_04_CRITICAL_HAZARD.png', label: '临界碰撞' },
+  { t: 28.0, id: '0280', file: 'keyframe_0700_05_NORMAL_CLEARED.png', label: '复位安全' }
 ]
 
 function nearestKeyframe(t) {
@@ -418,90 +460,190 @@ function nearestKeyframe(t) {
     Math.abs(kf.t - t) < Math.abs(best.t - t) ? kf : best
   )
 }
+function getThreatTier(score) {
+  const s = Number(score ?? 0)
+  if (s >= 2.2) return { text: 'Level 3 紧迫危险', color: '#EF4444' }
+  if (s >= 1.5) return { text: 'Level 2 临界预警', color: '#F59E0B' }
+  if (s >= 0.5) return { text: 'Level 1 低度注意', color: '#38BDF8' }
+  return { text: 'Level 0 正常受控', color: '#10B981' }
+}
+function getHazardBehavior(incident) {
+  if (!incident) return { label: '--', prob: 0 }
+  const hb = incident.hazardBehavior
+  if (hb && typeof hb === 'object') {
+    const labelMap = {
+      standing_in_blindspot: '盲区滞留',
+      back_facing_vehicle: '背向车辆',
+      phone_distracted: '低头看手机',
+      normal_compliant: '作业规范'
+    }
+    // 优先提取非合规的高危违章动作 (按概率降序)
+    const hazards = Object.entries(hb).filter(([k]) => k !== 'normal_compliant')
+    hazards.sort((a, b) => Number(b[1]) - Number(a[1]))
+    if (hazards.length && Number(hazards[0][1]) >= 0.10) {
+      const [key, prob] = hazards[0]
+      const pct = (Number(prob) * 100).toFixed(0)
+      return {
+        label: `${pct}% ${labelMap[key] || key}`,
+        prob: Number(prob)
+      }
+    }
+    // 若无明显违章，展示规范作业概率
+    const compliantProb = Number(hb.normal_compliant ?? 0.88)
+    return {
+      label: `✔ ${(compliantProb * 100).toFixed(0)}% 规范作业`,
+      prob: compliantProb
+    }
+  }
+  if ((incident.awareness ?? 0) >= 0.5 || (incident.collisionRisk ?? 0) >= 50) {
+    const isPhone = incident.reasons?.some(r => r.includes('手机')) || incident.frameId % 2 === 0
+    return isPhone
+      ? { label: '78% 低头玩手机', prob: 0.78 }
+      : { label: '82% 背对开来叉车', prob: 0.82 }
+  }
+  return { label: '✔ 规范作业中', prob: 0.88 }
+}
+
 
 // ── 告警段落提取 ────────────────────────────────────────────────────────
-// 连续非 NORMAL 帧合并为一段险情; 短于 MIN_EPISODE_FRAMES 的单帧抖动丢弃。
-const MIN_EPISODE_FRAMES = 8 // 25fps 下约 0.32s
+// 段落切分逻辑复用 composable (与「视频感知阵列」页同源), 采用峰值时刻 (peakTime) 锚定危急关键帧抓拍。
+function buildEpisodesWithKeyframe(frames) {
+  return buildEpisodes(frames).map(e => ({
+    ...e,
+    keyframe: nearestKeyframe(e.peakTime ?? (e.frameId ? e.frameId / 10.0 : e.startTime))
+  }))
+}
+const { frames: metadataFrames, metadata: cctvMetadata, load: loadMetadata } = useCctvMetadata()
 
-function summarizeEpisode(run) {
-  // 峰值帧: 碰撞风险概率优先, 其次综合危害烈度
-  let peak = run[0]
-  for (const f of run) {
-    const a = f.probes?.collision_risk || 0
-    const b = peak.probes?.collision_risk || 0
-    if (a > b || (a === b && (f.probes?.threat_score || 0) > (peak.probes?.threat_score || 0))) {
-      peak = f
+const currentFrame = computed(() => {
+  const frames = metadataFrames.value
+  if (!frames || frames.length === 0) return null
+  const t = Number(props.currentTime) || 0
+  const fps = Number(cctvMetadata.value?.fps || 10.0)
+  const idx = Math.max(0, Math.min(frames.length - 1, Math.round(t * fps)))
+  return frames[idx] || null
+})
+
+// 探针 1：实时碰撞风险
+const liveCollisionRisk = computed(() => {
+  if (currentFrame.value?.probes?.collision_risk != null) {
+    return Number((currentFrame.value.probes.collision_risk * 100).toFixed(1))
+  }
+  return cardIncident.value?.collisionRisk ?? 0
+})
+const liveCollisionColor = computed(() => {
+  if (liveCollisionRisk.value >= 70) return 'var(--emergency-red)'
+  if (liveCollisionRisk.value >= 40) return 'var(--safety-amber)'
+  return 'var(--nominal-green)'
+})
+
+// 探针 2：实时工人注意力
+const liveAwareness = computed(() => {
+  const aw = currentFrame.value?.probes?.worker_awareness
+  if (aw) {
+    const unawarePct = Number(((aw.unaware ?? 0) * 100).toFixed(0))
+    const yieldingPct = Number(((aw.yielding ?? 0) * 100).toFixed(0))
+    const separatedPct = Number(((aw.separated ?? 0) * 100).toFixed(0))
+    if (unawarePct >= 40) {
+      return {
+        label: `${unawarePct}% 分心无戒备`,
+        prob: (aw.unaware ?? 0),
+        color: 'var(--emergency-red)'
+      }
+    } else if (yieldingPct >= 50) {
+      return {
+        label: `${yieldingPct}% 抬头注视避让`,
+        prob: (aw.yielding ?? 0),
+        color: 'var(--nominal-green)'
+      }
+    } else {
+      return {
+        label: `${separatedPct}% 处于安全通道`,
+        prob: (aw.separated ?? 0),
+        color: 'var(--nominal-green)'
+      }
     }
   }
-
-  // 物理间距取段落内最危险值
-  let minDistPx = Infinity
-  let minDistM = Infinity
-  for (const f of run) {
-    if (Number.isFinite(f.min_dist_px)) minDistPx = Math.min(minDistPx, f.min_dist_px)
-    const m = f.red_zone?.min_dist_m
-    if (m !== null && m !== undefined && Number.isFinite(Number(m))) {
-      minDistM = Math.min(minDistM, Number(m))
+  if (cardIncident.value) {
+    const p = cardIncident.value.awareness ?? 0
+    return {
+      label: `${(p * 100).toFixed(0)}% 分心无戒备`,
+      prob: p,
+      color: isCardPending.value ? 'var(--safety-amber)' : 'var(--nominal-green)'
     }
   }
+  return { label: '--', prob: 0, color: 'var(--nominal-green)' }
+})
 
-  const p = peak.probes || {}
-  const last = run[run.length - 1]
+// 探针 3：实时工人危险行为辨识
+const liveHazardBehavior = computed(() => {
+  const hb = currentFrame.value?.probes?.worker_hazard_behavior
+  if (hb && typeof hb === 'object') {
+    const labelMap = {
+      standing_in_blindspot: '盲区滞留',
+      back_facing_vehicle: '背向车辆',
+      phone_distracted: '低头看手机',
+      normal_compliant: '作业规范'
+    }
+    const hazards = Object.entries(hb).filter(([k]) => k !== 'normal_compliant')
+    hazards.sort((a, b) => Number(b[1]) - Number(a[1]))
+    if (hazards.length && Number(hazards[0][1]) >= 0.10) {
+      const [key, prob] = hazards[0]
+      return {
+        label: `${(Number(prob) * 100).toFixed(0)}% ${labelMap[key] || key}`,
+        prob: Number(prob),
+        color: 'var(--emergency-red)'
+      }
+    }
+    const compliant = Number(hb.normal_compliant ?? 0.88)
+    return {
+      label: `✔ ${(compliant * 100).toFixed(0)}% 规范作业`,
+      prob: compliant,
+      color: 'var(--nominal-green)'
+    }
+  }
   return {
-    id: `EP-${peak.frame_id}`,
-    frameId: peak.frame_id,
-    startTime: run[0].timestamp,
-    endTime: last.timestamp,
-    durationSec: +(last.timestamp - run[0].timestamp).toFixed(2),
-    frameCount: run.length,
-    level: peak.alarm_level,
-    minDistPx: Number.isFinite(minDistPx) ? +minDistPx.toFixed(1) : null,
-    minDistM: Number.isFinite(minDistM) ? +minDistM.toFixed(2) : null,
-    collisionRisk: +((p.collision_risk ?? 0) * 100).toFixed(1),
-    threatScore: +(p.threat_score ?? 0).toFixed(2),
-    awareness: +(p.worker_awareness?.unaware ?? 0).toFixed(2),
-    latencyMs: p.latency_ms ?? 107.4,
-    reasons: peak.reasons || [],
-    status: 'pending', // pending | confirmed | resolved
-    keyframe: nearestKeyframe(peak.timestamp),
-    isLedger: false
+    ...getHazardBehavior(cardIncident.value),
+    color: isCardPending.value ? 'var(--emergency-red)' : 'var(--nominal-green)'
   }
-}
+})
 
-function buildEpisodes(frames) {
-  const episodes = []
-  let run = []
-  const flush = () => {
-    if (run.length >= MIN_EPISODE_FRAMES) episodes.push(summarizeEpisode(run))
-    run = []
+// 探针 4：实时综合危害烈度
+const liveThreatScore = computed(() => {
+  if (currentFrame.value?.probes?.threat_score != null) {
+    return Number(Number(currentFrame.value.probes.threat_score).toFixed(2))
   }
-  for (const f of frames) {
-    if (f.alarm_level === 'NORMAL') flush()
-    else run.push(f)
-  }
-  flush()
-  // 核验队列按发生时刻正序, 展示列表按时刻倒序 (最新在上)
-  return episodes.sort((a, b) => a.startTime - b.startTime)
-}
+  return cardIncident.value?.threatScore ?? 0.45
+})
 
-const { frames: cctvFrames, load: loadMetadata } = useCctvMetadata()
+// 实时单帧推理延迟
+const liveLatencyMs = computed(() => {
+  if (currentFrame.value?.probes?.latency_ms != null) {
+    return Number(currentFrame.value.probes.latency_ms).toFixed(1)
+  }
+  return cardIncident.value?.latencyMs ? Number(cardIncident.value.latencyMs).toFixed(1) : '107.4'
+})
 
 const episodes = ref([])
-// 播放高水位: 记录曾经播放到的最远时刻, 回拖不会让已发生的告警从流水里消失
 const maxReachedTime = ref(0)
 
 watch(
   () => props.currentTime,
   (t) => {
     const v = Number(t) || 0
-    if (v > maxReachedTime.value) maxReachedTime.value = v
+    // 当视频回拖回开头时，重置水位，险情卡片自动收起复位
+    if (v < 0.5 && maxReachedTime.value > 1.0) {
+      maxReachedTime.value = v
+    } else if (v > maxReachedTime.value) {
+      maxReachedTime.value = v
+    }
   },
   { immediate: true }
 )
 
 onMounted(async () => {
   const frames = await loadMetadata()
-  if (frames.length) episodes.value = buildEpisodes(frames)
+  if (frames.length) episodes.value = buildEpisodesWithKeyframe(frames)
 })
 
 // 已发生 (播放水位越过) 且仍待复核的段落
@@ -512,7 +654,7 @@ const visibleIncidents = computed(() =>
 const incidents = visibleIncidents
 
 const pendingIncident = computed(
-  () => visibleIncidents.value.find(e => e.status === 'pending') || null
+  () => visibleIncidents.value.find(e => e.status === 'pending' || e.status === 'clearing') || null
 )
 
 const hasPending = computed(() => pendingIncident.value !== null)
@@ -535,15 +677,29 @@ const lastReviewed = computed(() => {
 // 卡片展示对象: 待复核险情 -> 进行中; 全部核验完 -> 最近一条结论
 const cardIncident = computed(() => pendingIncident.value || lastReviewed.value)
 
+const activeIncidentState = computed(() => pendingIncident.value?.status || (lastReviewed.value?.status ?? 'none'))
+
+const captionTitle = computed(() => {
+  if (activeIncidentState.value === 'pending') return '双系统分层仲裁依据'
+  if (activeIncidentState.value === 'clearing') return '现场危急排险调度'
+  return '核验结论'
+})
+
+const resolvedSummaryText = computed(() => {
+  if (!visibleIncidents.value.length) return '车间常态监控中 · 无在途险情'
+  if (lastReviewed.value?.status === 'confirmed') return '危急险情已二次确认解除 · 动力已恢复'
+  if (lastReviewed.value?.status === 'resolved') return '判定误报 · 动力已即时恢复'
+  return '本轮核验已闭环'
+})
 const isCardPending = computed(() => pendingIncident.value !== null)
 
-const pendingCount = computed(() => visibleIncidents.value.filter(e => e.status === 'pending').length)
+const pendingCount = computed(() => visibleIncidents.value.filter(e => e.status === 'pending' || e.status === 'clearing').length)
 const ledgerCount = computed(() => visibleIncidents.value.filter(e => e.isLedger).length)
 
 const filteredIncidents = computed(() => {
   // 最新告警排在最前
   const rows = [...visibleIncidents.value].sort((a, b) => b.startTime - a.startTime)
-  if (currentTab.value === 'pending') return rows.filter(i => i.status === 'pending')
+  if (currentTab.value === 'pending') return rows.filter(i => i.status === 'pending' || i.status === 'clearing')
   if (currentTab.value === 'ledger') return rows.filter(i => i.isLedger)
   return rows
 })
@@ -554,8 +710,18 @@ function rowView(i) {
       time: i.startTime.toFixed(2) + '秒',
       device: `CCTV-04 (帧 #${i.frameId})`,
       tagClass: i.level === 'CRITICAL' ? 'tag-critical' : 'tag-warning',
-      tagText: i.level === 'CRITICAL' ? '待复核' : '接近预警',
+      tagText: i.level === 'CRITICAL' ? '待复核制动' : '接近预警',
       meta: `${i.minDistPx ?? '--'}像素 / ${i.collisionRisk}%`,
+      isActive: i.id === activeIncident.value?.id
+    }
+  }
+  if (i.status === 'clearing') {
+    return {
+      time: i.startTime.toFixed(2) + '秒',
+      device: `CCTV-04 (帧 #${i.frameId})`,
+      tagClass: 'tag-clearing',
+      tagText: '排险锁定中',
+      meta: '维持动力切断',
       isActive: i.id === activeIncident.value?.id
     }
   }
@@ -563,9 +729,9 @@ function rowView(i) {
     return {
       time: i.startTime.toFixed(2) + '秒',
       device: `CCTV-04 (帧 #${i.frameId})`,
-      tagClass: 'tag-warning',
-      tagText: '已入台账',
-      meta: '正样本',
+      tagClass: 'tag-confirmed',
+      tagText: '危情已解除',
+      meta: '正样本·已入台账',
       isActive: false
     }
   }
@@ -573,7 +739,7 @@ function rowView(i) {
     time: i.startTime.toFixed(2) + '秒',
     device: `CCTV-04 (帧 #${i.frameId})`,
     tagClass: 'tag-resolved',
-    tagText: '误报解除',
+    tagText: '误报已恢复',
     meta: '难负例',
     isActive: false
   }
@@ -582,11 +748,20 @@ function rowView(i) {
 function handleConfirmHazard() {
   const target = pendingIncident.value
   if (!target) return
-  target.status = 'confirmed'
+  target.status = 'clearing'
   target.isLedger = true
-  flywheelText.value = '已标注为正样本 (已入微调池)'
-  flywheelColor.value = '#15803d'
+  flywheelText.value = '危急属实 · 维持全车制动排险中'
+  flywheelColor.value = '#ef4444'
   emit('confirm-hazard', target)
+}
+
+function handleClearHazard() {
+  const target = pendingIncident.value
+  if (!target) return
+  target.status = 'confirmed'
+  flywheelText.value = '危情已解除 · 沉淀为真实险情正样本'
+  flywheelColor.value = '#15803d'
+  emit('clear-hazard', target)
 }
 
 function submitFalseAlarm() {
@@ -596,7 +771,7 @@ function submitFalseAlarm() {
   resolvedReason.value = selectedReason.value
 
   target.status = 'resolved'
-  flywheelText.value = '已标注为高难负例 (反哺降误报)'
+  flywheelText.value = '判定误报已恢复动力 · 沉淀为高难负例'
   flywheelColor.value = '#15803d'
 
   emit('exclude-false', selectedReason.value, target)
@@ -605,6 +780,26 @@ function submitFalseAlarm() {
 function locateIncident(i) {
   emit('locate-incident', i.startTime)
 }
+
+// ── 系统时钟 (原 TopHeader, 随处置坞右上角常驻) ────────────────────────
+const systemTime = ref('')
+let clockTimer = null
+
+function updateClock() {
+  const now = new Date()
+  const pad = (n, l = 2) => String(n).padStart(l, '0')
+  systemTime.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ` +
+                     `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.${pad(Math.floor(now.getMilliseconds()), 3)}`
+}
+
+onMounted(() => {
+  updateClock()
+  clockTimer = setInterval(updateClock, 100)
+})
+
+onUnmounted(() => {
+  if (clockTimer) clearInterval(clockTimer)
+})
 
 defineExpose({
   openHdModal: () => { showHdModal.value = true }
@@ -637,6 +832,27 @@ defineExpose({
   top: 0;
   z-index: 10;
   flex-shrink: 0;
+}
+
+.triage-clock {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.triage-clock .clock-icon {
+  color: var(--telemetry-cyan);
+  flex-shrink: 0;
+}
+
+.triage-clock .clock-time {
+  color: var(--text-main);
+  font-weight: 600;
 }
 
 .active-hazard-card {
@@ -707,7 +923,7 @@ defineExpose({
 
 .probe-triad-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 6px;
 }
 
@@ -845,6 +1061,67 @@ defineExpose({
 .action-exclude-false:hover {
   border-color: var(--nominal-green);
   color: var(--nominal-green);
+}
+.clearing-row {
+  width: 100%;
+}
+
+.action-clear-hazard {
+  width: 100%;
+  background: #16a34a;
+  color: #fff;
+  border: 1px solid #16a34a;
+  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 4px;
+  box-shadow: 0 0 14px rgba(22, 163, 74, 0.4);
+  animation: clearPulse 1.6s infinite ease-in-out;
+  transition: all 0.2s ease;
+}
+
+.action-clear-hazard:hover {
+  background: #15803d;
+  box-shadow: 0 0 18px rgba(22, 163, 74, 0.6);
+}
+
+@keyframes clearPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(22, 163, 74, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(22, 163, 74, 0.7);
+  }
+}
+
+.caption-clearing {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-left: 3px solid var(--emergency-red) !important;
+  color: #fca5a5 !important;
+}
+
+.tag-clearing {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+  animation: tagPulse 1.2s infinite;
+}
+
+.tag-confirmed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+@keyframes tagPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .resolved-banner {

@@ -1,6 +1,5 @@
 <template>
   <div class="app-wrapper">
-    <TopHeader />
     <div class="main-layout">
       <SidebarNav />
       <main class="main-content">
@@ -15,7 +14,6 @@
 </template>
 
 <script setup>
-import TopHeader from './components/dashboard/TopHeader.vue'
 import SidebarNav from './components/dashboard/SidebarNav.vue'
 </script>
 

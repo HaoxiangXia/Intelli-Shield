@@ -1,8 +1,9 @@
 import { ref, shallowRef } from 'vue'
 
-// 752 帧 HPC 元数据约 4.1 MB, 全局单例保证只发起一次请求/解析。
+// 301 帧 (10 FPS 恒频推演) HPC 元数据约 1.7 MB, 全局单例保证只发起一次请求/解析。
 // 使用 shallowRef: 帧数组按引用传递, 无需深层响应式代理。
 const frames = shallowRef([])
+const metadata = ref(null)
 const status = ref('idle') // idle | loading | ready | error
 
 let inflight = null
@@ -18,6 +19,7 @@ async function load() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       frames.value = data.frames || []
+      metadata.value = data.metadata || {}
       status.value = 'ready'
       return frames.value
     } catch (err) {
@@ -75,8 +77,8 @@ export const CAMERA_REGISTRY = [
   }
 ]
 
-// 连续非 NORMAL 帧合并为一段险情; 短于 MIN_EPISODE_FRAMES 的单帧抖动丢弃 (25fps 下约 0.32s)。
-export const MIN_EPISODE_FRAMES = 8
+// 连续非 NORMAL 帧合并为一段险情; 10 FPS 恒频下短于 3 帧 (0.3s) 丢弃防抖。
+export const MIN_EPISODE_FRAMES = 3
 
 export function summarizeEpisode(run) {
   // 峰值帧: 碰撞风险概率优先, 其次综合危害烈度
@@ -105,6 +107,7 @@ export function summarizeEpisode(run) {
   return {
     id: `EP-${peak.frame_id}`,
     frameId: peak.frame_id,
+    peakTime: peak.timestamp,
     startTime: run[0].timestamp,
     endTime: last.timestamp,
     durationSec: +(last.timestamp - run[0].timestamp).toFixed(2),
@@ -116,6 +119,7 @@ export function summarizeEpisode(run) {
     threatScore: +(p.threat_score ?? 0).toFixed(2),
     awareness: +(p.worker_awareness?.unaware ?? 0).toFixed(2),
     latencyMs: p.latency_ms ?? 107.4,
+    hazardBehavior: p.worker_hazard_behavior || null,
     reasons: peak.reasons || [],
     status: 'pending',
     isLedger: false
@@ -193,5 +197,5 @@ export function summarizeCctvStats(frames) {
 }
 
 export function useCctvMetadata() {
-  return { frames, status, load }
+  return { frames, metadata, status, load }
 }

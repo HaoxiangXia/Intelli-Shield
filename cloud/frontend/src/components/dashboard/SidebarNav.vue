@@ -1,5 +1,12 @@
 <template>
   <nav class="sidebar-nav">
+    <div class="brand-section">
+      <div class="brand-logo-badge">
+        <img src="/logo.svg" alt="Logo" class="brand-logo-img" />
+        <span class="brand-title">智盾</span>
+      </div>
+    </div>
+
     <div class="nav-container">
       <router-link
         v-for="item in menuItems"
@@ -42,10 +49,45 @@ const menuItems = [
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   background-color: var(--bg-panel);
   border-right: 1px solid var(--border-machined);
   user-select: none;
+}
+
+/* ── 品牌区 (原 TopHeader, 移至侧栏顶部) ─────────────────────────────── */
+.brand-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 16px 10px 14px;
+  border-bottom: 1px solid var(--border-machined);
+}
+
+/* logo.svg 原始 viewBox 为 289x336 (竖版), 保持该比例避免被压扁留白 */
+.brand-logo-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo-img {
+  width: 30px;
+  height: 35px;
+  object-fit: contain;
+}
+
+.brand-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 4px;
+  /* 末字后的尾随字距会让 CJK 视觉偏左, 用 text-indent 抵消 */
+  text-indent: 4px;
+  color: var(--text-main);
 }
 
 .nav-container {
@@ -98,6 +140,7 @@ const menuItems = [
 }
 
 .officer-duty-chip {
+  margin-top: auto;
   padding: 10px 8px;
   border-top: 1px solid var(--border-machined);
   background: var(--bg-panel-subtle);

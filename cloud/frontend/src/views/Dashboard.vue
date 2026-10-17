@@ -25,6 +25,7 @@
         ref="triageDockRef"
         :current-time="videoCurrentTime"
         @confirm-hazard="onConfirmHazard"
+        @clear-hazard="onClearHazard"
         @exclude-false="onExcludeFalse"
         @pending-change="onPendingChange"
         @locate-incident="onLocateIncident"
@@ -51,7 +52,7 @@ import TacticalRadarTwin from '../components/dashboard/TacticalRadarTwin.vue'
 import ThreatTimelineChart from '../components/dashboard/ThreatTimelineChart.vue'
 import IncidentTriageDock from '../components/dashboard/IncidentTriageDock.vue'
 
-const isHazardActive = ref(true)
+const isHazardActive = ref(false)
 const videoCurrentTime = ref(0)
 const radarRef = ref(null)
 function onTimeUpdate(t) {
@@ -87,21 +88,30 @@ function handleOpenHd() {
   }
 }
 
-// PRD 4.4 责任人核验响应处理
+// PRD 4.4 责任人两段式核验响应处理
 function onConfirmHazard(incident) {
   triggerToast(
     Megaphone,
-    '现场对讲喊话已开启 · 归入《隐患台账》',
-    `险情段 ${incident.id} (帧 #${incident.frameId}) 已确认属实，系统已向叉车下发减速制动指令，调度中心广播已通报：“通廊人员背向危险，请立即避让！”`,
+    '危急属实 · 维持全车动力切断',
+    `险情段 ${incident.id} (帧 #${incident.frameId}) 责任人已确认危急！系统维持画面内全车动力切断联锁，调度中心广播通报：“现场人车险情属实，全车制动中，请作业人员立即避让撤离！”`,
     true
+  )
+}
+
+function onClearHazard(incident) {
+  triggerToast(
+    ShieldCheck,
+    '危情已二次确认解除 · 叉车动力恢复',
+    `险情段 ${incident.id} (帧 #${incident.frameId}) 现场排险完毕。系统已向全车广播动力恢复指令，现场停止报警，事件已归入《特种车辆安全隐患台账》并沉淀为正样本。`,
+    false
   )
 }
 
 function onExcludeFalse(reason, incident) {
   triggerToast(
     ShieldCheck,
-    '警报已核验排除 · 样本沉淀为高难负例',
-    `险情段 ${incident.id} (帧 #${incident.frameId}) 核验依据：【${reason}】。样本已反哺目标检测与认知探针模型训练池。`,
+    '判定误报 · 叉车动力已即时恢复',
+    `险情段 ${incident.id} (帧 #${incident.frameId}) 责任人判定误报，依据：【${reason}】。系统已下发动力恢复指令并停止报警，样本已沉淀为高难负例。`,
     false
   )
 }
@@ -127,27 +137,34 @@ function onLocateIncident(sec) {
   width: 100%;
   overflow: hidden;
   position: relative;
+  box-sizing: border-box;
 }
 
 .tactical-column {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--bg-canvas);
+  background: #000;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
 }
 
 .radar-section {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   overflow: hidden;
+  background: #000;
 }
 
 .timeline-section {
-  flex-shrink: 0;
+  flex: 0 0 138px;
+  height: 138px;
+  overflow: hidden;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-machined);
 }
-
 .triage-column {
   width: 430px;
   display: flex;

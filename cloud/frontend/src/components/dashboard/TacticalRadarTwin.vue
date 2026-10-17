@@ -24,7 +24,17 @@
           @click="showAiOverlay = !showAiOverlay"
         >
           <Crosshair :size="13" class="tool-btn-icon" />
-          <span>{{ showAiOverlay ? '隐藏 AI 实时标注层' : '显示 AI 实时标注层' }}</span>
+          <span>{{ showAiOverlay ? '隐藏 AI 视觉模型标注层' : '显示 AI 视觉模型标注层' }}</span>
+        </button>
+
+        <!-- 三向红光区域显隐切换按钮 -->
+        <button
+          class="tool-btn"
+          :class="{ active: showRedZone }"
+          @click="showRedZone = !showRedZone"
+        >
+          <ShieldAlert :size="13" class="tool-btn-icon" />
+          <span>{{ showRedZone ? '隐藏三向红光区' : '显示三向红光区' }}</span>
         </button>
 
         <!-- 重置按钮 -->
@@ -66,16 +76,17 @@
           </defs>
 
           <!-- 0. 叉车三向红光安全禁区多边形 (Ground Optical Red-Zone Polygon) -->
-          <g v-for="(polyPoints, pIdx) in scaledRedZonePolygons" :key="'rz-' + pIdx">
-            <polygon
-              :points="polyPoints"
-              :fill="isCriticalAlarm ? 'rgba(239, 68, 68, 0.24)' : (isWarningAlarm ? 'rgba(245, 158, 11, 0.20)' : 'rgba(16, 185, 129, 0.12)')"
-              :stroke="isCriticalAlarm ? '#ff3b30' : (isWarningAlarm ? '#ff9f0a' : '#10b981')"
-              stroke-width="2.5"
-              stroke-dasharray="8,4"
-            />
-          </g>
-
+          <template v-if="showRedZone">
+            <g v-for="(polyPoints, pIdx) in scaledRedZonePolygons" :key="'rz-' + pIdx">
+              <polygon
+                :points="polyPoints"
+                :fill="isCriticalAlarm ? 'rgba(239, 68, 68, 0.24)' : (isWarningAlarm ? 'rgba(245, 158, 11, 0.20)' : 'rgba(16, 185, 129, 0.12)')"
+                :stroke="isCriticalAlarm ? '#ff3b30' : (isWarningAlarm ? '#ff9f0a' : '#10b981')"
+                stroke-width="2.5"
+                stroke-dasharray="8,4"
+              />
+            </g>
+          </template>
           <!-- 1. 动态绘制当前帧检出的所有 YOLO 目标框 -->
           <g v-for="(box, bIdx) in scaledDetections" :key="bIdx">
             <rect
@@ -137,13 +148,8 @@
           <div class="cam-info-pill">
             <span class="live-dot" :class="{ running: isRunning }"></span>
             <span class="cam-name">CCTV-04 仓库主干道 (中转区南段)</span>
-            <span class="cam-timecode">{{ formattedTimecode }}</span>
           </div>
           <div class="omnijev-capsule">
-            <div class="capsule-col">
-              <span class="capsule-label">双系统认知直觉推演</span>
-              <span class="capsule-value highlight-cyan">OneJev-0.8B + 红光围栏</span>
-            </div>
             <div class="capsule-col">
               <span class="capsule-label">三向红光物理边界</span>
               <span
@@ -163,12 +169,13 @@
               </span>
             </div>
             <div class="capsule-col">
-              <span class="capsule-label">综合危害烈度</span>
+              <span class="capsule-label">综合危害烈度 (4级)</span>
               <span
                 class="capsule-value"
-                :class="isCriticalAlarm ? 'val-danger' : (isWarningAlarm ? 'val-warning' : 'val-safe')"
+                :class="threatTier.cls"
+                :style="{ color: threatTier.color }"
               >
-                {{ currentProbes.threat_score || 0.45 }} / 3.0 ({{ threatLevelText }})
+                {{ (currentProbes.threat_score ?? 0.45).toFixed(2) }} / 3.0 ({{ threatTier.text }})
               </span>
             </div>
           </div>
@@ -177,6 +184,9 @@
         <!-- 底部视频控制栏与关键时序跳转 -->
         <div class="video-control-bar">
           <div class="timeline-scrubber-wrap">
+            <div class="timeline-timecode-badge">
+              <span class="cam-timecode">{{ formattedTimecode }}</span>
+            </div>
             <input
               type="range"
               min="0"
@@ -192,7 +202,7 @@
             <span class="strip-label">关键时序节点跳转:</span>
             <button class="seek-chip" @click="seekTo(1.0)">
               <ShieldCheck :size="12" class="chip-icon safe-icon" />
-              <span>01秒 红光外安全 (帧 #0025)</span>
+              <span>01秒 红光外安全 (帧 #0026)</span>
             </button>
             <button class="seek-chip" @click="seekTo(2.7)">
               <AlertCircle :size="12" class="chip-icon warn-icon" />
@@ -200,7 +210,7 @@
             </button>
             <button class="seek-chip chip-critical" @click="seekTo(8.0)">
               <AlertTriangle :size="12" class="chip-icon danger-icon" />
-              <span>08秒 越过红线告警 (帧 #0200)</span>
+              <span>08秒 越过红线告警 (帧 #0201)</span>
             </button>
             <button class="seek-chip chip-critical" @click="seekTo(23.0)">
               <Flame :size="12" class="chip-icon danger-icon" />
@@ -208,7 +218,7 @@
             </button>
             <button class="seek-chip" @click="seekTo(28.0)">
               <Shield :size="12" class="chip-icon safe-icon" />
-              <span>28秒 驶离红线复位 (帧 #0700)</span>
+              <span>28秒 驶离红线复位 (帧 #0701)</span>
             </button>
           </div>
         </div>
@@ -228,7 +238,8 @@ import {
   AlertCircle,
   AlertTriangle,
   Flame,
-  Shield
+  Shield,
+  ShieldAlert
 } from 'lucide-vue-next'
 import { useCctvMetadata } from '../../composables/useCctvMetadata'
 
@@ -246,11 +257,11 @@ const containerRef = ref(null)
 const isRunning = ref(false)
 const isMuted = ref(true)
 const showAiOverlay = ref(true)
+const showRedZone = ref(true) // 默认开启三向红光区域渲染，支持按钮切换
 const currentTime = ref(0)
 const duration = ref(30.08)
-
 // JSON 帧数据集 (从 HPC 生成的 752 帧元数据载入, 与告警流水共享同一单例)
-const { frames: metadataFrames, load: loadMetadata } = useCctvMetadata()
+const { frames: metadataFrames, metadata: cctvMetadata, load: loadMetadata } = useCctvMetadata()
 const videoNativeW = ref(1920)
 const videoNativeH = ref(1080)
 
@@ -263,17 +274,44 @@ const displayMetrics = ref({
 })
 
 // 查找当前视频播放时间点对应的 JSON 帧
+// 查找当前视频播放时间点对应的 JSON 帧 (自适应时间戳对齐，支持任意帧率数据集)
 const currentFrameData = computed(() => {
-  if (!metadataFrames.value || metadataFrames.value.length === 0) return null
+  const framesList = metadataFrames.value
+  if (!framesList || framesList.length === 0) return null
   const targetTime = currentTime.value
-  const targetFrameId = Math.max(1, Math.min(752, Math.round(targetTime * 25.0)))
-  
-  // 快速通过索引查取 (frame_id 对应数组下标 frame_id - 1)
-  const item = metadataFrames.value[targetFrameId - 1]
-  if (item && item.frame_id === targetFrameId) return item
-  
-  // 备用：按时间戳就近搜索
-  return metadataFrames.value.find(f => Math.abs(f.timestamp - targetTime) <= 0.05) || metadataFrames.value[0]
+  const total = framesList.length
+
+  // 快速基于实际帧率估算初始下标
+  const fps = Number(cctvMetadata.value?.fps || (total > 350 ? 25.0 : 10.0))
+  const estimatedIdx = Math.max(0, Math.min(total - 1, Math.round(targetTime * fps)))
+  const cand = framesList[estimatedIdx]
+  if (cand && Math.abs(cand.timestamp - targetTime) <= 0.02) {
+    return cand
+  }
+
+  // 二分查找最贴近当前视频播放时间戳的帧
+  let low = 0
+  let high = total - 1
+  let best = cand || framesList[0]
+  let minDiff = Math.abs(best.timestamp - targetTime)
+
+  while (low <= high) {
+    const mid = (low + high) >> 1
+    const item = framesList[mid]
+    const diff = Math.abs(item.timestamp - targetTime)
+    if (diff < minDiff) {
+      minDiff = diff
+      best = item
+    }
+    if (item.timestamp < targetTime) {
+      low = mid + 1
+    } else if (item.timestamp > targetTime) {
+      high = mid - 1
+    } else {
+      return item
+    }
+  }
+  return best
 })
 
 const currentProbes = computed(() => {
@@ -295,24 +333,24 @@ const isWarningAlarm = computed(() => {
 
 const redZoneSummaryText = computed(() => {
   const rz = currentFrameData.value?.red_zone
-  if (!rz || rz.min_dist_m === null || rz.min_dist_m === undefined) {
-    return isCriticalAlarm.value ? '禁区侵入 (一票否决)' : '安全线外'
+  if (!rz) {
+    return isCriticalAlarm.value ? '侵入红线' : '红线外'
   }
-  const m = Number(rz.min_dist_m)
   if (rz.state === 'INSIDE') {
-    return `侵入红线 ${m.toFixed(2)}m (违章)`
+    return '侵入红线'
   }
   if (rz.state === 'BUFFER') {
-    return `临界缓冲 +${m.toFixed(2)}m (≤0.3m)`
+    return '临界缓冲'
   }
-  return `红线外 +${m.toFixed(2)}m (合规)`
+  return '红线外'
 })
 
-const threatLevelText = computed(() => {
-  const t = currentProbes.value.threat_score || 0.45
-  if (t >= 2.0) return '三级临界'
-  if (t >= 1.0) return '二级警示'
-  return '安全基线'
+const threatTier = computed(() => {
+  const t = Number(currentProbes.value.threat_score ?? 0.45)
+  if (t >= 2.2) return { text: 'Level 3 紧迫危险', cls: 'threat-level-3', color: '#EF4444' }
+  if (t >= 1.5) return { text: 'Level 2 临界预警', cls: 'threat-level-2', color: '#F59E0B' }
+  if (t >= 0.5) return { text: 'Level 1 低度注意', cls: 'threat-level-1', color: '#38BDF8' }
+  return { text: 'Level 0 正常受控', cls: 'threat-level-0', color: '#10B981' }
 })
 
 const formattedTimecode = computed(() => {
@@ -321,7 +359,7 @@ const formattedTimecode = computed(() => {
   const secs = Math.floor(t % 60)
   const ms = Math.floor((t % 1) * 100)
   const pad = (n, l = 2) => String(n).padStart(l, '0')
-  const fid = currentFrameData.value?.frame_id || Math.floor(t * 25)
+  const fid = currentFrameData.value?.frame_id || (Math.floor(t * 10) + 1)
   return `${pad(mins)}:${pad(secs)}.${pad(ms)} (帧 #${fid})`
 })
 
@@ -332,7 +370,11 @@ const scaledDetections = computed(() => {
   const scaleX = dW / videoNativeW.value
   const scaleY = dH / videoNativeH.value
 
-  return currentFrameData.value.detections.map(det => {
+  const allowedClasses = new Set(['person', 'pedestrian', 'truck', 'truckHead', 'smallTruck', 'forkTruck', 'forklift'])
+
+  return currentFrameData.value.detections
+    .filter(det => allowedClasses.has(det.class_name))
+    .map(det => {
     const [x1, y1, x2, y2] = det.bbox
     const rawClass = det.class_name
     const conf = Math.round((det.confidence || 0) * 100)
@@ -513,8 +555,9 @@ onMounted(() => {
   loadHpcMetadata()
   window.addEventListener('resize', updateDisplayMetrics)
   if (videoRef.value) {
-    videoRef.value.currentTime = 23.0
-    currentTime.value = 23.0
+    videoRef.value.currentTime = 0.0
+    currentTime.value = 0.0
+    emit('time-update', 0.0)
     setTimeout(updateDisplayMetrics, 200)
   }
 })
@@ -539,7 +582,7 @@ defineExpose({ seekTo })
 }
 
 .panel-toolbar {
-  height: 42px;
+  height: 38px;
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border-machined);
   display: flex;
@@ -551,10 +594,17 @@ defineExpose({ seekTo })
   user-select: none;
 }
 
-.toolbar-left, .toolbar-right {
+.toolbar-left {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
 }
 
 .toolbar-title {
@@ -633,13 +683,15 @@ defineExpose({ seekTo })
 
 /* 主视频舞台 */
 .main-video-stage {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   position: relative;
   background-color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding: 0;
 }
 
 .video-player-container {
@@ -680,8 +732,19 @@ defineExpose({ seekTo })
   border: 1px solid var(--border-machined);
   padding: 4px 10px;
   font-size: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
+}
+
+.timeline-timecode-badge {
+  display: flex;
+  align-items: center;
+  background: rgba(17, 21, 28, 0.9);
+  border: 1px solid var(--border-machined);
+  padding: 3px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 
 .live-dot {
@@ -715,16 +778,15 @@ defineExpose({ seekTo })
 
 /* 顶部认知探针胶囊 */
 .omnijev-capsule {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid var(--border-bright);
-  border-left: 3px solid var(--telemetry-cyan);
+  background: rgba(17, 21, 28, 0.9);
+  border: 1px solid var(--border-machined);
   padding: 4px 12px;
   display: flex;
   align-items: center;
   gap: 14px;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   pointer-events: auto;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(4px);
 }
 
 .capsule-col {
@@ -735,13 +797,14 @@ defineExpose({ seekTo })
 
 .capsule-label {
   font-size: 10px;
-  color: var(--text-muted);
+  color: #94a3b8;
+  font-weight: 500;
 }
 
 .capsule-value {
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-main);
+  color: #f1f5f9;
   font-family: var(--font-mono);
 }
 
@@ -749,18 +812,22 @@ defineExpose({ seekTo })
   color: var(--telemetry-cyan);
 }
 
-.val-danger {
-  color: var(--emergency-red);
+.val-danger, .threat-level-3 {
+  color: #EF4444;
+  text-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
 }
 
-.val-warning {
-  color: var(--safety-amber);
+.val-warning, .threat-level-2 {
+  color: #F59E0B;
 }
 
-.val-safe {
-  color: var(--nominal-green);
+.val-caution, .threat-level-1 {
+  color: #38BDF8;
 }
 
+.val-safe, .threat-level-0 {
+  color: #10B981;
+}
 /* 底部进度拖动条与节点切换 */
 .video-control-bar {
   position: absolute;
@@ -770,10 +837,10 @@ defineExpose({ seekTo })
   background: rgba(255, 255, 255, 0.96);
   border-top: 1px solid var(--border-machined);
   box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.06);
-  padding: 6px 14px;
+  padding: 5px 14px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   z-index: 12;
   backdrop-filter: blur(8px);
 }
@@ -782,15 +849,18 @@ defineExpose({ seekTo })
   width: 100%;
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .video-range-slider {
-  width: 100%;
-  height: 4px;
+  flex: 1;
+  min-width: 0;
+  height: 6px;
   background: var(--border-machined);
   outline: none;
   accent-color: var(--telemetry-cyan);
   cursor: pointer;
+  border-radius: 3px;
 }
 
 .keyframe-jump-strip {
