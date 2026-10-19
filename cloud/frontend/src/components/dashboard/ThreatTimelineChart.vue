@@ -109,23 +109,6 @@
           <circle :cx="playheadX" cy="67.5" r="3" fill="#0284c7" stroke="#ffffff" stroke-width="1"/>
         </svg>
       </div>
-
-      <div class="telemetry-metrics-summary">
-        <div class="metric-sub-card">
-          <span class="metric-sub-label">防误报拦截率</span>
-          <span class="metric-sub-val" style="color:var(--nominal-green)">{{ driverExclusionText }}</span>
-        </div>
-        <div class="metric-sub-card">
-          <span class="metric-sub-label">HPC 推理延迟</span>
-          <span class="metric-sub-val">{{ hpcLatencyText }}</span>
-        </div>
-        <div class="metric-sub-card">
-          <span class="metric-sub-label">峰值危害烈度</span>
-          <span class="metric-sub-val" :style="{ color: peakThreatColor }">
-            {{ peakThreatScore.toFixed(2) }} / 3.0
-          </span>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -160,62 +143,6 @@ const playheadX = computed(() => {
   const dur = duration.value > 0 ? duration.value : 30.08
   const cur = Math.max(0, Math.min(dur, Number(props.currentTime) || 0))
   return (cur / dur) * 600
-})
-
-// 1. 防误报拦截率 - 动态提取
-const driverExclusionText = computed(() => {
-  if (backendAnalysis.value?.summary?.driver_exclusion_pct != null) {
-    return `${backendAnalysis.value.summary.driver_exclusion_pct}% (司机排除)`
-  }
-  const sanitizer = cctvMetadata.value?.pre_perception_sanitizer
-  if (sanitizer) {
-    return sanitizer.includes('IoP') ? '100% (IoP >= 0.65)' : '100% (司机排除)'
-  }
-  return '100% (司机排除)'
-})
-
-// 2. HPC 推理延迟 - 动态提取当前帧或元数据
-const hpcLatencyText = computed(() => {
-  const dur = duration.value > 0 ? duration.value : 30.08
-  const cur = Math.max(0, Math.min(dur, Number(props.currentTime) || 0))
-  const frames = metadataFrames.value
-  const fps = Number(cctvMetadata.value?.fps || 10.0)
-
-  if (frames && frames.length) {
-    const targetId = Math.max(1, Math.min(frames.length, Math.round(cur * fps) + 1))
-    const f = frames[targetId - 1]
-    if (f?.probes?.latency_ms != null) {
-      return `${Number(f.probes.latency_ms).toFixed(1)} 毫秒`
-    }
-  }
-  if (backendAnalysis.value?.summary?.latency_ms != null) {
-    return `${Number(backendAnalysis.value.summary.latency_ms).toFixed(1)} 毫秒`
-  }
-  return '107.4 毫秒'
-})
-
-// 3. 峰值危害烈度 - 动态遍历整份 JSON 取真实峰值
-const peakThreatScore = computed(() => {
-  if (backendAnalysis.value?.summary?.peak_threat != null) {
-    return Number(backendAnalysis.value.summary.peak_threat)
-  }
-  const frames = metadataFrames.value
-  if (frames && frames.length) {
-    let maxS = 0
-    for (let i = 0; i < frames.length; i++) {
-      const s = Number(frames[i]?.probes?.threat_score || 0)
-      if (s > maxS) maxS = s
-    }
-    return maxS > 0 ? maxS : (props.activeHazard ? 2.48 : 0.45)
-  }
-  return props.activeHazard ? 2.48 : 0.45
-})
-
-const peakThreatColor = computed(() => {
-  const s = peakThreatScore.value
-  if (s >= 2.2) return 'var(--emergency-red)'
-  if (s >= 1.5) return 'var(--warning-amber)'
-  return 'var(--nominal-green)'
 })
 
 async function fetchLatestAnalysis() {
@@ -279,28 +206,15 @@ const fallbackSegments = [
   {
     id: 'seg-4',
     start_time: 23.4,
-    end_time: 29.1,
+    end_time: 29.6,
     x: 466.8,
-    width: 113.7,
+    width: 123.7,
     label: '险情解除 · 责任人确认后恢复车辆动力',
     short_label: '险情解除',
     color_bg: 'rgba(16, 185, 129, 0.14)',
     color_stroke: 'rgba(16, 185, 129, 0.35)',
     color_text: '#047857',
     is_hazard: false
-  },
-  {
-    id: 'seg-5',
-    start_time: 29.1,
-    end_time: 29.6,
-    x: 580.5,
-    width: 10.0,
-    label: '联锁二次触发 · 车辆再次逼近红光区',
-    short_label: '再联锁',
-    color_bg: 'rgba(220, 38, 38, 0.55)',
-    color_stroke: '#dc2626',
-    color_text: '#ffffff',
-    is_hazard: true
   },
   {
     id: 'seg-6',
@@ -420,7 +334,7 @@ const threatPoints = computed(() => {
       { t: 24.5, s: 0.75 },
       { t: 26.0, s: 0.45 },
       { t: 28.5, s: 0.45 },
-      { t: 29.3, s: 2.35 },
+      { t: 29.3, s: 0.45 },
       { t: 29.8, s: 0.45 },
       { t: 30.08, s: 0.45 }
     ]
@@ -536,8 +450,6 @@ const currentThreatColor = computed(() => {
   padding: 8px 14px;
   box-sizing: border-box;
   display: flex;
-  align-items: stretch;
-  gap: 16px;
 }
 
 .ecg-chart-box {
@@ -551,31 +463,5 @@ const currentThreatColor = computed(() => {
   width: 100%;
   height: 100%;
   display: block;
-}
-
-.telemetry-metrics-summary {
-  width: 135px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  font-family: var(--font-mono);
-  border-left: 1px solid var(--border-machined);
-  padding-left: 14px;
-  flex-shrink: 0;
-}
-.metric-sub-card {
-  display: flex;
-  flex-direction: column;
-}
-
-.metric-sub-label {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-.metric-sub-val {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--telemetry-cyan);
 }
 </style>
