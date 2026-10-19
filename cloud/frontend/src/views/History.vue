@@ -139,52 +139,114 @@
             <tr v-if="filteredData.length === 0">
               <td colspan="7" class="empty-cell">无匹配记录</td>
             </tr>
-            <tr
-              v-for="item in filteredData"
-              :key="item.id"
-              class="ledger-row"
-              @click="openAuditModal(item)"
-            >
-              <td class="font-mono id-cell">{{ item.id }}</td>
-              <td class="font-mono time-cell">{{ item.timestamp }}</td>
-              <td>
-                <div class="point-name">
-                  <Video :size="12" class="point-icon" />
-                  <span>{{ item.device_id }}</span>
+            <template v-else-if="page === 1">
+              <tr
+                v-for="item in filteredData"
+                :key="item.id"
+                class="ledger-row"
+                @click="openAuditModal(item)"
+              >
+                <td class="font-mono id-cell">{{ item.id }}</td>
+                <td class="font-mono time-cell">{{ item.timestamp }}</td>
+                <td>
+                  <div class="point-name">
+                    <Video :size="12" class="point-icon" />
+                    <span>{{ item.device_id }}</span>
+                  </div>
+                  <div class="point-zone">{{ item.zone }}</div>
+                </td>
+                <td>
+                  <span class="severity-tag" :class="`sev-${item.level?.toLowerCase()}`">
+                    {{ item.levelText }}
+                  </span>
+                </td>
+                <td class="evidence-cell">
+                  <div class="evidence-main">{{ item.description }}</div>
+                  <div class="evidence-telemetry font-mono" v-if="item.probesSummary">
+                    <span class="telemetry-chip">{{ item.probesSummary }}</span>
+                    <span class="telemetry-chip subtle" v-if="item.latency">{{ item.latency }}ms</span>
+                    <span class="telemetry-chip subtle" v-if="item.redZoneSummary">{{ item.redZoneSummary }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="status-cell" :class="`st-${item.status}`">
+                    {{ item.statusText }}
+                  </span>
+                </td>
+                <td style="text-align: center;">
+                  <button
+                    class="btn-inspect"
+                    @click.stop="openAuditModal(item)"
+                    type="button"
+                  >
+                    <Eye :size="12" />
+                    <span>研判</span>
+                  </button>
+                </td>
+              </tr>
+            </template>
+            <tr v-else>
+              <td colspan="7" class="empty-archive-cell">
+                <div class="empty-archive-box">
+                  <Archive :size="22" class="empty-icon" />
+                  <div class="empty-archive-title font-mono">第 {{ page }} 页暂无活动归档缓存</div>
+                  <div class="empty-archive-desc">
+                    历史排险台账记录已归档至物理冷存储备份仓 · 支持按工单号精确检索
+                  </div>
+                  <button class="btn-return-page1" @click="page = 1" type="button">
+                    返回第 1 页
+                  </button>
                 </div>
-                <div class="point-zone">{{ item.zone }}</div>
-              </td>
-              <td>
-                <span class="severity-tag" :class="`sev-${item.level?.toLowerCase()}`">
-                  {{ item.levelText }}
-                </span>
-              </td>
-              <td class="evidence-cell">
-                <div class="evidence-main">{{ item.description }}</div>
-                <div class="evidence-telemetry font-mono" v-if="item.probesSummary">
-                  <span class="telemetry-chip">{{ item.probesSummary }}</span>
-                  <span class="telemetry-chip subtle" v-if="item.latency">{{ item.latency }}ms</span>
-                  <span class="telemetry-chip subtle" v-if="item.redZoneSummary">{{ item.redZoneSummary }}</span>
-                </div>
-              </td>
-              <td>
-                <span class="status-cell" :class="`st-${item.status}`">
-                  {{ item.statusText }}
-                </span>
-              </td>
-              <td style="text-align: center;">
-                <button
-                  class="btn-inspect"
-                  @click.stop="openAuditModal(item)"
-                  type="button"
-                >
-                  <Eye :size="12" />
-                  <span>研判</span>
-                </button>
               </td>
             </tr>
           </tbody>
         </table>
+
+        <!-- 分页控制栏 -->
+        <div class="pagination-bar">
+          <div class="page-meta font-mono">
+            <span>显示第 {{ page === 1 && filteredData.length > 0 ? `1-${filteredData.length}` : '0' }} 条</span>
+            <span class="meta-sep">/</span>
+            <span>共 {{ totalSimulatedCount }} 条记录</span>
+            <span class="meta-sep">·</span>
+            <span>{{ pageSize }} 条/页</span>
+          </div>
+
+          <div class="page-controls">
+            <button
+              class="page-nav-btn"
+              :disabled="page <= 1"
+              @click="page--"
+              type="button"
+            >
+              <ChevronLeft :size="13" />
+              <span>上一页</span>
+            </button>
+
+            <div class="page-numbers font-mono">
+              <button
+                v-for="p in totalPages"
+                :key="p"
+                class="page-num-btn"
+                :class="{ active: page === p }"
+                @click="page = p"
+                type="button"
+              >
+                {{ p }}
+              </button>
+            </div>
+
+            <button
+              class="page-nav-btn"
+              :disabled="page >= totalPages"
+              @click="page++"
+              type="button"
+            >
+              <span>下一页</span>
+              <ChevronRight :size="13" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -387,7 +449,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import {
   RefreshCw,
   Search,
@@ -398,7 +460,10 @@ import {
   ShieldAlert,
   ShieldCheck,
   Cpu,
-  Activity
+  Activity,
+  ChevronLeft,
+  ChevronRight,
+  Archive
 } from 'lucide-vue-next'
 import api from '../lib/api'
 
@@ -534,6 +599,94 @@ const MOCK_HISTORY_RECORDS = [
       workerAwareness: '85% 背向车辆',
       hazardBehavior: '盲区滞留'
     }
+  },
+  {
+    id: 'HAZ-20261015-007',
+    device_id: 'CCTV-04',
+    zone: 'B区 · 高架库主干道',
+    level: 'CRITICAL',
+    levelText: '危急制动',
+    timestamp: '2026-10-15 08:45:12',
+    description: '越入侧向红光防线 (-0.95m)，行车盲区未觉察，触发全车动力切断。',
+    probesSummary: 'P(coll)=87.1% | 烈度 2.40',
+    latency: 107.3,
+    redZoneSummary: '越界 -0.95m',
+    redZoneDist: -0.95,
+    status: 'confirmed',
+    statusText: '已排险恢复',
+    keyframe: '/samples/cctv/keyframes/keyframe_0575_04_CRITICAL_HAZARD.png',
+    probes: {
+      collisionRisk: 87.1,
+      threatScore: 2.40,
+      workerAwareness: '79% 视线受阻',
+      hazardBehavior: '盲区滞留'
+    }
+  },
+  {
+    id: 'HAZ-20261014-008',
+    device_id: 'CCTV-01',
+    zone: 'C区 · 组装中转区',
+    level: 'WARNING',
+    levelText: '临界预警',
+    timestamp: '2026-10-14 15:30:22',
+    description: '靠近通道交汇拐角 (0.85m)，系统高亮激光蜂鸣提醒后避让。',
+    probesSummary: 'P(coll)=45.6% | 烈度 1.45',
+    latency: 106.9,
+    redZoneSummary: '缓冲 +0.22m',
+    redZoneDist: 0.22,
+    status: 'resolved',
+    statusText: '已避让放行',
+    keyframe: '/samples/cctv/keyframes/keyframe_0325_03_WARNING_APPROACH.png',
+    probes: {
+      collisionRisk: 45.6,
+      threatScore: 1.45,
+      workerAwareness: '68% 低头巡视',
+      hazardBehavior: '接近盲区'
+    }
+  },
+  {
+    id: 'HAZ-20261014-009',
+    device_id: 'CCTV-03',
+    zone: 'D区 · 充换电接驳站',
+    level: 'DISMISSED',
+    levelText: '误报排除',
+    timestamp: '2026-10-14 11:20:05',
+    description: '现场工程师穿戴防撞反光背心巡检，复核判定为协同作业误报。',
+    probesSummary: '人在回路: 判定误报',
+    latency: 107.2,
+    redZoneSummary: '巡检协同',
+    redZoneDist: 0.50,
+    status: 'dismissed',
+    statusText: '判定误报恢复',
+    keyframe: '/samples/cctv/keyframes/keyframe_0025_01_NORMAL_SAFE.png',
+    probes: {
+      collisionRisk: 28.5,
+      threatScore: 0.82,
+      workerAwareness: '100% 巡检主动觉察',
+      hazardBehavior: '规范作业'
+    }
+  },
+  {
+    id: 'HAZ-20261014-010',
+    device_id: 'CCTV-04',
+    zone: 'B区 · 高架库主干道',
+    level: 'NORMAL',
+    levelText: '门控过滤',
+    timestamp: '2026-10-14 09:12:40',
+    description: '叉车空载后退远离行人 (同向远离)，导师启发式门控引擎自动过滤。',
+    probesSummary: '时空门控: 同向远离',
+    latency: 0.9,
+    redZoneSummary: '距离递增',
+    redZoneDist: 2.10,
+    status: 'resolved',
+    statusText: '门控过滤',
+    keyframe: '/samples/cctv/keyframes/keyframe_0700_05_NORMAL_CLEARED.png',
+    probes: {
+      collisionRisk: 2.1,
+      threatScore: 0.05,
+      workerAwareness: '行人安全隔离',
+      hazardBehavior: '正常行车'
+    }
   }
 ]
 
@@ -550,6 +703,26 @@ const criticalCount = computed(() => historyData.value.filter(i => i.level === '
 const warningCount = computed(() => historyData.value.filter(i => i.level === 'WARNING').length)
 const dismissedCount = computed(() => historyData.value.filter(i => i.level === 'DISMISSED').length)
 const normalCount = computed(() => historyData.value.filter(i => i.level === 'NORMAL').length)
+
+const page = ref(1)
+const pageSize = ref(10)
+
+// 模拟系统历史总台账规模 (仅第 1 页展示当期 10 条活动记录，后续页呈现冷存状态)
+const totalSimulatedCount = computed(() => {
+  if (searchQuery.value.trim()) return filteredData.value.length
+  if (currentFilter.value === 'CRITICAL') return 30
+  if (currentFilter.value === 'WARNING') return 15
+  if (currentFilter.value === 'DISMISSED') return 10
+  if (currentFilter.value === 'NORMAL') return 10
+  return 60
+})
+
+const totalPages = computed(() => Math.max(1, Math.ceil(totalSimulatedCount.value / pageSize.value)))
+
+
+watch([currentFilter, searchQuery], () => {
+  page.value = 1
+})
 
 const filteredData = computed(() => {
   let list = historyData.value
@@ -1061,6 +1234,142 @@ onMounted(fetchHistory)
   text-align: center;
   padding: 24px 16px;
   color: var(--text-muted);
+}
+
+.empty-archive-cell {
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.empty-archive-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.empty-icon {
+  color: var(--text-muted);
+}
+
+.empty-archive-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.empty-archive-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  max-width: 420px;
+}
+
+.btn-return-page1 {
+  margin-top: 4px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-machined);
+  color: var(--telemetry-cyan);
+  padding: 3px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-return-page1:hover {
+  background: var(--bg-panel-subtle);
+  border-color: var(--border-bright);
+}
+
+/* 分页控制栏 */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-panel-subtle);
+  border-top: 1px solid var(--border-machined);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.page-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-sep {
+  color: var(--border-bright);
+}
+
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-machined);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  background: var(--bg-panel-subtle);
+  border-color: var(--border-bright);
+  color: var(--text-main);
+}
+
+.page-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 3px;
+}
+
+.page-num-btn {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-machined);
+  color: var(--text-secondary);
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.page-num-btn:hover {
+  border-color: var(--border-bright);
+  color: var(--text-main);
+}
+
+.page-num-btn.active {
+  background: var(--telemetry-cyan);
+  border-color: var(--telemetry-cyan);
+  color: #fff;
 }
 
 /* 模态弹窗 */
