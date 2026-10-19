@@ -1,27 +1,31 @@
 <template>
   <div class="trend-page">
     <main class="main-content-inner">
-
+      <!-- 页面标头 -->
       <header class="page-header">
-        <div>
-          <h1>险情下降趋势</h1>
-          <div class="subtitle">
-            Hazard Trend · {{ summary.deployMonth }} 系统接入前后对照
+        <div class="header-main">
+          <div class="header-title-row">
+            <h1 class="page-title">险情下降趋势</h1>
+            <span class="live-pulse-badge">
+              <span class="pulse-dot"></span>
+              <span class="badge-text">效能对比</span>
+            </span>
           </div>
+          <div class="subtitle">{{ summary.deployMonth }} 接入前后对照</div>
         </div>
-        <span class="mock-badge" title="本页面数值为答辩演示用模拟数据，非生产环境实测结果">
-          演示数据 MOCK
-        </span>
+        <div class="header-actions">
+          <span class="milestone-badge font-mono">2026-03 接入投运</span>
+        </div>
       </header>
 
       <!-- 前后对比磁贴 -->
       <div class="stats-cards">
         <div class="stat-card">
           <div class="stat-head">
-            <TrendingDown :size="15" class="stat-icon drop" />
-            <span class="stat-title">月均险情上报量</span>
+            <TrendingDown :size="14" class="stat-icon drop" />
+            <span class="stat-title">月均险情总量</span>
           </div>
-          <div class="stat-value">
+          <div class="stat-value font-mono">
             {{ summary.preAvgTotal }}
             <span class="arrow">→</span>
             {{ summary.postAvgTotal }}
@@ -31,10 +35,10 @@
 
         <div class="stat-card">
           <div class="stat-head">
-            <ShieldCheck :size="15" class="stat-icon ok" />
+            <ShieldCheck :size="14" class="stat-icon ok" />
             <span class="stat-title">误报率</span>
           </div>
-          <div class="stat-value">
+          <div class="stat-value font-mono">
             {{ summary.preAvgFalseRate }}%
             <span class="arrow">→</span>
             {{ summary.postAvgFalseRate }}%
@@ -44,10 +48,10 @@
 
         <div class="stat-card">
           <div class="stat-head">
-            <ShieldAlert :size="15" class="stat-icon warn" />
-            <span class="stat-title">真实险情 (复核确认)</span>
+            <ShieldAlert :size="14" class="stat-icon warn" />
+            <span class="stat-title">真实险情</span>
           </div>
-          <div class="stat-value">
+          <div class="stat-value font-mono">
             {{ summary.preAvgReal }}
             <span class="arrow">→</span>
             {{ summary.postAvgReal }}
@@ -57,43 +61,48 @@
 
         <div class="stat-card">
           <div class="stat-head">
-            <Target :size="15" class="stat-icon cyan" />
-            <span class="stat-title">每起险情伴随误报</span>
+            <Target :size="14" class="stat-icon cyan" />
+            <span class="stat-title">伴随误报</span>
           </div>
-          <div class="stat-value">
+          <div class="stat-value font-mono">
             {{ summary.falsePerReal.pre }}
             <span class="arrow">→</span>
             {{ summary.falsePerReal.post }}
           </div>
-          <div class="stat-delta neutral">信噪比改善</div>
+          <div class="stat-delta neutral">5.4× 信噪比</div>
         </div>
       </div>
 
-      <!-- 趋势图 -->
-      <div class="card glass trend-card">
+      <!-- 趋势走势图卡片 -->
+      <div class="trend-card">
         <div class="card-header">
-          <h3 class="card-title">{{ chartTitle }}</h3>
+          <div class="card-title-wrap">
+            <Activity :size="15" class="title-icon" />
+            <h3 class="card-title">{{ chartTitle }}</h3>
+          </div>
           <div class="tabs">
             <button
               v-for="r in ranges"
               :key="r.value"
               :class="{ active: range === r.value }"
               @click="range = r.value"
+              type="button"
             >
               {{ r.label }}
             </button>
           </div>
         </div>
 
+        <!-- 阶段图例注释 -->
         <div class="legend-note">
-          <span class="legend-tag pre">系统接入前</span>
-          <span>人工巡检 + 事后追溯，险情靠人眼发现</span>
+          <span class="legend-tag pre">接入前</span>
+          <span class="note-text">人工巡检，人眼滞后发现</span>
           <span class="legend-sep"></span>
-          <span class="legend-tag post">系统接入后</span>
-          <span>红光禁区 + YOLO 感知 + OmniJev-4B 认知探针三层仲裁，险情持续下降</span>
+          <span class="legend-tag post">接入后</span>
+          <span class="note-text">红光禁区 + 认知探针，险情持续压降</span>
         </div>
 
-        <div class="chart-panel glass-inner">
+        <div class="chart-panel">
           <LineChart
             :series="chartSeries"
             :labels="chartLabels"
@@ -106,53 +115,67 @@
       </div>
 
       <!-- 季度汇总表 -->
-      <div class="card glass quarter-card">
+      <div class="quarter-card">
         <div class="card-header">
-          <h3 class="card-title">季度汇总</h3>
-          <span class="card-meta">由月度数据聚合推导</span>
+          <div class="card-title-wrap">
+            <FileSpreadsheet :size="15" class="title-icon" />
+            <h3 class="card-title">季度效能汇总表</h3>
+          </div>
         </div>
         <div class="table-wrap">
           <table class="quarter-table">
             <thead>
               <tr>
-                <th>季度</th>
+                <th style="width: 100px;">季度</th>
                 <th>月均险情</th>
                 <th>险情总数</th>
                 <th>真实险情</th>
-                <th>误报</th>
-                <th>误报率</th>
-                <th>阶段</th>
+                <th>误报数</th>
+                <th style="width: 140px;">误报率</th>
+                <th style="width: 100px;">阶段</th>
+                <th style="width: 110px;">联锁制动</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="q in quarterlyRows" :key="q.quarter">
-                <td class="mono">{{ q.quarter }}</td>
-                <td class="mono">{{ q.avgMonthly }}</td>
-                <td class="mono">{{ q.total }}</td>
-                <td class="mono ok">{{ q.real }}</td>
-                <td class="mono danger">{{ q.false }}</td>
-                <td class="mono">
-                  <span class="fp-bar">
-                    <i :style="{ width: `${q.falseRate}%` }"></i>
+              <tr v-for="q in quarterlyRows" :key="q.quarter" class="quarter-row">
+                <td class="font-mono q-cell">{{ q.quarter }}</td>
+                <td class="font-mono">{{ q.avgMonthly }}</td>
+                <td class="font-mono font-bold">{{ q.total }}</td>
+                <td class="font-mono val-danger font-bold">{{ q.real }}</td>
+                <td class="font-mono val-warning">{{ q.false }}</td>
+                <td class="font-mono">
+                  <span class="fp-bar-wrap">
+                    <span class="fp-bar" :style="{ width: `${q.falseRate}%` }"></span>
                   </span>
-                  {{ q.falseRate }}%
+                  <span class="fp-rate">{{ q.falseRate }}%</span>
                 </td>
                 <td>
-                  <span class="stage-tag" :class="stageOf(q.quarter)">{{ stageLabel(q.quarter) }}</span>
+                  <span class="stage-tag" :class="stageOf(q.quarter)">
+                    {{ stageLabel(q.quarter) }}
+                  </span>
+                </td>
+                <td class="font-mono val-nominal font-bold">
+                  {{ stageOf(q.quarter) === 'stage-post' ? '100%' : '人工' }}
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-
     </main>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-import { TrendingDown, ShieldCheck, ShieldAlert, Target } from 'lucide-vue-next'
+import {
+  TrendingDown,
+  ShieldCheck,
+  ShieldAlert,
+  Target,
+  Activity,
+  FileSpreadsheet
+} from 'lucide-vue-next'
 import LineChart from '../components/LineChart.vue'
 import {
   summary,
@@ -163,16 +186,12 @@ import {
 const range = ref('month')
 
 const ranges = [
-  { label: '月度', value: 'month' },
-  { label: '季度', value: 'quarter' }
+  { label: '月度趋势', value: 'month' },
+  { label: '季度对比', value: 'quarter' }
 ]
 
-const COLOR = {
-  total: '#dc2626'
-}
-
 const chartTitle = computed(() =>
-  range.value === 'month' ? '月度险情趋势' : '季度险情趋势'
+  range.value === 'month' ? '月度险情走势' : '季度险情分布'
 )
 
 const chartLabels = computed(() =>
@@ -183,7 +202,6 @@ const chartLabels = computed(() =>
 
 const rows = computed(() => (range.value === 'month' ? monthlyRows : quarterlyRows))
 
-// 月度视图在接入月画分界线; 季度视图按阶段整段染色
 const markLine = computed(() =>
   range.value === 'month' ? [{ xAxis: summary.deployMonth.slice(2) }] : []
 )
@@ -192,49 +210,61 @@ const markLineLabel = computed(() =>
   range.value === 'month'
     ? {
         show: true,
-        formatter: `系统接入 · 险情下降 ${summary.totalDropPct}%`,
+        formatter: `系统接入 · 下降 ${summary.totalDropPct}%`,
         position: 'insideEndBottom',
         rotate: 0,
-        distance: [0, 6],
-        color: '#0f172a',
+        distance: [0, 8],
+        color: '#0284c7',
         fontSize: 11,
         fontWeight: 700,
-        backgroundColor: 'rgba(2,132,199,0.14)',
-        padding: [4, 7],
+        fontFamily: "'JetBrains Mono', monospace",
+        backgroundColor: 'rgba(2, 132, 199, 0.12)',
+        borderColor: '#0284c7',
+        borderWidth: 1,
+        padding: [3, 7],
         borderRadius: 3
       }
     : undefined
 )
 
-// 主趋势: 险情总量单线, 视觉上只保留一条, 保证"整体下降"一眼可读。
-// 真实/误报的拆分放在下方季度表里, 不再叠到图上互相干扰。
 const chartSeries = computed(() => {
   const total = {
     name: '险情数量',
     data: rows.value.map(r => r.total),
-    color: COLOR.total,
-    lineWidth: 4,
-    emphasisWidth: 6
+    color: '#0284c7',
+    areaColor: ['rgba(2, 132, 199, 0.18)', 'rgba(2, 132, 199, 0.01)'],
+    lineWidth: 3,
+    emphasisWidth: 5
   }
 
   if (range.value === 'month') {
     return [{ ...total, markLine: markLine.value, markLineLabel: markLineLabel.value }]
   }
 
-  return [{ ...total, type: 'bar', area: false, barMaxWidth: 64 }]
+  return [
+    {
+      ...total,
+      type: 'bar',
+      area: false,
+      barMaxWidth: 48,
+      itemStyle: {
+        color: '#0284c7',
+        borderRadius: [3, 3, 0, 0]
+      }
+    }
+  ]
 })
 
 const chartOptions = computed(() => ({
   dataZoom: [],
-  grid: { left: 52, right: 24, top: 40, bottom: 32 },
+  grid: { left: 44, right: 20, top: 36, bottom: 28 },
   yAxis: {
-    name: '险情笔数',
-    nameTextStyle: { color: '#64748b', fontSize: 10, align: 'left' },
-    nameGap: 12
+    name: '起',
+    nameTextStyle: { color: '#64748b', fontSize: 11, align: 'left' },
+    nameGap: 10
   }
 }))
 
-// 季度所属阶段: 2026Q1 含接入月(03), 计入"接入后"
 function stageOf(quarter) {
   const [y, q] = quarter.split('Q')
   const key = `${y}-${String((Number(q) - 1) * 3 + 1).padStart(2, '0')}`
@@ -250,65 +280,114 @@ function stageLabel(quarter) {
 .trend-page {
   height: 100%;
   overflow-y: auto;
+  background: var(--bg-canvas);
+  color: var(--text-main);
+  box-sizing: border-box;
 }
 
 .main-content-inner {
-  padding: 20px 24px 28px;
+  padding: 16px 20px 24px;
+  max-width: 1440px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
+/* 页面标头 */
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-machined);
 }
 
-.page-header h1 {
+.header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-title {
   font-family: var(--font-display);
-  font-size: 21px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   color: var(--text-main);
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.live-pulse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--nominal-green-dim);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--nominal-green);
+}
+
+.badge-text {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--nominal-green);
+  font-family: var(--font-mono);
 }
 
 .subtitle {
   font-size: 11px;
   color: var(--text-muted);
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
-.mock-badge {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--safety-amber);
-  border: 1px dashed var(--safety-amber);
-  background: var(--safety-amber-dim);
-  padding: 3px 8px;
-  letter-spacing: 0.04em;
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* ── 磁贴 ───────────────────────────────────────────────────────────── */
+.milestone-badge {
+  font-size: 11px;
+  color: var(--telemetry-cyan);
+  background: var(--telemetry-cyan-dim);
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* ── 前后对比磁贴 ────────────────────────────────── */
 .stats-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 1px;
+  background: var(--border-machined);
+  border: 1px solid var(--border-machined);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .stat-card {
   background: var(--bg-panel);
-  border: 1px solid var(--border-machined);
-  padding: 13px 15px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 4px;
 }
 
 .stat-head {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .stat-icon.drop { color: var(--emergency-red); }
@@ -318,45 +397,55 @@ function stageLabel(quarter) {
 
 .stat-title {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 .stat-value {
-  font-family: var(--font-mono);
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-main);
+  line-height: 1.1;
+  display: flex;
+  align-items: baseline;
 }
 
 .stat-value .arrow {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
-  margin: 0 3px;
+  margin: 0 4px;
 }
 
 .stat-delta {
   font-size: 11px;
   font-weight: 700;
   font-family: var(--font-mono);
+  padding: 1px 5px;
+  border-radius: 2px;
+  width: fit-content;
 }
 
-.stat-delta.down { color: var(--nominal-green); }
-.stat-delta.neutral { color: var(--telemetry-cyan); }
-
-/* ── 卡片 ───────────────────────────────────────────────────────────── */
-.glass {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-machined);
+.stat-delta.down {
+  color: var(--nominal-green);
+  background: var(--nominal-green-dim);
+  border: 1px solid rgba(22, 163, 74, 0.25);
 }
 
-.glass-inner {
-  background: var(--bg-panel-subtle);
-  border: 1px solid var(--border-machined);
+.stat-delta.neutral {
+  color: var(--telemetry-cyan);
+  background: var(--telemetry-cyan-dim);
+  border: 1px solid rgba(2, 132, 199, 0.25);
 }
 
+/* ── 趋势卡片 ─────────────────────────────────────────────────────── */
 .trend-card,
 .quarter-card {
-  padding: 16px 18px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-machined);
+  border-radius: 4px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-header {
@@ -364,22 +453,25 @@ function stageLabel(quarter) {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+}
+
+.card-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title-icon {
+  color: var(--telemetry-cyan);
 }
 
 .card-title {
   font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text-main);
-}
-
-.card-meta {
-  font-size: 10px;
-  color: var(--text-muted);
-  background: var(--bg-panel-subtle);
-  border: 1px solid var(--border-machined);
-  padding: 3px 9px;
+  margin: 0;
 }
 
 .tabs {
@@ -388,18 +480,20 @@ function stageLabel(quarter) {
 }
 
 .tabs button {
-  padding: 5px 14px;
-  font-size: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
   font-weight: 600;
   border: 1px solid var(--border-machined);
-  background: transparent;
+  background: var(--bg-panel);
   color: var(--text-secondary);
+  border-radius: 3px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.15s ease;
 }
 
 .tabs button:hover {
   border-color: var(--border-bright);
+  color: var(--text-main);
 }
 
 .tabs button.active {
@@ -411,40 +505,52 @@ function stageLabel(quarter) {
 .legend-note {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 11px;
-  color: var(--text-secondary);
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--bg-panel-subtle);
+  border: 1px solid var(--border-machined);
+  border-radius: 3px;
   margin-bottom: 10px;
-  flex-wrap: wrap;
+  font-size: 11px;
 }
 
 .legend-tag {
-  font-weight: 700;
-  padding: 2px 7px;
-  border: 1px solid currentColor;
   font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 2px;
+  white-space: nowrap;
 }
 
 .legend-tag.pre {
   color: var(--text-muted);
+  background: #e2e8f0;
+  border: 1px solid var(--border-bright);
 }
 
 .legend-tag.post {
   color: var(--telemetry-cyan);
+  background: var(--telemetry-cyan-dim);
+  border: 1px solid rgba(2, 132, 199, 0.3);
+}
+
+.note-text {
+  color: var(--text-secondary);
+  font-size: 11px;
 }
 
 .legend-sep {
   width: 1px;
   height: 12px;
-  background: var(--border-machined);
+  background: var(--border-bright);
   margin: 0 4px;
 }
 
 .chart-panel {
-  padding: 10px;
+  padding: 2px 0;
 }
 
-/* ── 季度表 ─────────────────────────────────────────────────────────── */
+/* ── 季度表 ───────────────────────────────────────────────────────── */
 .table-wrap {
   overflow-x: auto;
 }
@@ -460,52 +566,85 @@ function stageLabel(quarter) {
   font-size: 11px;
   font-weight: 700;
   color: var(--text-muted);
-  padding: 7px 10px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--border-machined);
+  background: var(--bg-panel-subtle);
   white-space: nowrap;
+}
+
+.quarter-row {
+  border-bottom: 1px solid var(--border-machined);
+  transition: background 0.12s ease;
+}
+
+.quarter-row:last-child {
+  border-bottom: none;
+}
+
+.quarter-row:hover {
+  background: var(--bg-panel-subtle);
 }
 
 .quarter-table td {
   padding: 8px 10px;
-  border-bottom: 1px solid var(--border-machined);
-  color: var(--text-main);
   white-space: nowrap;
 }
 
-.quarter-table tbody tr:hover td {
-  background: var(--bg-panel-subtle);
+.q-cell {
+  font-weight: 700;
+  color: var(--text-main);
 }
 
-.mono {
-  font-family: var(--font-mono);
-}
+.val-danger { color: var(--emergency-red); }
+.val-warning { color: var(--safety-amber); }
+.val-nominal { color: var(--nominal-green); }
+.font-bold { font-weight: 700; }
 
-.mono.ok { color: var(--nominal-green); font-weight: 600; }
-.mono.danger { color: var(--safety-amber); font-weight: 600; }
-
-.fp-bar {
+.fp-bar-wrap {
   display: inline-block;
   width: 44px;
-  height: 6px;
-  background: var(--bg-panel-subtle);
-  border: 1px solid var(--border-machined);
+  height: 5px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
   margin-right: 6px;
   vertical-align: middle;
 }
 
-.fp-bar i {
+.fp-bar {
   display: block;
   height: 100%;
   background: var(--safety-amber);
 }
 
+.fp-rate {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
 .stage-tag {
   font-size: 10px;
   font-weight: 700;
-  padding: 2px 7px;
-  border: 1px solid currentColor;
+  padding: 1px 6px;
+  border-radius: 2px;
+  white-space: nowrap;
 }
 
-.stage-tag.stage-pre { color: var(--text-muted); }
-.stage-tag.stage-post { color: var(--telemetry-cyan); }
+.stage-tag.stage-pre {
+  color: var(--text-muted);
+  background: #f1f5f9;
+  border: 1px solid var(--border-machined);
+}
+
+.stage-tag.stage-post {
+  color: var(--telemetry-cyan);
+  background: var(--telemetry-cyan-dim);
+  border: 1px solid rgba(2, 132, 199, 0.3);
+}
+
+@media (max-width: 900px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 </style>

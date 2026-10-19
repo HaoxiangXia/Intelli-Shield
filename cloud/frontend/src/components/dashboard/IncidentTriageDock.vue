@@ -43,7 +43,7 @@
       <div class="probe-triad-box">
         <div class="probe-triad-title">
           <span>OmniJev-4B 四路认知探针遥测</span>
-          <span style="color:var(--text-muted)">RTX 3090 集群 · {{ liveLatencyMs }}毫秒 (突破生理极限)</span>
+          <span style="color:var(--text-muted)">RTX 3090 推理耗时 {{ liveLatencyMs }}毫秒 </span>
         </div>
         <div class="probe-triad-grid">
           <!-- 探针 1: 碰撞风险概率 -->

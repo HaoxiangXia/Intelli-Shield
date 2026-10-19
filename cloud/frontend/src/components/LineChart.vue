@@ -37,8 +37,10 @@ const chartRef = ref(null)
 let chartInstance = null
 
 const defaultColors = [
-  { line: '#b8a9e8', area: ['rgba(184,169,232,0.18)', 'rgba(184,169,232,0.02)'] },
-  { line: '#D0F578', area: ['rgba(208,245,120,0.16)', 'rgba(208,245,120,0.02)'] },
+  { line: '#0284c7', area: ['rgba(2,132,199,0.18)', 'rgba(2,132,199,0.02)'] },
+  { line: '#dc2626', area: ['rgba(220,38,38,0.18)', 'rgba(220,38,38,0.02)'] },
+  { line: '#d97706', area: ['rgba(217,119,6,0.16)', 'rgba(217,119,6,0.02)'] },
+  { line: '#16a34a', area: ['rgba(22,163,74,0.16)', 'rgba(22,163,74,0.02)'] }
 ]
 
 function renderChart() {
@@ -67,19 +69,21 @@ function renderChart() {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(255,255,255,0.85)',
-      borderColor: 'rgba(243, 238, 238, 0.86)',
+      backgroundColor: '#ffffff',
+      borderColor: '#cbd5e1',
       borderWidth: 1,
-      textStyle: { color: '#dad8e6', fontSize: 12 },
+      padding: [8, 12],
+      textStyle: { color: '#0f172a', fontSize: 12, fontFamily: 'Inter, -apple-system, sans-serif' },
+      extraCssText: 'box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08); border-radius: 4px;'
     },
     axisPointer: {
-      type: 'shadow',
-      shadowStyle: { color: 'rgba(184, 169, 232, 0.12)' },
+      type: 'line',
+      lineStyle: { color: '#0284c7', width: 1, type: 'dashed' },
     },
     legend: props.showLegend
       ? {
           data: props.series.map(s => s.name),
-          textStyle: { color: '#0f0f10', fontSize: 15 },
+          textStyle: { color: '#0f172a', fontSize: 12, fontWeight: 600 },
           top: 0,
           itemWidth: 14,
           itemHeight: 3,
@@ -95,16 +99,16 @@ function renderChart() {
       type: 'category',
       boundaryGap: false,
       data: props.labels,
-      axisLine: { lineStyle: { color: 'rgba(184,169,232,0.18)' } },
+      axisLine: { lineStyle: { color: '#cbd5e1' } },
       axisTick: { show: false },
-      axisLabel: { color: '#9890b0', fontSize: 10, margin: 8 },
+      axisLabel: { color: '#64748b', fontSize: 11, margin: 8, fontFamily: "'JetBrains Mono', monospace" }
     },
     yAxis: {
       type: 'value',
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { color: '#9890b0', fontSize: 10 },
-      splitLine: { lineStyle: { color: 'rgba(184,169,232,0.10)', type: 'dashed' } },
+      axisLabel: { color: '#64748b', fontSize: 11, fontFamily: "'JetBrains Mono', monospace" },
+      splitLine: { lineStyle: { color: '#f1f5f9', type: 'dashed' } },
     },
     series: props.series.map((s, i) => {
       const color = s.color || defaultColors[i]?.line || defaultColors[0].line
@@ -191,7 +195,7 @@ watch(
 .line-chart {
   width: 100%;
   height: v-bind(height);
-  border-radius: 18px;
+  border-radius: 4px;
   overflow: hidden;
 }
 </style>
