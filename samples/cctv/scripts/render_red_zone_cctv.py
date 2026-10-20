@@ -141,7 +141,7 @@ def render_annotated_frame(
         draw.rectangle([(fx1, max(fy1 - 30, 8)), (fx1 + f_w, max(fy1 - 4, 34))], fill=(15, 25, 35, 220))
         draw.text((fx1 + 6, max(fy1 - 28, 10)), f_tag, font=font_tag, fill=(0, 230, 255))
     # HUD Texts
-    draw.text((panel_x1 + 25, panel_y1 + 18), "智盾 2.0 | 双过程认知风控与红光空间防御 (PROBE HUD)", font=font_title, fill=(0, 240, 255))
+    draw.text((panel_x1 + 25, panel_y1 + 18), "智盾 2.0 | 卡尼曼双系统认知风控与红光空间防御 (PROBE HUD)", font=font_title, fill=(0, 240, 255))
     draw.text((panel_x1 + 25, panel_y1 + 52), "System 1 Fast Intuition (OmniJev) + Physical Red-Zone Hard Boundary", font=font_sub, fill=(160, 180, 200))
 
     # Metric Row 1: Physical Red Zone Boundary
