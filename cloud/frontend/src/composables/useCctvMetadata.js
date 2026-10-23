@@ -44,36 +44,59 @@ export const CAMERA_REGISTRY = [
     zone: 'A区',
     position: '冲压装配主通廊入口',
     hasMetadata: true,
+    hasVideo: true,
+    videoFile: 'output_video7.mp4',
     video: '/samples/cctv/videos/output_video7.mp4',
     thumbnail: '/samples/cctv/keyframes/keyframe_0575_04_CRITICAL_HAZARD.png'
   },
   {
-    id: 'CCTV-01',
-    name: '焊接工段 · 立柱内侧',
-    zone: 'C区',
-    position: '自动化焊接作业岛',
-    hasMetadata: false
+    id: 'CCTV-03',
+    name: '冲压装配主通廊 · 回转区',
+    zone: 'A区',
+    position: '冲压A线通廊东侧',
+    hasMetadata: false,
+    hasVideo: true,
+    videoFile: 'output_video3.mp4',
+    video: '/samples/cctv/videos/output_video3.mp4',
+    thumbnail: '/samples/cctv/keyframes/output_video3_thumb.jpg'
   },
   {
     id: 'CCTV-02',
     name: '冲压A线 · 机械手上方',
     zone: 'A区',
     position: '冲压装配主通廊',
-    hasMetadata: false
+    hasMetadata: false,
+    hasVideo: true,
+    videoFile: 'output_video4.mp4',
+    video: '/samples/cctv/videos/output_video4.mp4',
+    thumbnail: '/samples/cctv/keyframes/output_video4_thumb.jpg'
   },
   {
-    id: 'CCTV-05',
+    id: 'CCTV-10',
     name: '重载物料立库 · 叉车回转区',
     zone: 'B区',
-    position: '重载物料立库区',
-    hasMetadata: false
+    position: '重载物料立库主通廊',
+    hasMetadata: false,
+    hasVideo: true,
+    videoFile: 'output_video10.mp4',
+    video: '/samples/cctv/videos/output_video10.mp4',
+    thumbnail: '/samples/cctv/keyframes/output_video10_thumb.jpg'
+  },
+  {
+    id: 'CCTV-01',
+    name: '焊接工段 · 立柱内侧',
+    zone: 'C区',
+    position: '自动化焊接作业岛',
+    hasMetadata: false,
+    hasVideo: false
   },
   {
     id: 'CCTV-06',
     name: '叉车充换电接驳站 · 充电桩侧',
     zone: 'D区',
     position: '叉车充换电接驳站',
-    hasMetadata: false
+    hasMetadata: false,
+    hasVideo: false
   }
 ]
 

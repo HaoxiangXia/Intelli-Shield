@@ -28,9 +28,9 @@
       <!-- 阵列总览：4栏细线网格 -->
       <div class="summary-strip">
         <div class="summary-cell">
-          <span class="s-label">接入规模</span>
+          <span class="s-label">视频源接入</span>
           <div class="s-val-row">
-            <span class="s-value">{{ onlineCount }}</span>
+            <span class="s-value">{{ videoCount }}</span>
             <span class="s-sub">/ {{ CAMERAS.length }} 路</span>
           </div>
         </div>
@@ -38,7 +38,7 @@
           <span class="s-label">险情段落</span>
           <div class="s-val-row">
             <span class="s-value">{{ totalEpisodes }}</span>
-            <span class="s-sub">段</span>
+            <span class="s-sub">段 (CCTV-04 实测)</span>
           </div>
         </div>
         <div class="summary-cell">
@@ -68,8 +68,7 @@
               v-for="cam in cards"
               :key="cam.id"
               class="cam-card"
-              :class="[cam.stateClass, { selected: selected?.id === cam.id }]"
-              @click="selectedId = cam.id"
+              :class="[cam.stateClass, { selected: cam.id === 'CCTV-04' }]"
             >
               <div class="cam-card-head">
                 <div class="cam-title">
@@ -84,10 +83,10 @@
               <div class="cam-meta">
                 <span class="meta-chip">{{ cam.zone }}</span>
                 <span class="meta-chip">{{ cam.position }}</span>
-                <span class="meta-chip font-mono" v-if="cam.hasMetadata">1080P</span>
+                <span class="meta-chip font-mono" v-if="cam.hasMetadata || cam.hasVideo">1080P</span>
               </div>
 
-              <!-- 已接入节点缩略与指标 -->
+              <!-- 1. 已接入实测指标节点 (CCTV-04) -->
               <div v-if="cam.stats" class="cam-card-body">
                 <div class="thumbnail-preview">
                   <img
@@ -96,7 +95,7 @@
                     :alt="cam.id"
                     class="thumb-img"
                   />
-                  <div class="thumb-badge font-mono">752 帧 · 4段险情</div>
+                  <div class="thumb-badge font-mono">4段险情 · 主推演工位</div>
                 </div>
 
                 <div class="stat-mini-row">
@@ -121,7 +120,24 @@
                 </div>
               </div>
 
-              <!-- 待接入节点规划 -->
+              <!-- 2. 已接入实景视频录像节点 (固定静态缩略图与规格展示，无需播放) -->
+              <div v-else-if="cam.hasVideo" class="cam-card-body">
+                <div class="thumbnail-preview">
+                  <img
+                    v-if="cam.thumbnail"
+                    :src="cam.thumbnail"
+                    :alt="cam.id"
+                    class="thumb-img"
+                  />
+                  <div class="thumb-badge font-mono">1080P@25FPS</div>
+                </div>
+                <div class="video-meta-brief font-mono">
+                  <span>30.1s 实景录像已就绪</span>
+                  <span class="brief-tag">离线存档</span>
+                </div>
+              </div>
+
+              <!-- 3. 待接入节点规划 -->
               <div v-else class="cam-pending-brief font-mono">
                 标高 6.0m · 焦距 4mm · 待接入
               </div>
@@ -305,6 +321,39 @@
                 </div>
               </div>
             </div>
+
+            <!-- 阵列实景视频源矩阵 (4 路 1080P 实景录像源) -->
+            <div class="video-sources-dock">
+              <div class="video-sources-head">
+                <Video :size="13" class="head-icon" />
+                <span>场端视频感知阵列 (4 路 1080P@25FPS 实景录像源)</span>
+                <span class="video-sources-tip font-mono">固定主推演工位: CCTV-04</span>
+              </div>
+              <div class="video-sources-grid">
+                <div
+                  v-for="vCam in videoCameras"
+                  :key="vCam.id"
+                  class="vsource-card"
+                  :class="{ active: vCam.id === 'CCTV-04' }"
+                >
+                  <div class="vsource-thumb-wrap">
+                    <img :src="vCam.thumbnail" :alt="vCam.id" class="vsource-thumb" />
+                    <span class="vsource-file-badge font-mono">{{ vCam.videoFile }}</span>
+                    <span class="vsource-role-badge" :class="vCam.id === 'CCTV-04' ? 'role-hpc' : 'role-archive'">
+                      {{ vCam.id === 'CCTV-04' ? 'HPC 实测推演' : '实景录像已归档' }}
+                    </span>
+                  </div>
+                  <div class="vsource-info">
+                    <div class="vsource-top">
+                      <span class="vsource-id font-mono">{{ vCam.id }}</span>
+                      <span class="vsource-zone font-mono">{{ vCam.zone }}</span>
+                    </div>
+                    <div class="vsource-name">{{ vCam.name }}</div>
+                    <div class="vsource-specs font-mono">1920×1080 · 25 FPS · 752 帧 · 30.1s</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </template>
 
           <!-- 2. 待接入节点档案 -->
@@ -379,16 +428,27 @@ const statsById = ref({})
 const cards = computed(() =>
   CAMERAS.map(cam => {
     const stats = cam.hasMetadata ? statsById.value[cam.id] || null : null
+    let stateClass = 'pending'
+    let stateText = '待接入'
+    if (cam.hasMetadata) {
+      stateClass = stats ? 'online' : 'loading'
+      stateText = stats ? '在线 · 实测基准' : '载入中'
+    } else if (cam.hasVideo) {
+      stateClass = 'archived'
+      stateText = '实景录像'
+    }
     return {
       ...cam,
       stats,
-      stateClass: cam.hasMetadata ? (stats ? 'online' : 'loading') : 'pending',
-      stateText: cam.hasMetadata ? (stats ? '在线' : '载入中') : '待接入'
+      stateClass,
+      stateText
     }
   })
 )
 
-const selected = computed(() => cards.value.find(c => c.id === selectedId.value) || cards.value[0])
+const selected = computed(() => cards.value.find(c => c.id === 'CCTV-04') || cards.value[0])
+const videoCameras = computed(() => cards.value.filter(c => c.hasVideo || c.hasMetadata))
+const videoCount = computed(() => videoCameras.value.length)
 
 const onlineCount = computed(() => CAMERAS.filter(c => c.hasMetadata).length)
 
@@ -423,7 +483,7 @@ const avgLatencyText = computed(() => {
 })
 
 const statusText = computed(() => {
-  if (status.value === 'ready') return `HPC 就绪 · ${frames.value.length} 帧`
+  if (status.value === 'ready') return `HPC 就绪 · 4路实景视频接入 (CCTV-04 实测)`
   if (status.value === 'loading') return '载入中...'
   if (status.value === 'error') return '载入失败'
   return '等待接入'
@@ -724,6 +784,12 @@ onMounted(async () => {
   border: 1px solid var(--border-machined);
 }
 
+.cam-state.archived {
+  color: var(--telemetry-cyan);
+  background: rgba(8, 145, 178, 0.08);
+  border: 1px solid rgba(8, 145, 178, 0.25);
+}
+
 .cam-name {
   font-size: 12px;
   font-weight: 600;
@@ -744,6 +810,7 @@ onMounted(async () => {
   padding: 1px 4px;
   border-radius: 2px;
 }
+
 
 .cam-card-body {
   display: flex;
@@ -816,6 +883,23 @@ onMounted(async () => {
 .split-bar-mini .crit { background: var(--emergency-red); }
 .split-bar-mini .warn { background: var(--safety-amber); }
 .split-bar-mini .safe { background: var(--nominal-green); }
+
+.video-meta-brief {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 2px 0;
+}
+
+.brief-tag {
+  background: var(--bg-panel-subtle);
+  border: 1px solid var(--border-machined);
+  padding: 1px 4px;
+  border-radius: 2px;
+  color: var(--telemetry-cyan);
+}
 
 .cam-pending-brief {
   margin-top: 2px;
@@ -1279,6 +1363,150 @@ onMounted(async () => {
   color: var(--text-main);
 }
 
+
+.video-sources-dock {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-machined);
+  border-radius: 4px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.video-sources-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.video-sources-tip {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.video-sources-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.vsource-card {
+  background: var(--bg-panel-subtle);
+  border: 1px solid var(--border-machined);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.15s ease;
+}
+
+.vsource-card.active {
+  border-color: var(--telemetry-cyan);
+  box-shadow: 0 0 0 1px var(--telemetry-cyan);
+  background: var(--bg-panel);
+}
+
+.vsource-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+}
+
+.vsource-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.vsource-file-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.vsource-role-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.role-hpc {
+  background: rgba(22, 163, 74, 0.9);
+  color: #fff;
+}
+
+.role-archive {
+  background: rgba(8, 145, 178, 0.85);
+  color: #fff;
+}
+
+.vsource-info {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.vsource-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vsource-id {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.vsource-zone {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.vsource-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vsource-specs {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 1200px) {
+  .video-sources-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .video-sources-grid {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 1024px) {
   .tactical-workstation {
     grid-template-columns: 1fr;
