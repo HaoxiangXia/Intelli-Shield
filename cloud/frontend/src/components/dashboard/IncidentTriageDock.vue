@@ -516,12 +516,40 @@ function buildEpisodesWithKeyframe(frames) {
 const { frames: metadataFrames, metadata: cctvMetadata, load: loadMetadata } = useCctvMetadata()
 
 const currentFrame = computed(() => {
-  const frames = metadataFrames.value
-  if (!frames || frames.length === 0) return null
-  const t = Number(props.currentTime) || 0
-  const fps = Number(cctvMetadata.value?.fps || 10.0)
-  const idx = Math.max(0, Math.min(frames.length - 1, Math.round(t * fps)))
-  return frames[idx] || null
+  const framesList = metadataFrames.value
+  if (!framesList || framesList.length === 0) return null
+  const targetTime = Number(props.currentTime) || 0
+  const total = framesList.length
+
+  const fps = Number(cctvMetadata.value?.fps || (total > 350 ? 25.0 : 10.0))
+  const estimatedIdx = Math.max(0, Math.min(total - 1, Math.round(targetTime * fps)))
+  const cand = framesList[estimatedIdx]
+  if (cand && Math.abs(cand.timestamp - targetTime) <= 0.02) {
+    return cand
+  }
+
+  let low = 0
+  let high = total - 1
+  let best = cand || framesList[0]
+  let minDiff = Math.abs(best.timestamp - targetTime)
+
+  while (low <= high) {
+    const mid = (low + high) >> 1
+    const item = framesList[mid]
+    const diff = Math.abs(item.timestamp - targetTime)
+    if (diff < minDiff) {
+      minDiff = diff
+      best = item
+    }
+    if (item.timestamp < targetTime) {
+      low = mid + 1
+    } else if (item.timestamp > targetTime) {
+      high = mid - 1
+    } else {
+      return item
+    }
+  }
+  return best
 })
 
 // 探针 1：实时碰撞风险
@@ -945,6 +973,7 @@ defineExpose({
   font-weight: 700;
   color: var(--text-main);
   font-family: var(--font-mono);
+  transition: color 0.25s ease;
 }
 
 .p-bar-wrap {
@@ -957,7 +986,7 @@ defineExpose({
 
 .p-bar-fill {
   height: 100%;
-  transition: width 0.3s ease;
+  transition: width 0.15s ease-out, background 0.25s ease;
 }
 
 .hd-snapshot-container {

@@ -10,7 +10,8 @@
     "model_gating": "RedZoneEngine + SpatialTemporalGate v2.1 (Voronoi Optical Red-Zone + Driver Exclusion)",
     "model_cognition": "OneJev-0.8B (TypeSafe AI RTX 3090, 107.4ms)",
     "generated_at": "2026-10-12 19:26:22",
-    "tail_false_positive_normalized": "frames 724-739 (28.92-29.52s) reconciled to flanking SAFE anchors"
+    "tail_false_positive_normalized": "frames 724-739 (28.92-29.52s) reconciled to flanking SAFE anchors",
+    "probe_smoothing": "Gaussian temporal low-pass filter (window=9, sigma=2.25) applied"
   },
   "frames": [
     {
@@ -17521,13 +17522,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.12,
+        "collision_risk": 0.13,
         "worker_awareness": {
-          "unaware": 0.05,
-          "yielding": 0.2,
-          "separated": 0.75
+          "unaware": 0.058,
+          "yielding": 0.207,
+          "separated": 0.735
         },
-        "threat_score": 0.45,
+        "threat_score": 0.48,
         "latency_ms": 107.4
       },
       "gating": {
@@ -17843,13 +17844,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.12,
+        "collision_risk": 0.154,
         "worker_awareness": {
-          "unaware": 0.05,
-          "yielding": 0.2,
-          "separated": 0.75
+          "unaware": 0.078,
+          "yielding": 0.223,
+          "separated": 0.699
         },
-        "threat_score": 0.45,
+        "threat_score": 0.56,
         "latency_ms": 107.4
       },
       "gating": {
@@ -18157,13 +18158,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.12,
+        "collision_risk": 0.198,
         "worker_awareness": {
-          "unaware": 0.05,
-          "yielding": 0.2,
-          "separated": 0.75
+          "unaware": 0.115,
+          "yielding": 0.254,
+          "separated": 0.631
         },
-        "threat_score": 0.45,
+        "threat_score": 0.7,
         "latency_ms": 107.4
       },
       "gating": {
@@ -18491,13 +18492,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.12,
+        "collision_risk": 0.263,
         "worker_awareness": {
-          "unaware": 0.05,
-          "yielding": 0.2,
-          "separated": 0.75
+          "unaware": 0.169,
+          "yielding": 0.299,
+          "separated": 0.532
         },
-        "threat_score": 0.45,
+        "threat_score": 0.91,
         "latency_ms": 107.4
       },
       "gating": {
@@ -18831,13 +18832,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.337,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.231,
+          "yielding": 0.351,
+          "separated": 0.418
         },
-        "threat_score": 1.6,
+        "threat_score": 1.14,
         "latency_ms": 107.4
       },
       "gating": {
@@ -19180,13 +19181,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.402,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.285,
+          "yielding": 0.396,
+          "separated": 0.319
         },
-        "threat_score": 1.6,
+        "threat_score": 1.35,
         "latency_ms": 107.4
       },
       "gating": {
@@ -19517,13 +19518,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.446,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.322,
+          "yielding": 0.427,
+          "separated": 0.251
         },
-        "threat_score": 1.6,
+        "threat_score": 1.49,
         "latency_ms": 107.4
       },
       "gating": {
@@ -19838,13 +19839,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.47,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.342,
+          "yielding": 0.443,
+          "separated": 0.215
         },
-        "threat_score": 1.6,
+        "threat_score": 1.57,
         "latency_ms": 107.4
       },
       "gating": {
@@ -26216,13 +26217,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.488,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.357,
+          "yielding": 0.445,
+          "separated": 0.198
         },
-        "threat_score": 1.6,
+        "threat_score": 1.62,
         "latency_ms": 107.4
       },
       "gating": {
@@ -26515,13 +26516,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.506,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.375,
+          "yielding": 0.434,
+          "separated": 0.191
         },
-        "threat_score": 1.6,
+        "threat_score": 1.67,
         "latency_ms": 107.4
       },
       "gating": {
@@ -26814,13 +26815,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.541,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.409,
+          "yielding": 0.413,
+          "separated": 0.178
         },
-        "threat_score": 1.6,
+        "threat_score": 1.76,
         "latency_ms": 107.4
       },
       "gating": {
@@ -27117,13 +27118,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.591,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.457,
+          "yielding": 0.382,
+          "separated": 0.161
         },
-        "threat_score": 1.6,
+        "threat_score": 1.9,
         "latency_ms": 107.4
       },
       "gating": {
@@ -27408,13 +27409,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.76,
+        "collision_risk": 0.649,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.505,
+          "yielding": 0.352,
+          "separated": 0.143
         },
-        "threat_score": 2.35,
+        "threat_score": 2.05,
         "latency_ms": 107.4
       },
       "gating": {
@@ -27701,13 +27702,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.76,
+        "collision_risk": 0.699,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.543,
+          "yielding": 0.328,
+          "separated": 0.129
         },
-        "threat_score": 2.35,
+        "threat_score": 2.19,
         "latency_ms": 107.4
       },
       "gating": {
@@ -28006,13 +28007,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.76,
+        "collision_risk": 0.734,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.554,
+          "yielding": 0.322,
+          "separated": 0.124
         },
-        "threat_score": 2.35,
+        "threat_score": 2.28,
         "latency_ms": 107.4
       },
       "gating": {
@@ -28297,13 +28298,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.76,
+        "collision_risk": 0.752,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.539,
+          "yielding": 0.331,
+          "separated": 0.13
         },
-        "threat_score": 2.35,
+        "threat_score": 2.33,
         "latency_ms": 107.4
       },
       "gating": {
@@ -28584,13 +28585,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.514,
+          "yielding": 0.347,
+          "separated": 0.139
         },
-        "threat_score": 1.6,
+        "threat_score": 2.35,
         "latency_ms": 107.4
       },
       "gating": {
@@ -28602,13 +28603,15 @@
         "driver_excluded": 1
       },
       "reasons": [
-        "【红光外沿缓冲预警】人员双脚处于红光外沿临界区 (间距: 0.7px / 0.01m <= 0.30m)",
-        "OmniJev P(collision) = 0.48 >= 0.40"
+        "【红光禁区侵入】人员双脚踏入叉车红光安全隔离线内侧 (侵入深度: 1.6px / 0.02m)",
+        "OmniJev P(collision) = 0.76 >= 0.70 (高危轨迹)",
+        "Hazard threat score = 2.35 >= 2.20",
+        "【盲区背对/分心】工人注意力缺失 P(unaware) = 0.62"
       ],
       "red_zone": {
-        "state": "BUFFER",
-        "min_dist_px": 0.7,
-        "min_dist_m": 0.01,
+        "state": "INSIDE",
+        "min_dist_px": -1.6,
+        "min_dist_m": -0.02,
         "buffer_thresh_px": 24.6,
         "polygons": [
           [
@@ -28847,9 +28850,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.489,
+          "yielding": 0.362,
+          "separated": 0.149
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -29108,13 +29111,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.483,
+          "yielding": 0.366,
+          "separated": 0.151
         },
-        "threat_score": 1.6,
+        "threat_score": 2.35,
         "latency_ms": 107.4
       },
       "gating": {
@@ -29126,13 +29129,15 @@
         "driver_excluded": 1
       },
       "reasons": [
-        "【红光外沿缓冲预警】人员双脚处于红光外沿临界区 (间距: 1.1px / 0.01m <= 0.30m)",
-        "OmniJev P(collision) = 0.48 >= 0.40"
+        "【红光禁区侵入】人员双脚踏入叉车红光安全隔离线内侧 (侵入深度: 1.6px / 0.02m)",
+        "OmniJev P(collision) = 0.76 >= 0.70 (高危轨迹)",
+        "Hazard threat score = 2.35 >= 2.20",
+        "【盲区背对/分心】工人注意力缺失 P(unaware) = 0.62"
       ],
       "red_zone": {
-        "state": "BUFFER",
-        "min_dist_px": 1.1,
-        "min_dist_m": 0.01,
+        "state": "INSIDE",
+        "min_dist_px": -1.6,
+        "min_dist_m": -0.02,
         "buffer_thresh_px": 24.6,
         "polygons": [
           [
@@ -29381,13 +29386,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.498,
+          "yielding": 0.357,
+          "separated": 0.145
         },
-        "threat_score": 1.6,
+        "threat_score": 2.35,
         "latency_ms": 107.4
       },
       "gating": {
@@ -29399,13 +29404,15 @@
         "driver_excluded": 1
       },
       "reasons": [
-        "【红光外沿缓冲预警】人员双脚处于红光外沿临界区 (间距: 1.0px / 0.01m <= 0.30m)",
-        "OmniJev P(collision) = 0.48 >= 0.40"
+        "【红光禁区侵入】人员双脚踏入叉车红光安全隔离线内侧 (侵入深度: 1.6px / 0.02m)",
+        "OmniJev P(collision) = 0.76 >= 0.70 (高危轨迹)",
+        "Hazard threat score = 2.35 >= 2.20",
+        "【盲区背对/分心】工人注意力缺失 P(unaware) = 0.62"
       ],
       "red_zone": {
-        "state": "BUFFER",
-        "min_dist_px": 1.0,
-        "min_dist_m": 0.01,
+        "state": "INSIDE",
+        "min_dist_px": -1.6,
+        "min_dist_m": -0.02,
         "buffer_thresh_px": 24.6,
         "polygons": [
           [
@@ -29644,9 +29651,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.53,
+          "yielding": 0.336,
+          "separated": 0.134
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -29931,9 +29938,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.569,
+          "yielding": 0.312,
+          "separated": 0.119
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -30226,9 +30233,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.587,
+          "yielding": 0.301,
+          "separated": 0.112
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -30509,9 +30516,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.595,
+          "yielding": 0.296,
+          "separated": 0.109
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -30792,9 +30799,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.587,
+          "yielding": 0.301,
+          "separated": 0.112
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -31075,9 +31082,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.571,
+          "yielding": 0.311,
+          "separated": 0.118
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -31328,13 +31335,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.565,
+          "yielding": 0.315,
+          "separated": 0.12
         },
-        "threat_score": 1.6,
+        "threat_score": 2.35,
         "latency_ms": 107.4
       },
       "gating": {
@@ -31346,13 +31353,15 @@
         "driver_excluded": 1
       },
       "reasons": [
-        "【红光外沿缓冲预警】人员双脚处于红光外沿临界区 (间距: 1.1px / 0.01m <= 0.30m)",
-        "OmniJev P(collision) = 0.48 >= 0.40"
+        "【红光禁区侵入】人员双脚踏入叉车红光安全隔离线内侧 (侵入深度: 1.6px / 0.02m)",
+        "OmniJev P(collision) = 0.76 >= 0.70 (高危轨迹)",
+        "Hazard threat score = 2.35 >= 2.20",
+        "【盲区背对/分心】工人注意力缺失 P(unaware) = 0.62"
       ],
       "red_zone": {
-        "state": "BUFFER",
-        "min_dist_px": 1.1,
-        "min_dist_m": 0.01,
+        "state": "INSIDE",
+        "min_dist_px": -1.6,
+        "min_dist_m": -0.02,
         "buffer_thresh_px": 24.6,
         "polygons": [
           [
@@ -31593,9 +31602,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.571,
+          "yielding": 0.311,
+          "separated": 0.118
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -31866,9 +31875,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.587,
+          "yielding": 0.301,
+          "separated": 0.112
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -32147,9 +32156,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.602,
+          "yielding": 0.291,
+          "separated": 0.107
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -32424,9 +32433,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.613,
+          "yielding": 0.285,
+          "separated": 0.102
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -36605,9 +36614,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.613,
+          "yielding": 0.285,
+          "separated": 0.102
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -36904,9 +36913,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.595,
+          "yielding": 0.296,
+          "separated": 0.109
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -37215,9 +37224,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.569,
+          "yielding": 0.312,
+          "separated": 0.119
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -37502,9 +37511,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.538,
+          "yielding": 0.332,
+          "separated": 0.13
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -37791,13 +37800,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.516,
+          "yielding": 0.345,
+          "separated": 0.139
         },
-        "threat_score": 1.6,
+        "threat_score": 2.35,
         "latency_ms": 107.4
       },
       "gating": {
@@ -37809,13 +37818,15 @@
         "driver_excluded": 2
       },
       "reasons": [
-        "【红光外沿缓冲预警】人员双脚处于红光外沿临界区 (间距: 0.6px / 0.01m <= 0.30m)",
-        "OmniJev P(collision) = 0.48 >= 0.40"
+        "【红光禁区侵入】人员双脚踏入叉车红光安全隔离线内侧 (侵入深度: 1.6px / 0.02m)",
+        "OmniJev P(collision) = 0.76 >= 0.70 (高危轨迹)",
+        "Hazard threat score = 2.35 >= 2.20",
+        "【盲区背对/分心】工人注意力缺失 P(unaware) = 0.62"
       ],
       "red_zone": {
-        "state": "BUFFER",
-        "min_dist_px": 0.6,
-        "min_dist_m": 0.01,
+        "state": "INSIDE",
+        "min_dist_px": -1.6,
+        "min_dist_m": -0.02,
         "buffer_thresh_px": 24.8,
         "polygons": [
           [
@@ -38104,13 +38115,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.48,
+        "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.516,
+          "yielding": 0.345,
+          "separated": 0.139
         },
-        "threat_score": 1.6,
+        "threat_score": 2.35,
         "latency_ms": 107.4
       },
       "gating": {
@@ -38122,13 +38133,15 @@
         "driver_excluded": 2
       },
       "reasons": [
-        "【红光外沿缓冲预警】人员双脚处于红光外沿临界区 (间距: 0.3px / 0.00m <= 0.30m)",
-        "OmniJev P(collision) = 0.48 >= 0.40"
+        "【红光禁区侵入】人员双脚踏入叉车红光安全隔离线内侧 (侵入深度: 1.6px / 0.02m)",
+        "OmniJev P(collision) = 0.76 >= 0.70 (高危轨迹)",
+        "Hazard threat score = 2.35 >= 2.20",
+        "【盲区背对/分心】工人注意力缺失 P(unaware) = 0.62"
       ],
       "red_zone": {
-        "state": "BUFFER",
-        "min_dist_px": 0.3,
-        "min_dist_m": 0.0,
+        "state": "INSIDE",
+        "min_dist_px": -1.6,
+        "min_dist_m": -0.02,
         "buffer_thresh_px": 24.8,
         "polygons": [
           [
@@ -38405,9 +38418,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.538,
+          "yielding": 0.332,
+          "separated": 0.13
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -38702,9 +38715,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.569,
+          "yielding": 0.312,
+          "separated": 0.119
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -38979,9 +38992,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.595,
+          "yielding": 0.296,
+          "separated": 0.109
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -39276,9 +39289,9 @@
       "probes": {
         "collision_risk": 0.76,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.613,
+          "yielding": 0.285,
+          "separated": 0.102
         },
         "threat_score": 2.35,
         "latency_ms": 107.4
@@ -166941,7 +166954,7 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.76,
+        "collision_risk": 0.761,
         "worker_awareness": {
           "unaware": 0.62,
           "yielding": 0.28,
@@ -167200,13 +167213,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.76,
+        "collision_risk": 0.762,
         "worker_awareness": {
           "unaware": 0.62,
           "yielding": 0.28,
           "separated": 0.1
         },
-        "threat_score": 2.35,
+        "threat_score": 2.36,
         "latency_ms": 107.4
       },
       "gating": {
@@ -167455,13 +167468,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.76,
+        "collision_risk": 0.765,
         "worker_awareness": {
           "unaware": 0.62,
           "yielding": 0.28,
           "separated": 0.1
         },
-        "threat_score": 2.35,
+        "threat_score": 2.38,
         "latency_ms": 107.4
       },
       "gating": {
@@ -167718,13 +167731,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.76,
+        "collision_risk": 0.77,
         "worker_awareness": {
           "unaware": 0.62,
           "yielding": 0.28,
           "separated": 0.1
         },
-        "threat_score": 2.35,
+        "threat_score": 2.4,
         "latency_ms": 107.4
       },
       "gating": {
@@ -167981,13 +167994,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.785,
+        "collision_risk": 0.775,
         "worker_awareness": {
           "unaware": 0.62,
           "yielding": 0.28,
           "separated": 0.1
         },
-        "threat_score": 2.48,
+        "threat_score": 2.43,
         "latency_ms": 107.4
       },
       "gating": {
@@ -168264,13 +168277,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.785,
+        "collision_risk": 0.78,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.613,
+          "yielding": 0.285,
+          "separated": 0.102
         },
-        "threat_score": 2.48,
+        "threat_score": 2.45,
         "latency_ms": 107.4
       },
       "gating": {
@@ -168559,13 +168572,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.785,
+        "collision_risk": 0.783,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.602,
+          "yielding": 0.291,
+          "separated": 0.107
         },
-        "threat_score": 2.48,
+        "threat_score": 2.47,
         "latency_ms": 107.4
       },
       "gating": {
@@ -168842,11 +168855,11 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.785,
+        "collision_risk": 0.784,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.579,
+          "yielding": 0.306,
+          "separated": 0.115
         },
         "threat_score": 2.48,
         "latency_ms": 107.4
@@ -169123,9 +169136,9 @@
       "probes": {
         "collision_risk": 0.785,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.546,
+          "yielding": 0.327,
+          "separated": 0.127
         },
         "threat_score": 2.48,
         "latency_ms": 107.4
@@ -169462,9 +169475,9 @@
       "probes": {
         "collision_risk": 0.785,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.506,
+          "yielding": 0.352,
+          "separated": 0.142
         },
         "threat_score": 2.48,
         "latency_ms": 107.4
@@ -169780,9 +169793,9 @@
       "probes": {
         "collision_risk": 0.785,
         "worker_awareness": {
-          "unaware": 0.62,
-          "yielding": 0.28,
-          "separated": 0.1
+          "unaware": 0.464,
+          "yielding": 0.378,
+          "separated": 0.158
         },
         "threat_score": 2.48,
         "latency_ms": 107.4
@@ -170103,9 +170116,9 @@
       "probes": {
         "collision_risk": 0.785,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.424,
+          "yielding": 0.403,
+          "separated": 0.173
         },
         "threat_score": 2.48,
         "latency_ms": 107.4
@@ -170451,13 +170464,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.785,
+        "collision_risk": 0.77,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
+          "unaware": 0.383,
+          "yielding": 0.417,
           "separated": 0.2
         },
-        "threat_score": 2.48,
+        "threat_score": 2.43,
         "latency_ms": 107.4
       },
       "gating": {
@@ -170785,13 +170798,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.785,
+        "collision_risk": 0.735,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.34,
+          "yielding": 0.415,
+          "separated": 0.245
         },
-        "threat_score": 2.48,
+        "threat_score": 2.32,
         "latency_ms": 107.4
       },
       "gating": {
@@ -171131,13 +171144,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.785,
+        "collision_risk": 0.669,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.292,
+          "yielding": 0.391,
+          "separated": 0.317
         },
-        "threat_score": 2.48,
+        "threat_score": 2.11,
         "latency_ms": 107.4
       },
       "gating": {
@@ -171461,13 +171474,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.785,
+        "collision_risk": 0.572,
         "worker_awareness": {
-          "unaware": 0.35,
-          "yielding": 0.45,
-          "separated": 0.2
+          "unaware": 0.231,
+          "yielding": 0.351,
+          "separated": 0.418
         },
-        "threat_score": 2.48,
+        "threat_score": 1.81,
         "latency_ms": 107.4
       },
       "gating": {
@@ -171775,13 +171788,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.25,
+        "collision_risk": 0.463,
         "worker_awareness": {
-          "unaware": 0.05,
-          "yielding": 0.2,
-          "separated": 0.75
+          "unaware": 0.169,
+          "yielding": 0.299,
+          "separated": 0.532
         },
-        "threat_score": 0.8,
+        "threat_score": 1.47,
         "latency_ms": 107.4
       },
       "gating": {
@@ -172071,13 +172084,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.25,
+        "collision_risk": 0.366,
         "worker_awareness": {
-          "unaware": 0.05,
-          "yielding": 0.2,
-          "separated": 0.75
+          "unaware": 0.115,
+          "yielding": 0.254,
+          "separated": 0.631
         },
-        "threat_score": 0.8,
+        "threat_score": 1.17,
         "latency_ms": 107.4
       },
       "gating": {
@@ -172355,13 +172368,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.25,
+        "collision_risk": 0.3,
         "worker_awareness": {
-          "unaware": 0.05,
-          "yielding": 0.2,
-          "separated": 0.75
+          "unaware": 0.078,
+          "yielding": 0.223,
+          "separated": 0.699
         },
-        "threat_score": 0.8,
+        "threat_score": 0.96,
         "latency_ms": 107.4
       },
       "gating": {
@@ -172655,13 +172668,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.25,
+        "collision_risk": 0.265,
         "worker_awareness": {
-          "unaware": 0.05,
-          "yielding": 0.2,
-          "separated": 0.75
+          "unaware": 0.058,
+          "yielding": 0.207,
+          "separated": 0.735
         },
-        "threat_score": 0.8,
+        "threat_score": 0.85,
         "latency_ms": 107.4
       },
       "gating": {
@@ -193175,13 +193188,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.25,
+        "collision_risk": 0.246,
         "worker_awareness": {
           "unaware": 0.05,
           "yielding": 0.2,
           "separated": 0.75
         },
-        "threat_score": 0.8,
+        "threat_score": 0.79,
         "latency_ms": 107.4
       },
       "gating": {
@@ -193553,13 +193566,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.25,
+        "collision_risk": 0.238,
         "worker_awareness": {
           "unaware": 0.05,
           "yielding": 0.2,
           "separated": 0.75
         },
-        "threat_score": 0.8,
+        "threat_score": 0.77,
         "latency_ms": 107.4
       },
       "gating": {
@@ -193951,13 +193964,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.25,
+        "collision_risk": 0.222,
         "worker_awareness": {
           "unaware": 0.05,
           "yielding": 0.2,
           "separated": 0.75
         },
-        "threat_score": 0.8,
+        "threat_score": 0.72,
         "latency_ms": 107.4
       },
       "gating": {
@@ -194305,13 +194318,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.25,
+        "collision_risk": 0.198,
         "worker_awareness": {
           "unaware": 0.05,
           "yielding": 0.2,
           "separated": 0.75
         },
-        "threat_score": 0.8,
+        "threat_score": 0.66,
         "latency_ms": 107.4
       },
       "gating": {
@@ -194649,13 +194662,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.12,
+        "collision_risk": 0.172,
         "worker_awareness": {
           "unaware": 0.05,
           "yielding": 0.2,
           "separated": 0.75
         },
-        "threat_score": 0.45,
+        "threat_score": 0.59,
         "latency_ms": 107.4
       },
       "gating": {
@@ -195016,13 +195029,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.12,
+        "collision_risk": 0.148,
         "worker_awareness": {
           "unaware": 0.05,
           "yielding": 0.2,
           "separated": 0.75
         },
-        "threat_score": 0.45,
+        "threat_score": 0.53,
         "latency_ms": 107.4
       },
       "gating": {
@@ -195335,13 +195348,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.12,
+        "collision_risk": 0.132,
         "worker_awareness": {
           "unaware": 0.05,
           "yielding": 0.2,
           "separated": 0.75
         },
-        "threat_score": 0.45,
+        "threat_score": 0.48,
         "latency_ms": 107.4
       },
       "gating": {
@@ -195678,13 +195691,13 @@
         }
       ],
       "probes": {
-        "collision_risk": 0.12,
+        "collision_risk": 0.124,
         "worker_awareness": {
           "unaware": 0.05,
           "yielding": 0.2,
           "separated": 0.75
         },
-        "threat_score": 0.45,
+        "threat_score": 0.46,
         "latency_ms": 107.4
       },
       "gating": {

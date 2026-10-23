@@ -57,8 +57,9 @@
           loop
           :muted="isMuted"
           @timeupdate="onTimeUpdate"
-          @play="isRunning = true"
-          @pause="isRunning = false"
+          @play="onPlay"
+          @pause="onPause"
+          @ended="onPause"
           @loadedmetadata="onVideoLoaded"
         ></video>
 
@@ -502,20 +503,69 @@ function onVideoLoaded() {
   }
 }
 
+let playbackRafId = null
+
+function syncPlaybackClock() {
+  if (!videoRef.value || videoRef.value.paused || videoRef.value.ended) {
+    return
+  }
+  const t = videoRef.value.currentTime
+  if (Math.abs(t - currentTime.value) > 0.005) {
+    currentTime.value = t
+    emit('time-update', t)
+  }
+  if ('requestVideoFrameCallback' in HTMLVideoElement.prototype && typeof videoRef.value.requestVideoFrameCallback === 'function') {
+    playbackRafId = videoRef.value.requestVideoFrameCallback(syncPlaybackClock)
+  } else {
+    playbackRafId = requestAnimationFrame(syncPlaybackClock)
+  }
+}
+
+function startPlaybackClock() {
+  stopPlaybackClock()
+  if (!videoRef.value) return
+  if ('requestVideoFrameCallback' in HTMLVideoElement.prototype && typeof videoRef.value.requestVideoFrameCallback === 'function') {
+    playbackRafId = videoRef.value.requestVideoFrameCallback(syncPlaybackClock)
+  } else {
+    playbackRafId = requestAnimationFrame(syncPlaybackClock)
+  }
+}
+
+function stopPlaybackClock() {
+  if (playbackRafId !== null) {
+    if ('cancelVideoFrameCallback' in HTMLVideoElement.prototype && typeof videoRef.value?.cancelVideoFrameCallback === 'function') {
+      videoRef.value.cancelVideoFrameCallback(playbackRafId)
+    } else {
+      cancelAnimationFrame(playbackRafId)
+    }
+    playbackRafId = null
+  }
+}
+
+function onPlay() {
+  isRunning.value = true
+  startPlaybackClock()
+}
+
+function onPause() {
+  isRunning.value = false
+  stopPlaybackClock()
+}
+
 function togglePlay() {
   if (!videoRef.value) return
   if (videoRef.value.paused) {
     videoRef.value.play().then(() => {
-      isRunning.value = true
+      onPlay()
     }).catch(e => console.error(e))
   } else {
     videoRef.value.pause()
-    isRunning.value = false
+    onPause()
   }
 }
 
 function onTimeUpdate() {
-  if (videoRef.value) {
+  if (videoRef.value && !playbackRafId) {
     currentTime.value = videoRef.value.currentTime
     emit('time-update', currentTime.value)
   }
@@ -527,14 +577,16 @@ function onSeek() {
     emit('time-update', Number(currentTime.value))
   }
 }
+
 function seekTo(sec) {
   if (videoRef.value) {
     videoRef.value.currentTime = sec
     currentTime.value = sec
     emit('time-update', sec)
     if (videoRef.value.paused) {
-      videoRef.value.play()
-      isRunning.value = true
+      videoRef.value.play().then(() => {
+        onPlay()
+      }).catch(e => console.error(e))
     }
   }
 }
@@ -563,6 +615,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  stopPlaybackClock()
   window.removeEventListener('resize', updateDisplayMetrics)
 })
 
@@ -806,6 +859,7 @@ defineExpose({ seekTo })
   font-weight: 700;
   color: #f1f5f9;
   font-family: var(--font-mono);
+  transition: color 0.25s ease, text-shadow 0.25s ease;
 }
 
 .highlight-cyan {

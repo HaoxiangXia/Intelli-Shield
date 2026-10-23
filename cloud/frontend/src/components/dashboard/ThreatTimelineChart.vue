@@ -410,15 +410,41 @@ const areaPath = computed(() => {
 })
 
 // 当前播放时间点上的威胁烈度与高度
+// 当前播放时间点上的威胁烈度与高度 (基于时间戳二分区间线性插值，杜绝阶跃跳变)
 const currentThreatScore = computed(() => {
   const dur = duration.value > 0 ? duration.value : 30.08
   const cur = Math.max(0, Math.min(dur, Number(props.currentTime) || 0))
   const frames = metadataFrames.value
-  const fps = Number(cctvMetadata.value?.fps || 10.0)
-  if (frames && frames.length) {
-    const targetId = Math.max(1, Math.min(frames.length, Math.round(cur * fps) + 1))
-    const f = frames[targetId - 1]
-    if (f) return Number(f.probes?.threat_score ?? 0.45)
+  if (!frames || frames.length === 0) return 0.45
+
+  if (cur <= (frames[0].timestamp ?? 0)) {
+    return Number(frames[0].probes?.threat_score ?? 0.45)
+  }
+  const last = frames[frames.length - 1]
+  if (cur >= (last.timestamp ?? dur)) {
+    return Number(last.probes?.threat_score ?? 0.45)
+  }
+
+  let low = 0
+  let high = frames.length - 1
+  while (low <= high) {
+    const mid = (low + high) >> 1
+    const item = frames[mid]
+    const itemT = Number(item.timestamp ?? 0)
+    if (itemT <= cur) {
+      if (mid === frames.length - 1 || Number(frames[mid + 1].timestamp ?? 0) > cur) {
+        const next = frames[mid + 1]
+        const nextT = Number(next.timestamp ?? itemT + 0.04)
+        const dt = (nextT - itemT) || 0.04
+        const alpha = Math.max(0, Math.min(1, (cur - itemT) / dt))
+        const s0 = Number(item.probes?.threat_score ?? 0.45)
+        const s1 = Number(next.probes?.threat_score ?? s0)
+        return s0 + alpha * (s1 - s0)
+      }
+      low = mid + 1
+    } else {
+      high = mid - 1
+    }
   }
   return 0.45
 })
